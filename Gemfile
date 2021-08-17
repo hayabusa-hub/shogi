@@ -7,6 +7,8 @@ ruby '2.6.3'
 gem 'rails',      '6.0.3'
 # Use secure password
 gem 'bcrypt',      '~> 3.1.13'
+# Use bootstarp
+gem 'bootstrap-sass',             '3.4.1'
 # Use Puma as the app server
 gem 'puma',       '~> 4.1'
 # Use SCSS for stylesheets
@@ -50,6 +52,8 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'
+  # User assert_template and so on
+  gem 'rails-controller-testing', '1.0.4'
   # Test layout 
   gem 'minitest-reporters',       '1.3.8'
 end
