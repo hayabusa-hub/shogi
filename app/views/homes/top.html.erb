@@ -1,6 +1,11 @@
-<h1>Sign up</h1>
+<h1>Top page</h1>
 <div class="row">
   <div class="col-md-3 col-md-offset-3">
-    <%= link_to "対局室へ移動", "#"%>
+    
+    <% if logged_in? %>
+      <%= link_to "対局室へ移動", matchs_path(user_id: @user.id), method: :post %>
+    <% else %>
+      <%= link_to "ログイン", login_path %>
+    <% end %>
   </div>
 </div>

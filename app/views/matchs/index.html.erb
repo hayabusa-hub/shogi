@@ -1,0 +1,9 @@
+<h1>User wait for game</h1>
+<%= "UserID: #{@user.id}" %>
+<% @matches.each do |matchs| %>
+  <% if matchs.user_id != @user.id %>
+    <%= matchs.user_id %>
+    <%= link_to "対戦", "#" %>
+  <% end %>
+<% end %>
+<%#= will_paginate %>

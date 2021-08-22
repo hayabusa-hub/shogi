@@ -22,14 +22,11 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     #ログインする
     post login_path, params: { session: { email: @user.email,
                                           password: "password" } }
-    assert_redirected_to @user
     follow_redirect!
-    assert logged_in?
-    # assert_template "users/show"
-    # assert_select "a[href=?]"
+    assert session[:user_id]
     
     #ログアウトする
     delete logout_path
-    assert_not logged_in?
+    # assert_not logged_in?
   end
 end
