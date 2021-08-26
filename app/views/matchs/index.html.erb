@@ -1,9 +1,22 @@
 <h1>User wait for game</h1>
 <%= "UserID: #{@user.id}" %>
-<% @matches.each do |matchs| %>
-  <% if matchs.user_id != @user.id %>
-    <%= matchs.user_id %>
-    <%= link_to "対戦", "#" %>
-  <% end %>
+
+<% if @opponent %>
+  <%= "#{@opponent.user.id}から対戦を申し込まれています" %>
+  <%= link_to "承諾", match_path(@opponent, opponent_id: @user.id, status: 3) , method: :patch %>
+  <%= link_to "拒否", match_path(@opponent, opponent_id: @user.id, status: 2) , method: :patch %>
 <% end %>
+
+<ul>
+<% @matches.each do |matchs| %>
+    <% if matchs.user_id != @user.id %>
+      <li>
+        <%= matchs.user_id %>
+        <%= link_to "対戦", match_path(@match, opponent_id: matchs.user_id, status: 1) , method: :patch %>
+      </li>
+    <% end %>
+<% end %>
+</ul>
+
+<%= link_to "退出する", match_path(@match) , method: :delete %>
 <%#= will_paginate %>

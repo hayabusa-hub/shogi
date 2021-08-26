@@ -1,5 +1,8 @@
 class User < ApplicationRecord
-    
+  
+  # relationship
+  has_one :match, dependent: :destroy
+  
   # validation
   validates :name,     presence: true,
                        length: {maximum: 30}

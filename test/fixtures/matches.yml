@@ -1,11 +1,6 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user_id: 1
-  opponent_id: 1
-  status: 1
-
-two:
-  user_id: 1
-  opponent_id: 1
+  user: alice
+  opponent_id: 0
   status: 1
