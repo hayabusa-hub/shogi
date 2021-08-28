@@ -16,7 +16,6 @@ class GamesController < ApplicationController
     @game.board = init_board()
     
     if @game.save
-      debugger
       redirect_to game_path(@game)
     else
       flash[:danger] = "error has occurred"

@@ -5,6 +5,8 @@ ruby '2.6.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails',      '6.0.3'
+# jQuery
+# gem 'jquery-rails'
 # Use Active Model has_secure_password
 gem 'bcrypt',      '~> 3.1.13'
 # Use paginate function
