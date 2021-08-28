@@ -58,6 +58,7 @@ class MatchsController < ApplicationController
       @match.status = 3
       if @match.save
         flash[:success] = "対局開始！！！"
+        render "shared/_game_create"
         # redirect_to games_path, method: :post
       else
         flash[:danger] = "対戦できませんでした"
