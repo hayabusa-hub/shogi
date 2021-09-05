@@ -14,17 +14,6 @@ class GamesController < ApplicationController
     @my_turn = my_turn(@game)
     @display = display_mode(@game, @my_turn)
     @order = get_order(@display)
-    
-    # if(@display == SECOND)
-    #   @ORDER = ORDER.reverse
-    # end
-    # debugger
-    
-    #@display = SECOND
-    # @game.board.reverse!
-    # @game.turn_board.reverse!
-    # @X = X.reverse
-    # @Y = Y.reverse
   end
   
   def index

@@ -30,9 +30,11 @@ input {
 
 /* game  */ 
 .board{
-  list-style: none;
-  margin-bottom: 10px;
-  display: inline-block;
+  // list-style: none;
+  // margin-bottom: 10px;
+  // display: inline-block;
+  align: center;
+  margin: auto;
 }
 
 .board_primary{

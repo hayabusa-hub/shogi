@@ -1,14 +1,5 @@
 module GamesHelper
   
-  # def get_image_path(game, pos, opp)
-  #   image_path = "/shogi/"
-  #   if(@game.turn_board[pos].to_i == opp)
-  #     image_path += "opp_"
-  #   end
-  #   image_path += @game.board[pos] + ".png"
-  #   return image_path
-  # end
-  
   def get_image_path(piece, turn)
     image_path = "/shogi/"
     if (turn != @display) && (turn != 0)
@@ -28,15 +19,6 @@ module GamesHelper
     return hash
   end
   
-  def board_reverse(game, display)
-    if(display == @second)
-      # @game.board.reverse!
-      # @game.turn_board.reverse!
-      # @X.reverse!
-      # @Y.reverse!
-    end
-  end
-  
   def is_reverse?(display)
     if(display == @first)
       false
@@ -44,6 +26,14 @@ module GamesHelper
       true
     else
       nil
+    end
+  end
+  
+  def get_link_path(edit, pos)
+    if edit == true
+      game_path(@game, before: params[:before], after: pos)
+    else
+      edit_game_path(@game, before: pos)
     end
   end
 end
