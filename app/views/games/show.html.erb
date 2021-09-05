@@ -1,2 +1,95 @@
 <h1>Games#show</h1>
 <p>Find me in app/views/games/show.html.erb</p>
+
+<p><%= "先手:#{@game.first_user_id}" %></p>
+<p><%= "後手:#{@game.second_user_id}" %></p>
+
+<% if @game.turn == 1 %>
+ <% turn = "先手" %>
+<% elsif @game.turn == 2 %>
+ <% turn = "後手" %>
+<% else %>
+ <% turn = "エラーが発生しました" %>
+<% end %>
+<p><%= "現在の手番:#{turn}"%></p>
+
+<%# board_reverse(@game, @display) %>
+
+<table id="board-table" border=1>
+  
+  <tr>
+    <% for col in @order %>
+    <td>
+      <%= @X[col]%>
+    </td>
+    <% end %>
+  </tr>
+
+  <% for row in @order %>
+  <tr>
+    <% for col in @order %>
+    <td>
+      <% pos = row*9 + col %>
+      <% image_path = get_image_path(@game.board[pos].to_i, @game.turn_board[pos].to_i) %>
+      <%= link_to(image_tag(image_path, size: '50x50'), edit_game_path(@game, before: pos)) %>
+    </td>
+    <% end %>
+    <td>
+      <%= @Y[row] %>
+    </td>
+  </tr>
+  <% end %>
+  
+</table>
+
+<%#= @game.own_piece %>
+
+<div>
+  <% first_have = get_own_piece(@game.own_piece, @first) %>
+  <% first_have.each do |piece, num| %>
+  <%#= "piece: #{piece}, num: #{num}"%>
+  <ul>
+    <% if num >= 1 %>
+    <li>
+      <% image_path = get_image_path(piece, @first) %>
+      <%= image_tag(image_path, size: '35x35') %>
+      <% if num >= 2 %>
+        <%= " × #{num}" %>
+      <% end %>
+    </li>
+    <% end %>
+  </ul>
+  <% end %>
+</div>
+
+<div>
+  <% second_have = get_own_piece(@game.own_piece, @second) %>
+  <% second_have.each do |piece, num| %>
+  <%#= "piece: #{piece}, num: #{num}"%>
+  <ul>
+    <% if num >= 1 %>
+    <li>
+      <% image_path = get_image_path(piece, @second) %>
+      <%= image_tag(image_path, size: '35x35') %>
+      <% if num >= 2 %>
+        <%= " × #{num}" %>
+      <% end %>
+    </li>
+    <% end %>
+  </ul>
+  <% end %>
+</div>
+
+
+<div onclick="document.forms[0].submit()">
+  <!--<input type=checkbox name="b" value="B">-->
+  <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true) do |f| %>
+    <% if @my_turn == @first %>
+      <%= f.label "反転(先手)" %>
+      <%= f.check_box :first_board, checked: is_reverse?(@display) %>
+    <% elsif @my_turn == @second %>
+      <%= f.label "反転(後手)" %>
+      <%= f.check_box :second_board, checked: is_reverse?(@display) %>
+    <% end %>
+  <% end %>
+</div>

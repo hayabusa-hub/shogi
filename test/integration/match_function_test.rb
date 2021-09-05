@@ -64,7 +64,7 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     assert matchs.opponent_id == @michael.id
     assert matchs.status == 3
     
-    #ゲーム画面へ移動する
+    #ゲーム画面へ移動し、ゲームモデルが作成されることを確認する
     # assert_redirected_to
   end
   
@@ -88,6 +88,9 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     assert matchs.opponent_id == @alice.id
     # assert matchs.status == 3
     follow_redirect!
+    
+    #ゲーム画面へ移動する
+    # assert_redirected_to
   end
   
   #対戦要求を拒否したときの挙動

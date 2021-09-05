@@ -27,3 +27,19 @@ input {
   //   color: $state-danger-text;
   // }
 }
+
+/* game  */ 
+.board{
+  list-style: none;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.board_primary{
+  color: blue;
+  background-color:rgba(0,0,255,0.7);
+}
+#board-table{
+  align: center;
+  margin: auto;
+}

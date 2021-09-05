@@ -1,11 +1,35 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  first_user_id: 1
-  second_user_id: 1
-  board: 
-
-two:
-  first_user_id: 1
-  second_user_id: 1
-  board: 
+# game1:
+#   first_user_id: test1
+#   second_user_id: test2
+#   turn: 1
+#   board: "234565432" + 
+#         "080000070" + 
+#         "111111111" + 
+#         "000000000" + 
+#         "000000000" +
+#         "000000000" +
+#         "111111111" +
+#         "070000080" +
+#         "234565432"
+#   turn_board: "222222222" +
+#               "020000020" +
+#               "222222222" +
+#               "000000000" +
+#               "000000000" +
+#               "000000000" +
+#               "111111111" +
+#               "010000010" +
+#               "111111111"
+#   own_piece: "000" +
+#             "100" +
+#             "200" +
+#             "300" +
+#             "400" +
+#             "500" +
+#             "600" +
+#             "700" +
+#             "800"
+#   first_user_board: 1
+#   second_user_board: 1

@@ -1,4 +1,32 @@
 class GamesController < ApplicationController
+  before_action :init, only: [:show, :edit, :update, :edit_board]
+  
+  include SessionsHelper
+  
+  def init
+    @game = Game.find(params[:id])
+    
+    @first = FIRST
+    @second = SECOND
+    @X = X
+    @Y = Y
+    
+    @my_turn = my_turn(@game)
+    @display = display_mode(@game, @my_turn)
+    @order = get_order(@display)
+    
+    # if(@display == SECOND)
+    #   @ORDER = ORDER.reverse
+    # end
+    # debugger
+    
+    #@display = SECOND
+    # @game.board.reverse!
+    # @game.turn_board.reverse!
+    # @X = X.reverse
+    # @Y = Y.reverse
+  end
+  
   def index
   end
 
@@ -11,9 +39,7 @@ class GamesController < ApplicationController
   def create
     first, second = make_turn(params[:user1], params[:user2])
     @game = Game.new()
-    @game.first_user_id = first
-    @game.second_user_id = second
-    @game.board = init_board()
+    @game.board_init(first, second)
     
     if @game.save
       redirect_to game_path(@game)
@@ -27,35 +53,94 @@ class GamesController < ApplicationController
   end
 
   def update
+    before_pos = params[:before].to_i
+    after_pos = params[:after].to_i
+    if @game.put_piece?(before_pos, after_pos)
+      redirect_to game_path(@game)
+    else
+      flash[:danger] = "その場所には着手できません"
+      redirect_to edit_game_path(@game, before: before_pos)
+    end
   end
 
   def destroy
   end
   
+  def edit_board
+    if(@my_turn == FIRST)
+      mode = params[:game][:first_board].to_i
+    elsif(@my_turn == SECOND)
+      mode = params[:game][:second_board].to_i
+    else
+    end
+    
+    # debugger
+    
+    @game = Game.find(params[:id])
+    set_board_display_mode(@game, mode, @my_turn)
+    # debugger
+    if @game.save
+      # debugger
+      redirect_to game_path(@game)
+    else
+      # debugger
+    end
+    
+  end
+  
   private
     def make_turn(user1, user2)
-      tmp = rand(1)
+      tmp = rand(2)
       if(tmp == 0)
         a = user1
         b = user2
       else
         a = user2
-        b = suer1
+        b = user1
       end
       return a, b
     end
     
-    def init_board
-      ret = "234565432" + 
-            "080000070" + 
-            "111111111" + 
-            "000000000" + 
-            "000000000" +
-            "000000000" +
-            "111111111" +
-            "070000080" +
-            "234565432"
-      return ret
+    def my_turn(game)
+      if(game.first_user_id == current_user.id)
+        FIRST
+      elsif(game.second_user_id == current_user.id)
+        SECOND
+      else
+        nil
+      end
     end
     
+    def display_mode(game, turn)
+      if(@my_turn == FIRST)
+        @game.first_user_board.to_i + 1
+      elsif(@my_turn = SECOND)
+        @game.second_user_board.to_i + 1
+      else
+        nil
+      end
+    end
+    
+    def get_order(display)
+      if(display == FIRST)
+        ORDER
+      elsif(display == SECOND)
+        ORDER.reverse
+      else
+        nil
+      end
+    end
+    
+    def set_board_display_mode(game, value, turn)
+    # debugger
+      if(turn == FIRST)
+        game.first_user_board = value
+      elsif(turn == SECOND)
+        game.second_user_board = value
+      else
+        return false
+      end
+      
+      return true
+    end
 end

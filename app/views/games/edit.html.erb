@@ -1,2 +1,29 @@
 <h1>Games#edit</h1>
 <p>Find me in app/views/games/edit.html.erb</p>
+
+<p><%= "先手:#{@game.first_user_id}" %></p>
+<p><%= "後手:#{@game.second_user_id}" %></p>
+
+<% 9.times do |row| %>
+  <ul>
+    <% 9.times do |col| %>
+    
+      <% pos = row*9 + col %>
+  
+      <li id="<%= pos %>"  class="board">
+        
+        <!--画像のパスを取得-->
+        <% image_path = get_image_path(@game.board[pos].to_i, @game.turn_board[pos].to_i) %>
+        
+        <!--画像およびリンクの表示-->
+        <%= link_to(image_tag(image_path, size: '50x50'), game_path(@game, before: params[:before], after: pos), method: :patch ) %>
+    　</li>
+    <% end %>
+  </ul>
+<% end %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("li#<%= params[:before] %>").addClass("board_primary");
+  });
+</script>

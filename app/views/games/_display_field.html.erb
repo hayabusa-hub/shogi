@@ -1,0 +1,18 @@
+<% 9.times do |row| %>
+  <ul>
+    <% 9.times do |col| %>
+    
+      <% pos = row*9 + col %>
+  
+      <li class="board">
+        
+        <!--画像のパスを取得-->
+        <% image_path = get_image_path(@game, pos, @opp_turn) %>
+        
+        <!--画像およびリンクの表示-->
+        <%#= link_to(image_tag(image_path, size: '50x50'), edit_game_path(@game, before: pos)) %>
+        <%= yield %>
+    　</li>
+    <% end %>
+  </ul>
+<% end %>
