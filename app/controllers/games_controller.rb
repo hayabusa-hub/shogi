@@ -44,11 +44,12 @@ class GamesController < ApplicationController
   def update
     before_pos = params[:before].to_i
     after_pos = params[:after].to_i
-    if @game.put_piece?(before_pos, after_pos)
+    piece = get_piece(@game, before_pos)
+    if @game.put_piece?(@my_turn, piece, before_pos, after_pos)
       redirect_to game_path(@game)
     else
-      flash[:danger] = "その場所には着手できません"
-      redirect_to edit_game_path(@game, before: before_pos)
+      flash[:danger] = @game.errors.messages[:name][0]
+      redirect_to game_path(@game)
     end
   end
 
@@ -131,5 +132,15 @@ class GamesController < ApplicationController
       end
       
       return true
+    end
+    
+    def get_piece(game, pos)
+      if(0 <= pos and pos <= 80)
+        game.board[pos].to_i
+      elsif(pos >= 100)
+        pos % 100
+      else
+        nil
+      end
     end
 end

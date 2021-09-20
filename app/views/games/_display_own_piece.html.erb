@@ -5,7 +5,8 @@
     <% if num >= 1 %>
     <li>
       <% image_path = get_image_path(piece, turn) %>
-      <%= image_tag(image_path, size: '35x35') %>
+      <%#= image_tag(image_path, size: '35x35') %>
+      <%= link_to(image_tag(image_path, size: '35x35'), get_link_path(edit, 100*turn + piece), method: method) %>
       <% if num >= 2 %>
         <%= " × #{num}" %>
       <% end %>

@@ -10,6 +10,8 @@
 <% end %>
 <p><%= "現在の手番:#{turn}"%></p>
 
+<%#= render "shared/error_messages", {object: @game} %>
+
 <table id="board-table" border=1>
   
   <tr>
@@ -37,6 +39,6 @@
   
 </table>
 
-<%= render 'display_own_piece', {class_name: :first, turn: @first} %>
+<%= render 'display_own_piece', {class_name: :first, turn: @first, edit: edit, method: method} %>
 
-<%= render 'display_own_piece', {class_name: :second, turn: @second} %>
+<%= render 'display_own_piece', {class_name: :second, turn: @second, edit: edit, method: method} %>
