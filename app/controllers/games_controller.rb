@@ -122,7 +122,6 @@ class GamesController < ApplicationController
     end
     
     def set_board_display_mode(game, value, turn)
-    # debugger
       if(turn == FIRST)
         game.first_user_board = value
       elsif(turn == SECOND)

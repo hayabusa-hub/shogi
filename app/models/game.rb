@@ -61,79 +61,6 @@ class Game < ApplicationRecord
     #飛び道具の場合はその間に駒がないか確認する
     isLegal = false
     
-    # dx = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
-    # dy = [-1, -1, -1, 0, 0, 0, 1, 1, 1]
-    
-    # move = [ [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 1, 0, 0, 0, 0, 0, 0, 0], #歩
-    #         [0, 2, 0, 0, 0, 0, 0, 0, 0], #香車
-    #         [1, 0, 1, 0, 0, 0, 0, 0, 0], #桂馬
-    #         [1, 1, 1, 0, 0, 0, 1, 0, 1], #銀
-    #         [1, 1, 1, 1, 0, 1, 0, 1, 0], #金
-    #         [1, 1, 1, 1, 0, 1, 1, 1, 1], #玉
-    #         [2, 0, 2, 0, 0, 0, 2, 0, 2], #角
-    #         [0, 2, 0, 2, 0, 2, 0, 2, 0]  #飛車
-    #   ]
-    
-    # move = [ [],
-    #         [[-1, 0, 1]],
-    #         [[-1, 0, 8]],
-    #         [[-2, -1, 1], [-2, 1, 1]],
-    #         [[-1, -1, 1], [-1, 0, 1], ]
-    #   ]
-    
-    move = Hash.new(Hash.new(Hash.new()))
-    
-    # #歩
-    # move[1][-1][0] = 1
-    
-    # #香車
-    # move[2][-1][0] = 8
-    
-    # #桂馬
-    # move[3][-2][-1] = 1
-    # move[3][-2][1]  = 1
-    
-    # #銀
-    # for i in -1..1 do
-    #   move[4][-1][i] = 1
-    # end
-    # move[4][1][-1] = 1
-    # move[4][1][1] = 1
-    
-    # #金
-    # for i in -1..1 do
-    #   move[5][-1][i] = 1
-    # end
-    # move[5][0][-1] = 1
-    # move[5][0][1]  = 1
-    # move[5][1][0]  = 1
-    
-    # #玉
-    # for i in -1..1 do
-    #   move[6][-1][i] = 1
-    #   move[6][1][i]  = 1
-    # end
-    # move[6][0][-1] = 1
-    # move[6][0][1]  = 1
-    
-    # #角
-    # move[7][-1][-1] = 8
-    # move[7][-1][1]  = 8
-    # move[7][1][-1]  = 8
-    # move[7][1][1]   = 8
-    
-    # #飛車
-    # move[8][-1][0] = 8
-    # move[8][0][-1] = 8
-    # move[8][0][1]  = 8
-    # move[8][1][0]  = 8
-    
-    
-    # move = [{},
-    #         {"-1": {"0": 1}},
-    #         {"-1": {"0": 8}}
-    # ]
     move = []
     
     #歩
@@ -167,7 +94,6 @@ class Game < ApplicationRecord
     move[8] = {"-1": {"0": 8},
                "0":  {"-1": 8, "1": 8},
                "1":  {"0": 8}}
-     
     
     before_row = before_pos / 9
     before_col = before_pos % 9
@@ -175,48 +101,50 @@ class Game < ApplicationRecord
     after_row  = after_pos / 9
     after_col  = after_pos % 9
     
-    # if(self.turn == 2)
-    #   before_row *= -1
-    #   after_row  *= -1
-    # end
-    
-    row = (after_row - before_row).to_s.to_sym
-    col = (after_col - before_col).to_s.to_sym
-    
-    # if(move[piece][row] != nil)
-    #   if(move[piece][row][col] == 1)
-    #     isLegal = true
-    #   end
-    # end
-    
-    move[piece].each do |r_, tmp|
+    if(0 <= before_pos and before_pos <= 80)
       
-      r_ = r_.to_s.to_i
-      if(self.turn == 2)
+      move[piece].each do |r_, tmp|
+      
+        r_ = r_.to_s.to_i
+        if(self.turn == 2)
           r_ *= -1
-      end
+        end
       
-      tmp.each do |c_, value|
-        c_ = c_.to_s.to_i
+        tmp.each do |c_, value|
+          c_ = c_.to_s.to_i
 
-        for i in 1..value do
+          for i in 1..value do
           
-          #現在位置を取得
-          pos = (before_row + i*r_) * 9 + (before_col + i*c_)
+            #現在位置を取得
+            pos = (before_row + i*r_) * 9 + (before_col + i*c_)
           
-          #一致したとき
-          if(after_row == before_row + i*r_) and (after_col == before_col + i*c_)
-            isLegal = true
-            break
-          end
+            #一致したとき
+            if(after_row == before_row + i*r_) and (after_col == before_col + i*c_)
+              isLegal = true
+              break
+            end
           
-          #途中で駒が存在したらループを抜ける
-          if(self.board[pos].to_i != 0)
-            break
+            #途中で駒が存在したらループを抜ける
+            if(self.board[pos].to_i != 0)
+              break
+            end
           end
         end
       end
+    else
+      
+      #先手後手を区別しないといけない
+      #歩、香車、桂馬は移動できない段でないことを確認する
+      if(piece <= 3 and after_row == ((self.turn - 1) << 3))
+      elsif(piece == 3 and after_row == (self.turn << self.turn) - 1)
+      #駒が存在していないことを確認する
+      elsif(self.turn_board[after_pos].to_i == 0)
+        isLegal = true
+      end
+      
     end
+    
+    
     
     return isLegal
   end
@@ -256,9 +184,20 @@ class Game < ApplicationRecord
       end
     elsif (before_pos >= 100)
       #移動元が持ち駒の場合
-      #持ち駒の数が1以上か
-      if 0 == self.own_piece[piece * 3 + self.turn].to_i
+      
+      piece = before_pos % 100
+      turn = before_pos / 100
+      
+      #相手の持ち駒を選択した場合
+      if turn != self.turn
         self.errors.add(:name, 'それはあなたの持ち駒ではありません')
+        return false
+      end
+      #持ち駒の数が1以上か
+      #if 0 == self.own_piece[piece * 3 + self.turn].to_i
+      if 0 == get_own_piece_num(piece, self.turn)
+        debugger
+        self.errors.add(:name, '持ち駒の数が不正です')
         return false
       end
     else
@@ -319,13 +258,31 @@ class Game < ApplicationRecord
   private
     def set_own_piece(piece, num)
       ret = true
-      have = self.own_piece[piece * 3 + self.turn].to_i
-      if(have+num > 0 && piece > 0)
-        self.own_piece[piece * 3 + self.turn] = (have + num).to_s
+      #have = self.own_piece[piece * 3 + self.turn].to_i
+      have = get_own_piece_num(piece, self.turn)
+      if(have+num >= 0 && piece > 0)
+        #self.own_piece[piece * 3 + self.turn] = (have + num).to_s
+        set_own_piece_num(piece, turn, have+num)
       else
         ret = false
       end
       return ret
+    end
+    
+    def get_own_piece_num(piece, turn)
+      numPiece = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i"]
+      num = self.own_piece[piece * 3 + turn]
+      19.times do |i|
+        if(numPiece[i] == num)
+          return i
+        end
+      end
+      return -1
+    end
+    
+    def set_own_piece_num(piece, turn, num)
+      numPiece = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i"]
+      self.own_piece[piece * 3 + turn] = numPiece[num]
     end
     
     def before_put_piece(piece, pos)
@@ -346,11 +303,14 @@ class Game < ApplicationRecord
       #移動先の駒
       opp_piece = self.board[pos].to_i
       
+      #移動先に相手の駒がある場合,持ち駒に追加する
+      #上流ではじいているため、下の条件分岐は不要ではある
+      if(self.turn_board[pos].to_i == self.turn^3)
+        set_own_piece(opp_piece, 1)
+      end
+      
       #着手を行う
       self.board[pos]       = piece.to_s
       self.turn_board[pos]  = self.turn.to_s
-      
-      #移動先に相手の駒がある場合,持ち駒に追加する
-      set_own_piece(opp_piece, 1)
     end
 end

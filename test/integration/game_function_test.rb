@@ -17,7 +17,19 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   end
   
   def ownPieceCount(piece, turn)
-    @game.own_piece[piece*3+turn].to_i
+    numPiece = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i"]
+      num = @game.own_piece[piece * 3 + turn]
+      19.times do |i|
+        if(numPiece[i] == num)
+          return i
+        end
+      end
+      return -1
+  end
+  
+  def setOwnPieceCount(piece, turn, num)
+    numPiece = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i"]
+    @game.own_piece[piece * 3 + turn] = numPiece[num]
   end
   
   def show_board(board)
@@ -30,10 +42,11 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     end
   end
   
-  def checkPutpieceTest_abnormal(array, before_pos, piece, turn, board, turn_board)
+  def checkPutpieceTest_abnormal(array, before_pos, piece, turn, board, turn_board, own_piece=@game.own_piece)
     #ゲーム画面を更新
     @game.board = board
     @game.turn_board = turn_board
+    @game.own_piece = own_piece
     #手番を強引に変更する
     @game.turn = turn
     @game.save
@@ -46,27 +59,30 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       #移動先の盤面情報を取得
       opp_piece = @game.board[i].to_i
       num = ownPieceCount(opp_piece, turn)
+      before_piece = @game.board[before_pos]
+      
       
       get edit_game_path(@game), params: {before: before_pos}
       patch game_path(@game, before: before_pos, after: i)
       
-      if(true == flash[:danger].empty?)
+      if(true == flash.empty?)
           debugger
       end
       assert_not flash[:danger].empty?
-      assert @game.reload.board[before_pos] == piece.to_s
-      assert @game.reload.turn_board[before_pos] == turn.to_s
+      assert @game.reload.board[before_pos] == before_piece
+      #assert @game.reload.turn_board[before_pos] == turn.to_s
       assert num == ownPieceCount(opp_piece, turn)
     end
   end
   
-  def checkPutpieceTest(array, before_pos, piece, turn, board, turn_board)
+  def checkPutpieceTest(array, before_pos, piece, turn, board, turn_board, own_piece=@game.own_piece)
     
       for i in array do
         
         #ゲーム画面を更新
         @game.board = board
         @game.turn_board = turn_board
+        @game.own_piece = own_piece
          #手番を強引に変更する
         @game.turn = turn
         @game.save
@@ -84,7 +100,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         if(false == flash.empty?)
           debugger
         end
-      
+        
         # 着手前の場所には
         assert flash.empty?
         assert @game.reload.board[before_pos] == "0"
@@ -98,6 +114,74 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
           assert num + 1 == ownPieceCount(opp_piece, turn)
         end
       end
+  end
+  
+  def checkPutownpieceTest(array, before_pos, piece, turn, board, turn_board, own_piece=@game.own_piece, num=1)
+    
+      for i in array do
+        
+        #ゲーム画面を更新
+        @game.board = board
+        @game.turn_board = turn_board
+        @game.own_piece = own_piece
+        
+        setOwnPieceCount(piece, turn, num)
+        
+         #手番を強引に変更する
+        @game.turn = turn
+        @game.save
+      
+        #前回までのフラッシュを削除
+        flash[:danger] = nil
+        
+        # 着手
+        get edit_game_path(@game), params: {before: before_pos}
+        patch game_path(@game, before: before_pos, after: i)
+        if(false == flash.empty?)
+          debugger
+        end
+        
+        # 正しく着手されているか
+        assert flash.empty?
+        assert @game.reload.board[i] == piece.to_s
+        assert @game.reload.turn_board[i] == turn.to_s
+        # assert ownPieceCount(piece, turn) == num_own_piece
+        
+        #持ち駒の数が減っているか
+        if ownPieceCount(piece, turn) != num-1
+          debugger
+        end
+        assert num-1 == ownPieceCount(piece, turn)
+      end
+  end
+  
+  def checkPutOwnpieceAll(array1, array2, piece, board, turn_board, own_piece, num=1)
+    
+    array = []
+    
+    ##先手　
+    turn = 1
+    
+    #相手の持ち駒(歩)を着手する
+    before_pos = (turn^3)*100 + piece
+    checkPutpieceTest_abnormal(array, before_pos, piece, turn, board, turn_board, own_piece)
+    
+    #自分の持ち駒(歩)を着手する
+    before_pos = turn*100 + piece
+    checkPutpieceTest_abnormal(array1, before_pos, piece, turn, board, turn_board, own_piece)
+    checkPutownpieceTest(array1, before_pos, piece, turn, board, turn_board, own_piece, num)
+    
+    ##後手
+    turn = 2
+    
+    #相手の持ち駒を着手する
+    before_pos = (turn^3)*100 + piece
+    checkPutpieceTest_abnormal(array, before_pos, piece, turn, board, turn_board, own_piece)
+    
+    #自分の持ち駒(歩)を着手する
+    before_pos = turn*100 + piece
+    checkPutpieceTest_abnormal(array2, before_pos, piece, turn, board, turn_board, own_piece)
+    checkPutownpieceTest(array2, before_pos, piece, turn, board, turn_board, own_piece, num)
     
   end
   
@@ -724,4 +808,148 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     checkPutpieceTest(array2, before_pos, piece, turn, board2, turn_board2)
   end
   
+  #持ち駒
+  test "own_piece" do
+    
+    board =     "000000000" + 
+                "000000000" + 
+                "111111111" + 
+                "000000000" + 
+                "000000000" +
+                "000000000" +
+                "111111111" +
+                "070000080" +
+                "000000000"
+    turn_board = "000000000" +
+                "000000000" +
+                "222222222" +
+                "000000000" +
+                "000000000" +
+                "000000000" +
+                "111111111" +
+                "010000010" +
+                "000000000"
+    own_piece = "000" +
+                "111" +
+                "211" +
+                "311" +
+                "411" +
+                "511" +
+                "611" +
+                "711" +
+                "811"
+    
+    #歩
+    piece = 1
+    array1 = [ 9, 10, 11, 12, 13, 14, 15, 16, 17,
+              27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53,
+              63,     65, 66, 67, 68, 69,     71,
+              72, 73, 74, 75, 76, 77, 78, 79, 80]
+    array2 = [ 0,  1,  2,  3,  4,  5,  6,  7,  8,
+               9, 10, 11, 12, 13, 14, 15, 16, 17,
+              27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53,
+              63,     65, 66, 67, 68, 69,     71]
+    checkPutOwnpieceAll(array1, array2, piece, board, turn_board, own_piece)
+    
+    #香車
+    piece = 2
+    checkPutOwnpieceAll(array1, array2, piece, board, turn_board, own_piece)
+    
+    #桂馬
+    piece = 3
+    array1 = [27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53,
+              63,     65, 66, 67, 68, 69,     71,
+              72, 73, 74, 75, 76, 77, 78, 79, 80]
+    array2 = [ 0,  1,  2,  3,  4,  5,  6,  7,  8,
+              9, 10, 11, 12, 13, 14, 15, 16, 17,
+              27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53]
+    checkPutOwnpieceAll(array1, array2, piece, board, turn_board, own_piece)
+    
+    #銀
+    piece = 4
+    array1 = [ 0,  1,  2,  3,  4,  5,  6,  7,  8,
+               9, 10, 11, 12, 13, 14, 15, 16, 17,
+              27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53,
+              63,     65, 66, 67, 68, 69,     71,
+              72, 73, 74, 75, 76, 77, 78, 79, 80]
+    checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
+    
+    #金
+    piece = 5
+    checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
+    
+    #玉
+    piece = 6
+    checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
+    
+    #角
+    piece = 7
+    checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
+    
+    #飛車
+    piece = 8
+    checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
+  end
+  
+  #持ち駒をたくさん持っている場合
+  test "many_own_piece" do
+    
+    board =     "000000000" + 
+                "000000000" + 
+                "111111111" + 
+                "000000000" + 
+                "000000000" +
+                "000000000" +
+                "111111111" +
+                "070000080" +
+                "000000000"
+    turn_board = "000000000" +
+                "000000000" +
+                "222222222" +
+                "000000000" +
+                "000000000" +
+                "000000000" +
+                "111111111" +
+                "010000010" +
+                "000000000"
+    own_piece = "000" +
+                "1aa" +
+                "211" +
+                "311" +
+                "411" +
+                "511" +
+                "611" +
+                "711" +
+                "811"
+    
+    #歩
+    piece = 1
+    array1 = [ 9, 10, 11, 12, 13, 14, 15, 16, 17,
+              27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53,
+              63,     65, 66, 67, 68, 69,     71,
+              72, 73, 74, 75, 76, 77, 78, 79, 80]
+    array2 = [ 0,  1,  2,  3,  4,  5,  6,  7,  8,
+               9, 10, 11, 12, 13, 14, 15, 16, 17,
+              27, 28, 29, 30, 31, 32, 33, 34, 35,
+              36, 37, 38, 39, 40, 41, 42, 43, 44,
+              45, 46, 47, 48, 49, 50, 51, 52, 53,
+              63,     65, 66, 67, 68, 69,     71]
+    checkPutOwnpieceAll(array1, array2, piece, board, turn_board, own_piece, 10)
+    for i in 1..18 do
+      checkPutOwnpieceAll(array1, array2, piece, board, turn_board, own_piece, i)
+    end
+    
+  end
 end
