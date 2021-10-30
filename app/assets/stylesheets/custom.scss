@@ -12,6 +12,10 @@ input {
   display: block;
 }
 
+li{
+  list-style: none;
+}
+
 /* エラーメッセージ */
 #error_explanation {
   color: red;
@@ -24,7 +28,7 @@ input {
   @extend .has-error;
   // form-controlの存在意義がわからない
   // .form-control {
-  //   color: $state-danger-text;
+  // cd  color: $state-danger-text;
   // }
 }
 
@@ -34,6 +38,16 @@ input {
   // margin-bottom: 10px;
   // display: inline-block;
   align: center;
+  margin: 0;
+}
+
+.board_table{
+  position: relative;
+  width: 480px;
+  left: 0px;
+  // right: 0;
+  // margin: auto;
+  // align: center;
   margin: auto;
 }
 
@@ -41,7 +55,18 @@ input {
   color: blue;
   background-color:rgba(0,0,255,0.7);
 }
-#board-table{
-  align: center;
-  margin: auto;
+
+.front{
+  position: absolute;
+  right: -100px;
+  top: 230px;
+  background-color: rgb(255,255,0);
 }
+
+.back{
+  position: absolute;
+  left: -110px;
+  top: 0;
+  background-color: rgb(255,255,0);
+}
+

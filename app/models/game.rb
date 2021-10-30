@@ -194,7 +194,6 @@ class Game < ApplicationRecord
         return false
       end
       #持ち駒の数が1以上か
-      #if 0 == self.own_piece[piece * 3 + self.turn].to_i
       if 0 == get_own_piece_num(piece, self.turn)
         debugger
         self.errors.add(:name, '持ち駒の数が不正です')
@@ -211,38 +210,9 @@ class Game < ApplicationRecord
       return false
     end
     
-    #移動先に相手の駒がある場合,持ち駒に追加する
-    # if self.turn_board[after_pos].to_i == (self.turn ^ 3)
-    #   opp_piece = self.board[after_pos].to_i
-    #   set_own_piece(opp_piece, 1)
-      # have = self.own_piece[opp_piece * 3 + self.turn].to_i
-      # self.own_piece[opp_piece * 3 + self.turn] = (have + 1).to_s
-    # end
-    
     #着手を行う
     before_put_piece(piece, before_pos)
     after_put_piece(piece, after_pos)
-    # if(0 <= before_pos and before_pos <= 80)
-    #   #移動元が盤面上の駒の場合
-    #   before_put_piece(before_pos)
-    #   # self.board[before_pos]      = 0.to_s
-    #   # self.turn_board[before_pos] = 0.to_s
-    #   after_put_piece(piece, after_pos)
-    #   #self.board[after_pos]       = piece.to_s
-    #   #self.turn_board[after_pos]  = self.turn.to_s
-      
-    # elsif (before_pos >= 100)
-    #   #移動元が持ち駒の場合
-    #   # have = self.own_piece[piece * 3 + self.turn].to_i
-    #   # self.own_piece[piece * 3 + self.turn] = (have - 1).to_s
-    #   set_own_piece(piece, -1)
-    #   # self.board[after_pos]       = piece.to_s
-    #   # self.turn_board[after_pos]  = self.turn.to_s
-    #   after_put_piece(piece, after_pos)
-    # else
-    #   self.errors.add(:name, '不正な盤情報が送信されました')
-    #   return false
-    # end
     
     #手番を交代する
     self.turn ^= 3
@@ -255,21 +225,7 @@ class Game < ApplicationRecord
     end
   end
   
-  private
-    def set_own_piece(piece, num)
-      ret = true
-      #have = self.own_piece[piece * 3 + self.turn].to_i
-      have = get_own_piece_num(piece, self.turn)
-      if(have+num >= 0 && piece > 0)
-        #self.own_piece[piece * 3 + self.turn] = (have + num).to_s
-        set_own_piece_num(piece, turn, have+num)
-      else
-        ret = false
-      end
-      return ret
-    end
-    
-    def get_own_piece_num(piece, turn)
+  def get_own_piece_num(piece, turn)
       numPiece = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i"]
       num = self.own_piece[piece * 3 + turn]
       19.times do |i|
@@ -278,6 +234,18 @@ class Game < ApplicationRecord
         end
       end
       return -1
+  end
+  
+  private
+    def set_own_piece(piece, num)
+      ret = true
+      have = get_own_piece_num(piece, self.turn)
+      if(have+num >= 0 && piece > 0)
+        set_own_piece_num(piece, self.turn, have+num)
+      else
+        ret = false
+      end
+      return ret
     end
     
     def set_own_piece_num(piece, turn, num)
