@@ -1,0 +1,21 @@
+<h1>Games#confirm</h1>
+<p>Find me in app/views/games/edit.html.erb</p>
+
+<div id="backRegion">
+  <% pos   = params[:before].to_i %>
+  <% piece = @game.board[pos] %>
+  <% turn  = @game.turn_board[pos].to_i %>
+  <% image_path_not_promote = get_image_path(piece, turn) %>
+  <% image_path_promote     = get_image_path(@game.get_promote_piece(piece), turn) %>
+  
+  <%= link_to(image_tag(image_path_not_promote, size: '50x50'), game_path(@game, before: params[:before], after: params[:after], promote: false), method: :patch) %>
+  <%= link_to(image_tag(image_path_promote, size: '50x50'), game_path(@game, before: params[:before], after: params[:after], promote: true), method: :patch) %>
+</div>
+
+<%= render 'display_field', {edit: true, method: :patch} %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    // $("div.board_table").addClass("mask");
+  });
+</script>

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get    "/login"                => "sessions#new"
   post   "/login"                => "sessions#create"
   patch  "/games/:id/editBoard"  => "games#edit_board"
+  patch  "/games/:id/putProcess" => "games#put_process"
   delete "/logout"               => "sessions#destroy"
   resources :users
   resources :games

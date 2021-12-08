@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :init, only: [:show, :edit, :update, :edit_board]
+  before_action :init, only: [:show, :edit, :update, :edit_board, :put_process]
   
   include SessionsHelper
   
@@ -45,10 +45,33 @@ class GamesController < ApplicationController
     before_pos = params[:before].to_i
     after_pos = params[:after].to_i
     piece = get_piece(@game, before_pos)
-    if @game.put_piece?(@my_turn, piece, before_pos, after_pos)
+    is_promote = get_is_promote(params[:promote])
+    
+    ##################################
+    if(true == is_promote)
+      #debugger
+    end
+    ###################################
+    if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
       redirect_to game_path(@game)
     else
       flash[:danger] = @game.errors.messages[:name][0]
+      redirect_to game_path(@game)
+    end
+  end
+  
+  def put_process
+    before_pos = params[:before].to_i
+    after_pos = params[:after].to_i
+    piece = get_piece(@game, before_pos)
+    
+    if @game.legal?(piece, before_pos, after_pos)
+      if @game.judge_promote(piece, before_pos, after_pos)
+        render("/games/confirm")
+      else
+        update()
+      end
+    else
       redirect_to game_path(@game)
     end
   end
@@ -64,11 +87,9 @@ class GamesController < ApplicationController
     else
     end
     
-    # debugger
-    
     @game = Game.find(params[:id])
     set_board_display_mode(@game, mode, @my_turn)
-    # debugger
+    
     if @game.save
       # debugger
       redirect_to game_path(@game)
@@ -135,11 +156,23 @@ class GamesController < ApplicationController
     
     def get_piece(game, pos)
       if(0 <= pos and pos <= 80)
-        game.board[pos].to_i
+        game.board[pos]
       elsif(pos >= 100)
-        pos % 100
+        (pos % 100).to_s
       else
         nil
+      end
+    end
+    
+    def checkPromote(piece, before, after)
+      return false
+    end
+    
+    def get_is_promote(str)
+      if str == "true"
+        true
+      else
+        false
       end
     end
 end

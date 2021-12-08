@@ -9,6 +9,24 @@ module GamesHelper
     return image_path
   end
   
+  # def get_promote_piece(piece)
+  #   if "1" == piece
+  #     "9"
+  #   elsif "2" == piece
+  #     "a"
+  #   elsif "3" == piece
+  #     "b"
+  #   elsif "4" == piece
+  #     "c"
+  #   elsif "7" == piece
+  #     "e"
+  #   elsif "8" == piece
+  #     "f"
+  #   else
+  #     "0"
+  #   end
+  # end
+  
   def get_own_piece(own_piece, turn)
     hash = {}
     9.times do |i|
@@ -31,7 +49,8 @@ module GamesHelper
   
   def get_link_path(edit, pos)
     if edit == true
-      game_path(@game, before: params[:before], after: pos)
+      #game_path(@game, before: params[:before], after: pos)
+      "/games/#{@game.id}/putProcess?before=#{params[:before]}&amp;after=#{pos}"
     else
       edit_game_path(@game, before: pos)
     end

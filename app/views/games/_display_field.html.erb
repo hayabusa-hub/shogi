@@ -25,7 +25,7 @@
     <% for col in @order %>
     <% pos = row*9 + col %>
     <td id="<%= pos %>"  class="board">
-      <% image_path = get_image_path(@game.board[pos].to_i, @game.turn_board[pos].to_i) %>
+      <% image_path = get_image_path(@game.board[pos], @game.turn_board[pos].to_i) %>
       <%= link_to(image_tag(image_path, size: '50x50'), get_link_path(edit, pos), method: method) %>
     </td>
     <% end %>

@@ -1,10 +1,10 @@
 <div>
 <ul class="<%=class_name%>">
   <% for piece in 1..8 do %>
-    <% num = @game.get_own_piece_num(piece, turn)%>
+    <% num = @game.get_own_piece_num(piece.to_s, turn)%>
     <% if num >= 1 %>
     <li>
-      <% image_path = get_image_path(piece, turn) %>
+      <% image_path = get_image_path(piece.to_s, turn) %>
       <%= link_to(image_tag(image_path, size: '35x35'), get_link_path(edit, 100*turn + piece), method: method) %>
       <% if num >= 2 %>
         <%= " × #{num}" %>
