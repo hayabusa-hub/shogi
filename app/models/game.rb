@@ -33,6 +33,8 @@ class Game < ApplicationRecord
                       "800"
     self.first_user_board = 0
     self.second_user_board = 0
+    self.first_king_pos = 74
+    self.second_king_pos = 4
     self.save
   end
   
@@ -53,7 +55,7 @@ class Game < ApplicationRecord
     end
   end
   
-  def legal?(piece, before_pos, after_pos)
+  def legal?(piece, before_pos, after_pos, turn=self.turn, board=self.board, turn_board=self.turn_board)
     #対戦ユーザーかどうか確認する
     #手番が正しいか確認する
     #移動元の駒が自分の駒であるか確認する
@@ -119,7 +121,7 @@ class Game < ApplicationRecord
       move[pieceConvert[piece.to_sym]].each do |r_, tmp|
       
         r_ = r_.to_s.to_i
-        if(self.turn == 2)
+        if(turn == 2)
           r_ *= -1
         end
       
@@ -138,7 +140,7 @@ class Game < ApplicationRecord
             end
           
             #途中で駒が存在したらループを抜ける
-            if(self.board[pos].to_i != 0)
+            if(board[pos].to_i != 0)
               break
             end
           end
@@ -146,18 +148,8 @@ class Game < ApplicationRecord
       end
     else
       
-      #先手後手を区別しないといけない
       #歩、香車、桂馬は移動できない段でないことを確認する
-      # if(piece == "1" and after_row == opp_1_row(self.turn))
-      # elsif(piece == "2" and after_row == opp_1_row(self.turn))
-      # elsif(piece == "3" and after_row == opp_1_row(self.turn))
-      # elsif(piece == "3" and after_row == opp_2_row(self.turn))
-      # #駒が存在していないことを確認する
-      # elsif(self.turn_board[after_pos].to_i == 0)
-      #   isLegal = true
-      # end
-      
-      if check_legal_pos(piece, after_pos) and (self.turn_board[after_pos].to_i == 0)
+      if check_legal_pos(piece, after_pos) and (turn_board[after_pos].to_i == 0)
         isLegal = true
       end
       
@@ -202,9 +194,6 @@ class Game < ApplicationRecord
     elsif (before_pos >= 100)
       #移動元が持ち駒の場合
       
-      #piece = before_pos % 100
-      turn = before_pos / 100
-      
       #相手の持ち駒を選択した場合
       if turn != self.turn
         self.errors.add(:name, 'それはあなたの持ち駒ではありません')
@@ -221,14 +210,13 @@ class Game < ApplicationRecord
     end
 
     #着手が合法か確認する
-    unless self.legal?(piece, before_pos, after_pos)
+    unless self.legal?(piece, before_pos, after_pos, self.turn)
       self.errors.add(:name, 'その場所に移動することはできません')
       return false
     end
     
     #着手を行う
-    before_put_piece(piece, before_pos)
-    after_put_piece(piece, after_pos, is_promote)
+    put_piece(piece, before_pos, after_pos, is_promote)
     
     #手番を交代する
     self.turn ^= 3
@@ -296,8 +284,8 @@ class Game < ApplicationRecord
     end
   end
   
-  def get_own_piece_num(piece, turn)
-    num = self.own_piece[get_org_piece(piece) * 3 + turn]
+  def get_own_piece_num(piece, turn, own_piece=self.own_piece)
+    num = own_piece[get_org_piece(piece) * 3 + turn]
     numPiece = {"0":0, "1":1,  "2":2,  "3":3,  "4":4,  "5":5,  "6":6,  "7":7,  "8":8,
                 "9":9, "a":10, "b":11, "c":12, "d":13, "e":14, "f":15, "g":16, "h":17, "i":18 }
     if(numPiece[num.to_sym])
@@ -307,10 +295,99 @@ class Game < ApplicationRecord
     end
   end
   
+  def get_king_pos(turn, board, turn_board)
+    
+    ret = -1
+    
+    for pos in 0..board.length do
+      if ("6" == board[pos]) and (turn == turn_board[pos].to_i)
+        ret = pos.to_i
+      end
+    end
+    
+    return ret
+  end
+  
+  def is_checkmate?(turn = self.turn^3)
+    
+    is_checkmate = true
+    
+    #王手がかかっているか
+    is_checkmate &= is_oute?(turn)
+    
+    #合法手をすべて着手して王手が回避できるかどうか
+    is_temp = true
+    for j in 0..80 do
+      for i in 0..80 do
+        if (turn == self.turn_board[i].to_i) and (turn != self.turn_board[j].to_i)
+          piece = self.board[i]
+          if self.legal?(piece, i, j, turn)
+            
+            #盤面情報をコピー
+            board = self.board.dup
+            turn_board = self.turn_board.dup
+            
+            #仮想盤面へ着手
+            before_put_piece(piece, i, board, turn_board)
+            after_put_piece(piece, j, false, turn, board, turn_board)
+            
+            unless is_oute?(turn, board, turn_board)
+              is_temp = false
+            end
+          end
+        end
+      end
+    end
+    
+    #持ち駒をすべて着手する
+    for piece in 0..8 do
+      pos = 100*turn + piece
+      
+      num = get_own_piece_num(piece.to_s, turn)
+      
+      if num > 0
+        for j in 0..80 do
+          
+          if self.legal?(piece.to_s, pos, j, turn)
+            #盤面情報をコピー
+            board      = self.board.dup
+            turn_board = self.turn_board.dup
+            
+            #仮想盤面へ着手
+            after_put_piece(piece.to_s, j, false, turn, board, turn_board)
+        
+            unless is_oute?(turn, board, turn_board)
+              is_temp = false
+            end
+          end
+          
+        end
+      end
+    end
+    
+    is_checkmate &= is_temp
+    
+    return is_checkmate
+  end
+  
+  def is_oute?(turn = self.turn, board = self.board, turn_board = self.turn_board)
+    pos = get_king_pos(turn, board, turn_board)
+    is_oute = false
+    for i in 0..80 do
+      if turn^3 == turn_board[i].to_i
+        piece = board[i]
+        if self.legal?(piece, i, pos, turn^3, board, turn_board)
+          is_oute = true
+        end
+      end
+    end
+    return is_oute
+  end
+  
   private
     def set_own_piece(piece, num)
       ret = true
-      have = get_own_piece_num(piece, self.turn)
+      have = get_own_piece_num(piece, self.turn, own_piece)
       if(have+num >= 0 && get_org_piece(piece) > 0)
         set_own_piece_num(piece, self.turn, have+num)
       else
@@ -324,12 +401,41 @@ class Game < ApplicationRecord
       self.own_piece[get_org_piece(piece) * 3 + turn] = numPiece[num]
     end
     
-    def before_put_piece(piece, pos)
+    def put_piece(piece, before_pos, after_pos, is_promote, board=self.board, turn_board=self.turn_board)
+      
+      ###移動元の盤面情報をリセット
+      before_put_piece(piece, before_pos, board, turn_board)
+      
+      ###移動先の盤面情報を更新
+      #移動先の駒
+      opp_piece = board[after_pos]
+      
+      #移動先に相手の駒がある場合,持ち駒に追加する
+      #上流ではじいているため、下の条件分岐は不要ではある
+      if(turn_board[after_pos].to_i == self.turn^3)
+        set_own_piece(opp_piece, 1)
+      end
+      
+      #着手を行う
+      after_put_piece(piece, after_pos, is_promote, self.turn, board, turn_board)
+      
+      #移動した駒が玉の場合、玉の位置を更新する
+      if "6" == piece
+        set_king_pos(after_pos, self.turn)
+      end
+      
+      #詰んでいる場合
+      if self.is_checkmate?()
+        self.winner = self.turn
+      end
+    end
+    
+    def before_put_piece(piece, pos, board=self.board, turn_board=self.board)
       
       if(0 <= pos and pos <= 80)
         #盤面から着手した場合
-        self.board[pos]      = 0.to_s
-        self.turn_board[pos] = 0.to_s
+        board[pos]      = 0.to_s
+        turn_board[pos] = 0.to_s
       elsif(pos >= 100)
         #持ち駒から着手した場合
         set_own_piece(piece, -1)
@@ -338,22 +444,42 @@ class Game < ApplicationRecord
       
     end
     
-    def after_put_piece(piece, pos, is_promote)
-      #移動先の駒
-      opp_piece = self.board[pos]
+    def after_put_piece(piece, pos, is_promote, turn=self.turn, board=self.board, turn_board=self.board)
+      # #移動先の駒
+      # opp_piece = self.board[pos]
       
-      #移動先に相手の駒がある場合,持ち駒に追加する
-      #上流ではじいているため、下の条件分岐は不要ではある
-      if(self.turn_board[pos].to_i == self.turn^3)
-        set_own_piece(opp_piece, 1)
-      end
+      # #移動先に相手の駒がある場合,持ち駒に追加する
+      # #上流ではじいているため、下の条件分岐は不要ではある
+      # if(self.turn_board[pos].to_i == self.turn^3)
+      #   set_own_piece(opp_piece, 1)
+      # end
       
       #着手を行う
       if(true == is_promote) or (false == check_legal_pos(piece, pos))
         piece = get_promote_piece(piece)
       end
-      self.board[pos]       = piece.to_s
-      self.turn_board[pos]  = self.turn.to_s
+      board[pos]       = piece.to_s
+      turn_board[pos]  = turn.to_s
+      
+      # #移動した駒が玉の場合、玉の位置を更新する
+      # if "6" == piece
+      #   set_king_pos(pos, self.turn)
+      # end
+      
+      # #詰んでいる場合
+      # if self.is_checkmate?()
+      #   self.winner = self.turn
+      # end
+    end
+    
+    def set_king_pos(pos, turn)
+      if 1 == turn
+        self.first_king_pos = pos
+      elsif 2 == turn
+        self.second_king_pos = pos
+      else
+        nil
+      end
     end
     
     def opp_1_row(turn)

@@ -1,0 +1,13 @@
+<h1>Games/finish</h1>
+<p>Find me in app/views/games/edit.html.erb</p>
+
+<div id="finish">
+  <% winner = params[:before].to_s %>
+  <% if @game.winner == @my_turn %>
+    <%= image_tag("/shogi/pose_win.png") %>
+  <% else%>
+    <%= image_tag("/shogi/pose_lose.png") %>
+  <% end %>
+</div>
+
+<%= render 'display_field', {edit: true, method: :patch} %>

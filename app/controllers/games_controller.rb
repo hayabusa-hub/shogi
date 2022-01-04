@@ -20,6 +20,9 @@ class GamesController < ApplicationController
   end
 
   def show
+    if @game.winner != 0
+      render("/games/finish")
+    end
   end
 
   def new
@@ -47,11 +50,6 @@ class GamesController < ApplicationController
     piece = get_piece(@game, before_pos)
     is_promote = get_is_promote(params[:promote])
     
-    ##################################
-    if(true == is_promote)
-      #debugger
-    end
-    ###################################
     if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
       redirect_to game_path(@game)
     else
@@ -91,10 +89,7 @@ class GamesController < ApplicationController
     set_board_display_mode(@game, mode, @my_turn)
     
     if @game.save
-      # debugger
       redirect_to game_path(@game)
-    else
-      # debugger
     end
     
   end
@@ -150,7 +145,6 @@ class GamesController < ApplicationController
       else
         return false
       end
-      
       return true
     end
     

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_05_080349) do
+ActiveRecord::Schema.define(version: 2021_12_21_232722) do
 
   create_table "games", force: :cascade do |t|
     t.integer "first_user_id"
@@ -23,7 +23,9 @@ ActiveRecord::Schema.define(version: 2021_09_05_080349) do
     t.integer "turn"
     t.integer "first_user_board"
     t.integer "second_user_board"
-    t.string "error_message"
+    t.integer "first_king_pos", default: 74
+    t.integer "second_king_pos", default: 4
+    t.integer "winner", default: 0
   end
 
   create_table "matches", force: :cascade do |t|

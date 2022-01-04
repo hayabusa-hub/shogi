@@ -8,12 +8,25 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @game.board_init(@test1.id, @test2.id)
     @game.save
     
+    @FIRST = 1
+    @SECOND = 2
+    
     #テスト1としてログイン
     get login_path
     login_as(@test1)
     
     #ゲーム画面へ移動
     get game_path(@game)
+  end
+  
+  def set_turn(turn)
+    if 1 == turn
+      @game.first_user_id = @test1.id
+      @game.second_user_id = @test2.id
+    elsif 2 == turn
+      @game.first_user_id = @test2.id
+      @game.second_user_id = @test1.id
+    end
   end
   
   def ownPieceCount(piece, turn)
@@ -42,14 +55,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     end
   end
   
-  # def getPromotePiece(piece)
-  #   pieceConvert = {"1":"9", "2":"a", "3":"b", "4":"c", "7":"e", "8":"f"}
-  #   if(pieceConvert[piece.to_sym])
-  #     pieceConvert[piece.to_sym]
-  #   else
-  #     piece
-  #   end
-  # end
   
   def show_board(board)
     for i in 0..8 do
@@ -68,6 +73,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @game.own_piece = own_piece
     #手番を強引に変更する
     @game.turn = turn
+    set_turn(turn)
+    
     @game.save
     for i in 0..80 do
       if(true == array.include?(i))
@@ -103,6 +110,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         @game.own_piece = own_piece
          #手番を強引に変更する
         @game.turn = turn
+        set_turn(turn)
         @game.save
       
         #前回までのフラッシュを削除
@@ -156,6 +164,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         
          #手番を強引に変更する
         @game.turn = turn
+        set_turn(turn)
         @game.save
       
         #前回までのフラッシュを削除
@@ -231,6 +240,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       
       #手番を強引に変更する
       @game.turn = turn
+      set_turn(turn)
       
       #ゲーム画面を更新
       @game.board = initial
@@ -275,6 +285,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     
     #手番を強引に変更する
     @game.turn = turn
+    set_turn(turn)
       
     #ゲーム画面を更新
     @game.board = initial
@@ -1555,4 +1566,59 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     check_promote(49, 58, false, "8", 2)
   end
   
+  def finish(judge)
+    @game.board =     "000060000" + 
+                      "000000000" + 
+                      "100510000" + 
+                      "000000000" + 
+                      "000000000" +
+                      "000000000" +
+                      "000015000" +
+                      "000000000" +
+                      "000060000"
+                       
+   @game.turn_board = "000020000" +
+                      "000000000" +
+                      "100110000" +
+                      "000000000" +
+                      "000000000" +
+                      "000000000" +
+                      "000022000" +
+                      "000000000" +
+                      "000010000"
+    @game.save
+    
+    if judge
+      before_pos = 21
+      after_pos = 13
+      get edit_game_path(@game), params: {before: before_pos}
+      patch game_path(@game, before: before_pos, after: after_pos)
+      follow_redirect!
+      assert @game.reload.winner == @FIRST
+      assert_select "div#finish", count: 1
+      assert_select "img[src=?]", "/shogi/pose_win.png", count: 1
+    else
+      before_pos = 18
+      after_pos = 9
+      get edit_game_path(@game), params: {before: before_pos}
+      patch game_path(@game, before: before_pos, after: after_pos)
+      
+      before_pos = 59
+      after_pos = 67
+      get edit_game_path(@game), params: {before: before_pos}
+      patch game_path(@game, before: before_pos, after: after_pos)
+      
+      follow_redirect!
+      assert @game.reload.winner == @SECOND
+      assert_select "div#finish", count: 1
+      assert_select "img[src=?]", "/shogi/pose_lose.png", count: 1
+    end
+  end
+  
+  ###勝敗
+  test "finish" do
+    
+    finish(true)
+    finish(false)
+  end
 end
