@@ -1,4 +1,38 @@
 class Game < ApplicationRecord
+  attr_accessor :board_hash
+  attr_accessor :first_oute_seq
+  attr_accessor :second_oute_seq
+  
+  # @board_hash = {}
+  
+  # def initialize(attributes = {})
+  #   @board_hash = {}
+  # end
+  
+  
+  # def board_hash
+  #   @board_hash
+  # end
+  
+  # def board_hash(key, value)
+  #   @board_hash[key] = value
+  # end
+  
+  def init_board_hash
+    
+    self.board_hash = {}
+    self.update!(board_hash: self.board_hash)
+    
+    ##########################
+    if nil == self.board_hash
+      debugger
+    end
+    #########################
+  end
+  
+  # def board_hash
+  #   @board_hash
+  # end
   
   def board_init(first, second)
     self.first_user_id = first
@@ -35,7 +69,17 @@ class Game < ApplicationRecord
     self.second_user_board = 0
     self.first_king_pos = 74
     self.second_king_pos = 4
+    self.first_oute_seq = false
+    self.second_oute_seq = false
+    #self.board_hash = {}
+    init_board_hash
     self.save
+    
+    ##########################
+    if nil == self.board_hash
+      debugger
+    end
+    #########################
   end
   
   def set_board_display_mode(value, turn)
@@ -116,6 +160,12 @@ class Game < ApplicationRecord
     after_row  = after_pos / 9
     after_col  = after_pos % 9
     
+    ############################
+    if nil == move[pieceConvert[piece.to_sym]]
+      #debugger
+    end
+    ############################
+    
     if(0 <= before_pos and before_pos <= 80)
       
       move[pieceConvert[piece.to_sym]].each do |r_, tmp|
@@ -147,10 +197,14 @@ class Game < ApplicationRecord
         end
       end
     else
-      
       #歩、香車、桂馬は移動できない段でないことを確認する
       if check_legal_pos(piece, after_pos) and (turn_board[after_pos].to_i == 0)
         isLegal = true
+      end
+      
+      #2歩でないことを確認する
+      if "1" == piece and judge_two_fu(turn, after_pos)
+        isLegal = false
       end
       
     end
@@ -206,6 +260,12 @@ class Game < ApplicationRecord
       end
     else
       self.errors.add(:name, '不正な盤情報が送信されました')
+      return false
+    end
+    
+    #自玉に王手がかかっていないか確認する
+    if is_oute_on_virtual?(piece, before_pos, after_pos, turn)
+      self.errors.add(:name, '王手放置することはできません')
       return false
     end
 
@@ -316,24 +376,27 @@ class Game < ApplicationRecord
     is_checkmate &= is_oute?(turn)
     
     #合法手をすべて着手して王手が回避できるかどうか
-    is_temp = true
     for j in 0..80 do
       for i in 0..80 do
         if (turn == self.turn_board[i].to_i) and (turn != self.turn_board[j].to_i)
+          # piece = self.board[i]
+          # if self.legal?(piece, i, j, turn)
+            
+          #   #盤面情報をコピー
+          #   board = self.board.dup
+          #   turn_board = self.turn_board.dup
+            
+          #   #仮想盤面へ着手
+          #   before_put_piece(piece, i, board, turn_board)
+          #   after_put_piece(piece, j, false, turn, board, turn_board)
+            
+          #   unless is_oute?(turn, board, turn_board)
+          #     is_checkmate = false
+          #   end
+          # end
           piece = self.board[i]
-          if self.legal?(piece, i, j, turn)
-            
-            #盤面情報をコピー
-            board = self.board.dup
-            turn_board = self.turn_board.dup
-            
-            #仮想盤面へ着手
-            before_put_piece(piece, i, board, turn_board)
-            after_put_piece(piece, j, false, turn, board, turn_board)
-            
-            unless is_oute?(turn, board, turn_board)
-              is_temp = false
-            end
+          unless is_oute_on_virtual?(piece, i, j, turn)
+            is_checkmate = false
           end
         end
       end
@@ -348,26 +411,53 @@ class Game < ApplicationRecord
       if num > 0
         for j in 0..80 do
           
-          if self.legal?(piece.to_s, pos, j, turn)
-            #盤面情報をコピー
-            board      = self.board.dup
-            turn_board = self.turn_board.dup
+          # if self.legal?(piece.to_s, pos, j, turn)
+          #   #盤面情報をコピー
+          #   board      = self.board.dup
+          #   turn_board = self.turn_board.dup
             
-            #仮想盤面へ着手
-            after_put_piece(piece.to_s, j, false, turn, board, turn_board)
+          #   #仮想盤面へ着手
+          #   after_put_piece(piece.to_s, j, false, turn, board, turn_board)
         
-            unless is_oute?(turn, board, turn_board)
-              is_temp = false
-            end
+          #   unless is_oute?(turn, board, turn_board)
+          #     is_checkmate = false
+          #   end
+          # end
+          
+          unless is_oute_on_virtual?(piece.to_s, pos, j, turn)
+            is_checkmate = false
           end
           
         end
       end
     end
     
-    is_checkmate &= is_temp
-    
     return is_checkmate
+  end
+  
+  def is_oute_on_virtual?(piece, before_pos, after_pos, turn = self.turn)
+    is_oute = false
+    
+    #盤面情報をコピー
+    board      = self.board.dup
+    turn_board = self.turn_board.dup
+    
+    if self.legal?(piece, before_pos, after_pos, turn)
+            
+      #仮想盤面へ着手
+      if(0 <= before_pos and before_pos <= 80)
+        before_put_piece(piece, before_pos, board, turn_board)
+      end
+      after_put_piece(piece, after_pos, false, turn, board, turn_board)
+      
+    end
+    
+    #王手がかかっているか確認する
+    if is_oute?(turn, board, turn_board)
+      is_oute = true
+    end
+    
+    return is_oute
   end
   
   def is_oute?(turn = self.turn, board = self.board, turn_board = self.turn_board)
@@ -376,12 +466,33 @@ class Game < ApplicationRecord
     for i in 0..80 do
       if turn^3 == turn_board[i].to_i
         piece = board[i]
+        
+        #####################
+        if "0" == piece
+          debugger
+        end
+        ###################
+        
         if self.legal?(piece, i, pos, turn^3, board, turn_board)
           is_oute = true
         end
       end
     end
     return is_oute
+  end
+  
+  def judge_two_fu(turn, position)
+    ret = false
+    col = position % 9
+      
+    for i in 0..8 do
+      pos = i * 9 + col
+      if (turn == self.turn_board[pos].to_i) and ("1" == self.board[pos])
+        ret = true
+        break
+      end
+    end
+    return ret
   end
   
   private
@@ -424,10 +535,17 @@ class Game < ApplicationRecord
         set_king_pos(after_pos, self.turn)
       end
       
+      # board_hashを更新
+      #set_board_hash()
+      
       #詰んでいる場合
       if self.is_checkmate?()
         self.winner = self.turn
       end
+      
+      #千日手か確認
+      #check_repetition()
+      
     end
     
     def before_put_piece(piece, pos, board=self.board, turn_board=self.board)
@@ -445,14 +563,6 @@ class Game < ApplicationRecord
     end
     
     def after_put_piece(piece, pos, is_promote, turn=self.turn, board=self.board, turn_board=self.board)
-      # #移動先の駒
-      # opp_piece = self.board[pos]
-      
-      # #移動先に相手の駒がある場合,持ち駒に追加する
-      # #上流ではじいているため、下の条件分岐は不要ではある
-      # if(self.turn_board[pos].to_i == self.turn^3)
-      #   set_own_piece(opp_piece, 1)
-      # end
       
       #着手を行う
       if(true == is_promote) or (false == check_legal_pos(piece, pos))
@@ -460,16 +570,6 @@ class Game < ApplicationRecord
       end
       board[pos]       = piece.to_s
       turn_board[pos]  = turn.to_s
-      
-      # #移動した駒が玉の場合、玉の位置を更新する
-      # if "6" == piece
-      #   set_king_pos(pos, self.turn)
-      # end
-      
-      # #詰んでいる場合
-      # if self.is_checkmate?()
-      #   self.winner = self.turn
-      # end
     end
     
     def set_king_pos(pos, turn)
@@ -506,6 +606,69 @@ class Game < ApplicationRecord
           ret = true
         else
         end
+      end
+      return ret
+    end
+    
+    def set_board_hash(turn=self.turn, board=self.board, turn_board=self.board, own_piece=self.own_piece)
+      key = (board + turn_board + own_piece).to_sym
+      
+      ########################
+      if nil == self.board_hash
+        debugger
+      end
+      ########################
+      if nil == @board_hash[key]
+        @board_hash[key] = 1
+      else
+        @board_hash[key] += 1
+        
+        value = is_oute?(turn^3)
+        if 2 == @board_hash[key]
+          set_seq_status(turn, value)
+        else
+          value &= get_seq_status(turn)
+          set_seq_status(turn, value)
+        end
+      end
+    end
+    
+    def set_seq_status(turn, value)
+      if 1 == turn
+        self.first_oute_seq = value
+      elsif 2 == turn
+        self.second_oute_seq = value
+      else
+      end
+    end
+    
+    def get_seq_status(turn)
+      if 1 == turn
+        self.first_oute_seq
+      elsif 2 == turn
+        self.second_oute_seq
+      else
+        debugger
+      end
+    end
+    
+    def check_repetition(board=self.board, turn_board=self.board, own_piece=self.own_piece)
+      key = (board + turn_board + own_piece).to_sym
+      
+      if self.board_hash[key] >= 4
+        debugger
+        if self.first_oute_seq
+          #後手勝ち
+          self.winner = 2
+        elsif self.second_oute_seq
+          #先手勝ち
+          self.winner = 1
+        else
+          #千日手
+          self.winner = 3
+        end
+      else
+        #続行
       end
       return ret
     end

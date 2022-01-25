@@ -5,8 +5,10 @@
   <% winner = params[:before].to_s %>
   <% if @game.winner == @my_turn %>
     <%= image_tag("/shogi/pose_win.png") %>
-  <% else%>
+  <% elsif @game.winner == @my_turn^3 %>
     <%= image_tag("/shogi/pose_lose.png") %>
+  <% else %>
+    <%= image_tag("/shogi/pose_draw.png") %>
   <% end %>
 </div>
 

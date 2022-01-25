@@ -700,25 +700,25 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     piece = "6"
     turn = 1
     array1 = [54, 55, 56, 63, 65, 72, 73, 74]
-    array2 = [0, 1, 2, 9, 11, 18, 19, 20]
-    board =      "234565000" + 
-                 "060000060" + 
+    array2 = [0, 1, 2, 18, 19, 20]
+    board =      "222222000" + 
+                 "000000000" + 
                  "111111000" + 
                  "000000000" + 
                  "000000000" +
                  "000000000" +
                  "000111111" +
-                 "060000060" +
-                 "000565432"
+                 "060000000" +
+                 "000222222"
                  
     turn_board = "222222000" +
-                 "010000020" +
+                 "000000000" +
                  "222222000" +
                  "000000000" +
                  "000000000" +
                  "000000000" +
                  "000111111" +
-                 "010000020" +
+                 "010000000" +
                  "000111111"
                         
     #玉を移動できない場所へ着手する
@@ -726,6 +726,26 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     
     #玉を移動できる場所(相手の駒がない)へ着手する
     checkPutpieceTest(array1, before_pos1, piece, turn, board, turn_board)
+    
+    board =      "111111000" + 
+                 "060000000" + 
+                 "333333000" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "000111111" +
+                 "000000000" +
+                 "000222222"
+                 
+    turn_board = "222222000" +
+                 "010000000" +
+                 "222222000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000111111" +
+                 "000000000" +
+                 "000111111"
     
     #玉を移動できる場所(相手の駒がある)へ着手する
     checkPutpieceTest(array2, before_pos2, piece, turn, board, turn_board)
@@ -735,13 +755,52 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     before_pos2 = 70
     turn = 2
     array1 = [6, 7, 8,  15, 17, 24, 25, 26]
-    array2 = [78, 79, 80, 69, 71, 60, 61, 62]
+    array2 = [78, 79, 80, 60, 61, 62]
+    board =      "222222000" + 
+                 "000000060" + 
+                 "111111000" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "000111111" +
+                 "000000000" +
+                 "000222222"
+                 
+    turn_board = "222222000" +
+                 "000000020" +
+                 "222222000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000111111" +
+                 "000000000" +
+                 "000111111"
     
     #玉を移動できない場所へ着手する
     checkPutpieceTest_abnormal(array1, before_pos1, piece, turn, board, turn_board)
     
     #玉を移動できる場所(相手の駒がない)へ着手する
     checkPutpieceTest(array1, before_pos1, piece, turn, board, turn_board)
+    
+    board =      "222222000" + 
+                 "000000000" + 
+                 "111111000" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "000333333" +
+                 "000000060" +
+                 "000111111"
+                 
+    turn_board = "222222000" +
+                 "000000000" +
+                 "222222000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000111111" +
+                 "000000020" +
+                 "000111111"
     
     #玉を移動できる場所(相手の駒がある)へ着手する
     checkPutpieceTest(array2, before_pos2, piece, turn, board, turn_board)
@@ -1338,14 +1397,14 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     
     board =     "000000000" + 
                 "000000000" + 
-                "111111111" + 
+                "222222222" + 
                 "000000000" + 
                 "000000000" +
                 "000000000" +
-                "111111111" +
+                "222222222" +
                 "070000080" +
                 "000000000"
-    turn_board = "000000000" +
+    turn_board ="000000000" +
                 "000000000" +
                 "222222222" +
                 "000000000" +
@@ -1413,9 +1472,9 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     piece = "5"
     checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
     
-    #玉
-    piece = "6"
-    checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
+    # #玉
+    # piece = "6"
+    # checkPutOwnpieceAll(array1, array1, piece, board, turn_board, own_piece)
     
     #角
     piece = "7"
@@ -1431,14 +1490,14 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     
     board =     "000000000" + 
                 "000000000" + 
-                "111111111" + 
+                "222222222" + 
                 "000000000" + 
                 "000000000" +
                 "000000000" +
-                "111111111" +
+                "222222222" +
                 "070000080" +
                 "000000000"
-    turn_board = "000000000" +
+    turn_board ="000000000" +
                 "000000000" +
                 "222222222" +
                 "000000000" +
@@ -1621,4 +1680,175 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     finish(true)
     finish(false)
   end
+  
+  def check_two_fu(turn, board, turn_board, own_piece, is_judge)
+    
+    before_pos = 100*turn + 1
+    
+    for after_pos in 36..44 do
+      @game.board = board
+      @game.turn_board = turn_board
+      @game.own_piece = own_piece
+      @game.turn = turn
+      set_turn(turn)
+      @game.save
+      
+      #移動先の盤面情報を取得
+      opp_piece = @game.board[after_pos]
+      piece = "1"
+      num = ownPieceCount(piece, turn)
+      # before_piece = @game.board[before_pos]
+    
+      #着手する
+      get edit_game_path(@game), params: {before: before_pos}
+      patch game_path(@game, before: before_pos, after: after_pos)
+      
+      if is_judge
+        # 正しく着手されているか
+        assert @game.reload.board[after_pos] == piece
+        assert @game.reload.turn_board[after_pos] == turn.to_s
+        
+        #持ち駒の数が減っているか
+        assert num-1 == ownPieceCount(piece, turn)
+        
+      else
+        assert @game.reload.board[after_pos] == opp_piece
+        assert num == ownPieceCount(piece, turn)
+      end
+    end
+  end
+  
+  ###2歩
+  test "two_fu_integration" do
+    board =      "000000000"+ 
+                 "000000000" + 
+                 "000000000" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "111111111" +
+                 "000000000" +
+                 "000000000"
+                 
+    turn_board = "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "111111111" +
+                 "000000000" +
+                 "000000000"
+                 
+    own_piece  = "000" +
+                 "111" +
+                 "200" +
+                 "300" +
+                 "400" +
+                 "500" +
+                 "600" +
+                 "700" +
+                 "800"
+    
+    check_two_fu(@FIRST, board, turn_board, own_piece, false)
+    check_two_fu(@SECOND, board, turn_board, own_piece, true)
+    
+    board =      "000000000"+ 
+                 "000000000" + 
+                 "111111111" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000"
+                 
+    turn_board = "000000000" + 
+                 "000000000" +
+                 "222222222" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000"
+    
+    check_two_fu(@FIRST, board, turn_board, own_piece, true)
+    check_two_fu(@SECOND, board, turn_board, own_piece, false)
+  end
+  
+  ###王手放置テスト
+  def oute_leave(before_pos, after_pos, turn, board, turn_board, is_judge)
+    @game.board = board
+    @game.turn_board = turn_board
+    @game.turn = turn
+    set_turn(turn)
+    @game.save
+      
+    #移動先の盤面情報を取得
+    opp_piece = @game.board[after_pos]
+    piece = @game.board[before_pos]
+    num = ownPieceCount(piece, turn)
+    
+    #着手する
+    get edit_game_path(@game), params: {before: before_pos}
+    patch game_path(@game, before: before_pos, after: after_pos)
+    
+    if is_judge
+      assert @game.reload.board[after_pos] == piece
+      assert @game.reload.turn_board[after_pos] == turn.to_s
+    else
+      assert @game.reload.board[after_pos] == opp_piece
+      assert num == ownPieceCount(piece, turn)
+    end
+  end
+  
+  test "oute_leave" do
+    
+    board =      "000060000" + 
+                 "000000000" + 
+                 "100050000" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "100050000" +
+                 "000010000" +
+                 "000060000"
+                 
+    turn_board = "000020000" + 
+                 "000000000" +
+                 "100010000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "200020000" +
+                 "000020000" +
+                 "000010000"
+    oute_leave(18, 9, @FIRST, board, turn_board, false)
+    oute_leave(54, 63, @SECOND, board, turn_board, true)
+    
+    board =      "000060000" + 
+                 "000010000" + 
+                 "100050000" + 
+                 "000000000" + 
+                 "000000000" +
+                 "000000000" +
+                 "000050000" +
+                 "100000000" +
+                 "000060000"
+                 
+    turn_board = "000020000" + 
+                 "000010000" +
+                 "100010000" +
+                 "000000000" +
+                 "000000000" +
+                 "000000000" +
+                 "000020000" +
+                 "200000000" +
+                 "000010000"
+    oute_leave(18, 9, @FIRST, board, turn_board, true)
+    oute_leave(63, 72, @SECOND, board, turn_board, false)
+    
+  end
+  
 end
