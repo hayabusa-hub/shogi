@@ -55,7 +55,6 @@ class GameTest < ActiveSupport::TestCase
     else
       assert_not @game.is_checkmate?()
     end
-    
   end
   
   test "checkmate" do
@@ -208,81 +207,71 @@ class GameTest < ActiveSupport::TestCase
     checkmate(@SECOND, board, turn_board, false, own_piece)
   end
   
-  # def two_fu(pos, turn, board, turn_board, own_piece, is_judge)
-  #   @game.board = board
-  #   @game.turn_board = turn_board
-  #   @game.own_piece = own_piece
-  #   @game.turn = turn
-  #   set_turn(turn)
-  #   @game.save
+  def isOute(turn, board, turn_board, is_judge, own_piece=@game.own_piece)
+    @game.turn = turn
+    set_turn(turn)
+    set_king_pos(board, turn_board)
     
-  #   if is_judge
-  #     assert @game.judge_two_fu(turn, pos)
-  #   else
-  #     assert_not @game.judge_two_fu(turn, pos)
-  #   end
-  # end
+    @game.board = board
+    @game.turn_board = turn_board
+    @game.own_piece = own_piece
+    @game.save
+    
+    if is_judge
+      #王手がかかっている
+      assert @game.is_oute?()
+    else
+      #王手がかかっていない
+      assert_not @game.is_oute?()
+    end
+  end
   
-  # test "tow_fu" do
+  test "oute" do
     
-  #   board =      "000000000"+ 
-  #               "000000000" + 
-  #               "000000000" + 
-  #               "000000000" + 
-  #               "000000000" +
-  #               "000000000" +
-  #               "111111111" +
-  #               "000000000" +
-  #               "000000000"
+    # 1
+    board =      "230500000" + 
+                 "040060e0f" + 
+                 "101111301" + 
+                 "000000010" + 
+                 "000000020" +
+                 "001000000" +
+                 "150011101" +
+                 "000056040" +
+                 "2000005f2"
                  
-  #   turn_board = "000000000" + 
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "111111111" +
-  #               "000000000" +
-  #               "000000000"
+    turn_board = "220200000" + 
+                 "020020101" +
+                 "202222202" +
+                 "000000020" +
+                 "000000020" +
+                 "001000000" +
+                 "110011101" +
+                 "000011010" +
+                 "100000121"
+    isOute(@SECOND, board, turn_board, false)
+    
+    # 2
+    board =      "230500000" + 
+                 "040060e08" + 
+                 "101111301" + 
+                 "000000010" + 
+                 "000000020" +
+                 "001000000" +
+                 "150011101" +
+                 "000056040" +
+                 "2000005f2"
                  
-  #   own_piece  = "000" +
-  #               "111" +
-  #               "200" +
-  #               "300" +
-  #               "400" +
-  #               "500" +
-  #               "600" +
-  #               "700" +
-  #               "800"
+    turn_board = "220200000" + 
+                 "020020101" +
+                 "202222202" +
+                 "000000020" +
+                 "000000020" +
+                 "001000000" +
+                 "110011101" +
+                 "000011010" +
+                 "100000121"
+    isOute(@SECOND, board, turn_board, false)
     
-  #   for pos in 36..44 do
-  #     two_fu(pos, @FIRST, board, turn_board, own_piece, true)
-  #     two_fu(pos, @SECOND, board, turn_board, own_piece, false)
-  #   end
-    
-  #   board =      "000000000"+ 
-  #               "000000000" + 
-  #               "111111111" + 
-  #               "000000000" + 
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000"
-                 
-  #   turn_board = "000000000" + 
-  #               "000000000" +
-  #               "222222222" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000" +
-  #               "000000000"
-    
-  #   for pos in 36..44 do
-  #     two_fu(pos, @FIRST, board, turn_board, own_piece, false)
-  #     two_fu(pos, @SECOND, board, turn_board, own_piece, true)
-  #   end
-  # end
+  end
+  
 end

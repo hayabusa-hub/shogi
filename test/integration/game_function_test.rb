@@ -1795,9 +1795,11 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     patch game_path(@game, before: before_pos, after: after_pos)
     
     if is_judge
+      #着手成功
       assert @game.reload.board[after_pos] == piece
       assert @game.reload.turn_board[after_pos] == turn.to_s
     else
+      #王手放置のため着手失敗
       assert @game.reload.board[after_pos] == opp_piece
       assert num == ownPieceCount(piece, turn)
     end
@@ -1824,8 +1826,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
                  "200020000" +
                  "000020000" +
                  "000010000"
-    oute_leave(18, 9, @FIRST, board, turn_board, false)
-    oute_leave(54, 63, @SECOND, board, turn_board, true)
+    #oute_leave(18, 9, @FIRST, board, turn_board, false)
+    #oute_leave(54, 63, @SECOND, board, turn_board, true)
     
     board =      "000060000" + 
                  "000010000" + 
@@ -1846,8 +1848,29 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
                  "000020000" +
                  "200000000" +
                  "000010000"
-    oute_leave(18, 9, @FIRST, board, turn_board, true)
-    oute_leave(63, 72, @SECOND, board, turn_board, false)
+    #oute_leave(18, 9, @FIRST, board, turn_board, true)
+    #oute_leave(63, 72, @SECOND, board, turn_board, false)
+    
+    board =      "230500000" + 
+                 "040006e0f" + 
+                 "101111301" + 
+                 "000000010" + 
+                 "000000020" +
+                 "001000000" +
+                 "150011101" +
+                 "000056040" +
+                 "2000005f2"
+                 
+    turn_board = "220200000" + 
+                 "020002101" +
+                 "202222202" +
+                 "000000020" +
+                 "000000020" +
+                 "001000000" +
+                 "110011101" +
+                 "000011010" +
+                 "100000121"
+    oute_leave(14, 13, @SECOND, board, turn_board, true)
     
   end
   

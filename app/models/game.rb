@@ -188,9 +188,16 @@ class Game < ApplicationRecord
               isLegal = true
               break
             end
-          
+            
+            ###########################
+            # if piece == "f"
+            #   debugger
+            # end
+            
+            ####################
+            
             #途中で駒が存在したらループを抜ける
-            if(board[pos].to_i != 0)
+            if(board[pos] != "0")
               break
             end
           end
@@ -460,18 +467,20 @@ class Game < ApplicationRecord
     return is_oute
   end
   
-  def is_oute?(turn = self.turn, board = self.board, turn_board = self.turn_board)
+  def is_oute?(turn = self.turn, board = self.board.dup, turn_board = self.turn_board)
     pos = get_king_pos(turn, board, turn_board)
     is_oute = false
+    
     for i in 0..80 do
       if turn^3 == turn_board[i].to_i
         piece = board[i]
         
         #####################
-        if "0" == piece
-          debugger
-        end
+        # if "0" == piece
+        #   debugger
+        # end
         ###################
+        
         
         if self.legal?(piece, i, pos, turn^3, board, turn_board)
           is_oute = true
