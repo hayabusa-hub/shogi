@@ -52,8 +52,10 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     login_as(@alice)
     post matchs_path, params: {user_id: @alice.id}
     follow_redirect!
-    assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 3) , text: "承諾"
-    assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
+    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 3) , text: "承諾"
+    assert_select "input[value=?]", "承諾"
+    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
+    assert_select "input[value=?]", "拒否"
     patch match_path(@michael.match, opponent_id: @alice.id, status: 3)
     matchs = Match.find_by(user_id: @michael.id)
     assert matchs.user_id == @michael.id
@@ -117,8 +119,10 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     login_as(@alice)
     post matchs_path, params: {user_id: @alice.id}
     follow_redirect!
-    assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 3) , text: "承諾"
-    assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
+    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 3) , text: "承諾"
+    assert_select "input[value=?]", "承諾"
+    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
+    assert_select "input[value=?]", "拒否"
     patch match_path(@michael.match, opponent_id: @alice.id, status: 2)
     matchs = Match.find_by(user_id: @michael.id)
     assert matchs.user_id == @michael.id

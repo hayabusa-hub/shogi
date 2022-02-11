@@ -3,8 +3,20 @@
 
 <% if @opponent %>
   <%= "#{@opponent.user.id}から対戦を申し込まれています" %>
-  <%= link_to "承諾", match_path(@opponent, opponent_id: @user.id, status: 3) , method: :patch %>
-  <%= link_to "拒否", match_path(@opponent, opponent_id: @user.id, status: 2) , method: :patch %>
+  
+  <%#= link_to "承諾", match_path(@opponent, opponent_id: @user.id, status: 3) , method: :patch %>
+  <%= form_with(model: @opponent, local: true) do |f|%>
+    <div><%= hidden_field_tag :opponent_id, @user.id %></div>
+    <div><%= hidden_field_tag :status, 3 %></div>
+    <%= f.submit "承諾", class: "btn btn-default" %>
+  <% end %>
+  
+  <%#= link_to "拒否", match_path(@opponent, opponent_id: @user.id, status: 2) , method: :patch %>
+  <%= form_with(model: @opponent, local: true) do |f|%>
+    <div><%= hidden_field_tag :opponent_id, @user.id %></div>
+    <div><%= hidden_field_tag :status, 2 %></div>
+    <%= f.submit "拒否", class: "btn btn-default" %>
+  <% end %>
 <% end %>
 
 <ul>
@@ -12,11 +24,20 @@
     <% if matchs.user_id != @user.id %>
       <li>
         <%= matchs.user_id %>
-        <%= link_to "対戦", match_path(@match, opponent_id: matchs.user_id, status: 1) , method: :patch %>
+        <%#= link_to "対戦", match_path(@match, opponent_id: matchs.user_id, status: 1) , method: :patch %>
+        <%= form_with(model: @match, local: true) do |f|%>
+          <div><%= hidden_field_tag :opponent_id, matchs.user_id %></div>
+          <div><%= hidden_field_tag :status, 1 %></div>
+          <%= f.submit "対戦", class: "btn btn-default" %>
+        <% end %>
       </li>
     <% end %>
 <% end %>
 </ul>
 
-<%= link_to "退出する", match_path(@match) , method: :delete %>
+<%#= link_to "退出する", match_path(@match) , method: :delete %>
+<%= form_with(model: @match,method: :delete, local: true) do |f|%>
+  <%= f.submit "退出する", class: "btn btn-default" %>
+<% end %>
+
 <%#= will_paginate %>

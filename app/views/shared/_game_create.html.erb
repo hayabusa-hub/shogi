@@ -5,8 +5,8 @@
 </body>
 
 <%= form_with(url: games_path, model: @game, local: true) do |f| %>
-  <%= f.text_field :user1, value: @user.id  %>
-  <%= f.text_field :user2, value: @opponent.user_id %>
+  <%= f.hidden_field :user1, value: @user.id  %>
+  <%= f.hidden_field :user2, value: @opponent.user_id %>
 <% end %>
 
 

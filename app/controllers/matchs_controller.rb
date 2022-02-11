@@ -73,4 +73,10 @@ class MatchsController < ApplicationController
     flash[:success] = "対局室から退室しました"
     redirect_to root_path
   end
+  
+  private
+  
+   def match_params
+    params.require(:match).permit(:id, :opponent_id, :status)
+   end
 end
