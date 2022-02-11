@@ -49,7 +49,7 @@ class MatchsController < ApplicationController
     end
     
     respond_to do |format|
-      format.html { redirect_to @user }
+      format.html { redirect_to @match }
       format.js
     end
     
