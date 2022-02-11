@@ -48,6 +48,11 @@ class MatchsController < ApplicationController
     else
     end
     
+    respond_to do |format|
+      format.html { redirect_to @user }
+      format.js
+    end
+    
     if @opponent.status == 1
       opp = User.find(@opponent.opponent_id)
       flash[:success] = "#{opp.name}へ対戦要求を出しました"
