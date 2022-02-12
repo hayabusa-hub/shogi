@@ -48,10 +48,10 @@ class MatchsController < ApplicationController
     else
     end
     
-    respond_to do |format|
-      format.html { redirect_to @match }
-      format.js
-    end
+    # respond_to do |format|
+    #   format.html { redirect_to @match }
+    #   format.js
+    # end
     
     if @opponent.status == 1
       opp = User.find(@opponent.opponent_id)

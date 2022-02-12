@@ -20,6 +20,7 @@
 <% end %>
 
 <ul>
+  
 <% @matches.each do |matchs| %>
     <% if matchs.user_id != @user.id %>
       <li>
@@ -41,3 +42,4 @@
 <% end %>
 
 <%#= will_paginate %>
+
