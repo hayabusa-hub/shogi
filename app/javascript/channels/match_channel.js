@@ -11,6 +11,7 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
 
   received(data) {
     // Called when there's incoming data on the websocket for this channel
+    alert()
   },
 
   speak: function() {
