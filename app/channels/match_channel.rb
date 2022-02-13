@@ -12,8 +12,7 @@ class MatchChannel < ApplicationCable::Channel
   end
 
   def speak()
-    ActionCable.server.broadcast('room_channel')
-    
+    ActionCable.server.broadcast('match_channel')
     
     redirect_to Match.find_by(user_id: current_user().id)
   end
