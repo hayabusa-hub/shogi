@@ -3,7 +3,10 @@
   <div class="col-md-3 col-md-offset-3">
     
     <% if logged_in? %>
-      <%= link_to "対局室へ移動", matchs_path(user_id: @user.id), method: :post %>
+      <%#= link_to "対局室へ移動", matchs_path(user_id: @user.id), method: :post %>
+      <%= form_with(url: matchs_path(user_id: @user.id), local: false) do |f| %>
+        <%= f.submit '対局室へ移動', class: 'btn btn-primary btn-block', id: 'matchRoom' %>
+      <% end %>
     <% else %>
       <%= link_to "ログイン", login_path %>
     <% end %>

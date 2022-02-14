@@ -5,6 +5,7 @@ class HomesController < ApplicationController
   def top
     if logged_in?
       @user = User.find(current_user.id)
+      @match = Match.find_by(user_id: @user.id)
     end
   end
   

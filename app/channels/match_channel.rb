@@ -5,15 +5,14 @@ class MatchChannel < ApplicationCable::Channel
   def subscribed
     # stream_from "some_channel"
     stream_from "match_channel"
+    5.times {puts "*********test***********"}
   end
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end
 
-  def speak()
-    ActionCable.server.broadcast('match_channel')
-    
-    #redirect_to Match.find_by(user_id: current_user().id)
-  end
+  # def speak(data)
+  #   ActionCable.server.broadcast('match_channel', message: data['message'])
+  # end
 end
