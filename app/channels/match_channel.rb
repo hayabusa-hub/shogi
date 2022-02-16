@@ -5,7 +5,7 @@ class MatchChannel < ApplicationCable::Channel
   def subscribed
     # stream_from "some_channel"
     stream_from "match_channel"
-    5.times {puts "*********test***********"}
+    #5.times {puts "*********test***********"}
   end
 
   def unsubscribed

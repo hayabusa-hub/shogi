@@ -28,11 +28,8 @@ class MatchsController < ApplicationController
     if @match.save
       flash[:success] = "対局室へ移動しました"
       
-      # ********** 以下を追加 **********
       # 入室の旨をチャット参加者に配信
-      ActionCable.server.broadcast('match_channel', message: "enter")
-      5.times {puts "*********broadcast***********"}
-      # ********** 以上を追加 **********
+      ActionCable.server.broadcast('match_channel', message: "enter", content: @match)
       
       redirect_to matchs_path
     elsif Match.find_by(user_id: params[:user_id])
