@@ -30,6 +30,7 @@ class MatchsController < ApplicationController
       
       # 入室の旨をチャット参加者に配信
       ActionCable.server.broadcast('match_channel', message: "enter", content: @match)
+      5.times {puts "********* enter room ***********"}
       
       redirect_to matchs_path
     elsif Match.find_by(user_id: params[:user_id])

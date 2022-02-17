@@ -13,17 +13,20 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
   received(data) {
     // Called when there's incoming data on the websocket for this channel
 
-    const html = `<p>${data.content.id}</p>`;
-    console.log(html);
+    //const html = `<p>${data.content.id}</p>`;
+    //console.log(html);
     //const messages = document.getElementById("samples");
     
-    var messages =document.getElementById("samples");
-    console.log(messages);
+    //var messages = document.getElementById("samples");
+    //console.log(messages);
     console.log(`id:${data.content.id}\n user_id:${data.content.user_id}`);
     console.log(` opponent_id:${data.content.opponent_id}`);
     console.log(` status:${data.content.status}`);
-    messages.insertAdjacentHTML('afterbegin', html);
-    //return alert(data['message']);
+    
+    window.location.href = 'matchs';
+    
+    //messages.insertAdjacentHTML('afterbegin', html);
+    return alert(data['message']);
   },
 
   speak: function() {
