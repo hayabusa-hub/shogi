@@ -30,7 +30,6 @@ class MatchsController < ApplicationController
       
       # 入室の旨をチャット参加者に配信
       ActionCable.server.broadcast('match_channel', message: "enter", content: @match)
-      5.times {puts "********* enter room ***********"}
       
       redirect_to matchs_path
     elsif Match.find_by(user_id: params[:user_id])
@@ -81,6 +80,9 @@ class MatchsController < ApplicationController
     @match = Match.find(@user.match.id)
     @match.destroy
     flash[:success] = "対局室から退室しました"
+    
+    # 退出の旨をチャット参加者に配信
+      ActionCable.server.broadcast('match_channel', message: "enter", content: @match)
     redirect_to root_path
   end
   

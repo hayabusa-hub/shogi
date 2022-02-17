@@ -19,7 +19,7 @@
   <% end %>
 <% end %>
 
-<!--<div id="matchTable">-->
+<div id="matchTable">
   <ul>
   <% @matches.each do |matchs| %>
     <% if matchs.user_id != @user.id %>
@@ -36,12 +36,6 @@
   <% end %>
   </ul>
 <!--</div>-->
-
-<div id="samples">
-  <% @matches.each do |matchs| %>
-    <p><%= matchs.user_id %></p>
-  <% end %>
-</div>
 
 
 <%#= link_to "退出する", match_path(@match) , method: :delete %>

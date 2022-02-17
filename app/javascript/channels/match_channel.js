@@ -17,16 +17,25 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     //console.log(html);
     //const messages = document.getElementById("samples");
     
-    //var messages = document.getElementById("samples");
-    //console.log(messages);
+    var matchTable = document.getElementById("matchTable");
+    console.log(matchTable);
     console.log(`id:${data.content.id}\n user_id:${data.content.user_id}`);
     console.log(` opponent_id:${data.content.opponent_id}`);
     console.log(` status:${data.content.status}`);
     
-    window.location.href = 'matchs';
+    if(null != matchTable)
+    {
+      console.log("match page update");
+      window.location.href = 'matchs';
+    }
+    else
+    {
+      console.log("match page not update");
+    }
+    
     
     //messages.insertAdjacentHTML('afterbegin', html);
-    return alert(data['message']);
+    //return alert(data['message']);
   },
 
   speak: function() {
