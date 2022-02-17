@@ -5,14 +5,14 @@
   <%= "#{@opponent.user.id}から対戦を申し込まれています" %>
   
   <%#= link_to "承諾", match_path(@opponent, opponent_id: @user.id, status: 3) , method: :patch %>
-  <%= form_with(model: @opponent, local: false) do |f|%>
+  <%= form_with(model: @opponent, local: true) do |f|%>
     <div><%= hidden_field_tag :opponent_id, @user.id %></div>
     <div><%= hidden_field_tag :status, 3 %></div>
     <%= f.submit "承諾", class: "btn btn-default" %>
   <% end %>
   
   <%#= link_to "拒否", match_path(@opponent, opponent_id: @user.id, status: 2) , method: :patch %>
-  <%= form_with(model: @opponent, local: false) do |f|%>
+  <%= form_with(model: @opponent, local: true) do |f|%>
     <div><%= hidden_field_tag :opponent_id, @user.id %></div>
     <div><%= hidden_field_tag :status, 2 %></div>
     <%= f.submit "拒否", class: "btn btn-default" %>
@@ -20,10 +20,10 @@
 <% end %>
 
 <!--<div id="matchTable">-->
-  <!--<ul>-->
+  <ul>
   <% @matches.each do |matchs| %>
     <% if matchs.user_id != @user.id %>
-      <!--<li>-->
+      <li>
         <p><%= matchs.user_id %></p>
         <%#= link_to "対戦", match_path(@match, opponent_id: matchs.user_id, status: 1) , method: :patch %>
         <%= form_with(model: @match, local: true) do |f|%>
@@ -31,10 +31,10 @@
           <div><%= hidden_field_tag :status, 1 %></div>
           <%= f.submit "対戦", class: "btn btn-default" %>
         <% end %>
-      <!--</li>-->
+      </li>
     <% end %>
   <% end %>
-  <!--</ul>-->
+  </ul>
 <!--</div>-->
 
 <div id="samples">
