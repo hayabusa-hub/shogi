@@ -29,7 +29,7 @@ class MatchsController < ApplicationController
       flash[:success] = "対局室へ移動しました"
       
       # 入室の旨をチャット参加者に配信
-      ActionCable.server.broadcast('match_channel', message: "enter", content: @match)
+      broadcast(@match)
       
       redirect_to matchs_path
     elsif Match.find_by(user_id: params[:user_id])
@@ -57,6 +57,9 @@ class MatchsController < ApplicationController
     #   format.js
     # end
     
+    #更新した旨を表示
+    broadcast(@match)
+    
     if @opponent.status == 1
       opp = User.find(@opponent.opponent_id)
       flash[:success] = "#{opp.name}へ対戦要求を出しました"
@@ -82,7 +85,7 @@ class MatchsController < ApplicationController
     flash[:success] = "対局室から退室しました"
     
     # 退出の旨をチャット参加者に配信
-      ActionCable.server.broadcast('match_channel', message: "enter", content: @match)
+    broadcast(@match)
     redirect_to root_path
   end
   
@@ -90,5 +93,10 @@ class MatchsController < ApplicationController
   
    def match_params
     params.require(:match).permit(:id, :opponent_id, :status)
+   end
+   
+   def broadcast(match_)
+     # チャット参加者に配信
+     ActionCable.server.broadcast('match_channel', message: "enter", content: match_)
    end
 end

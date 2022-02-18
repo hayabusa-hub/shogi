@@ -1,5 +1,5 @@
 <h1>User wait for game</h1>
-<%= "UserID: #{@user.id}" %>
+<p>UserID:<span id="UserID"><%= "#{@user.id}" %></span></p>
 
 <% if @opponent %>
   <%= "#{@opponent.user.id}から対戦を申し込まれています" %>
@@ -35,7 +35,7 @@
     <% end %>
   <% end %>
   </ul>
-<!--</div>-->
+</div>
 
 
 <%#= link_to "退出する", match_path(@match) , method: :delete %>
