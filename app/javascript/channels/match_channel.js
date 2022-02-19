@@ -23,7 +23,7 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     //console.log(` opponent_id:${data.content.opponent_id}`);
     //console.log(` status:${data.content.status}`);
     
-    if((userID != null) && (data.user_id.to_s != userID.textContent.to_s))
+    if((userID != null) && (data.user_id != userID.textContent))
     {
       console.log("match page update");
       console.log(`userID: ${userID.textContent}`);
@@ -42,9 +42,7 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
         console.log(`data.user_id:${data.user_id}`);
         console.log(` condetion1: ${userID != null}`);
         console.log(` condetion2: ${data.user_id != userID.textContent}`);
-        console.log(` condetion3: ${data.user_id.to_s != userID.textContent.to_s}`);
-        
-        console.log(` **********condetion3: ${(true) && (true)}`);
+        //console.log(` condetion3: ${data.user_id.to_s != userID.textContent.to_s}`);
       }
       else
       {
