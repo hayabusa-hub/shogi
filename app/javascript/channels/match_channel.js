@@ -35,6 +35,8 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     else
     {
       console.log("match page not update");
+      console.log(`userID: ${userID.textContent}`);
+      console.log(` data.user_id:${data.user_id}`);
     }
     
     
