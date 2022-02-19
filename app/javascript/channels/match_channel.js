@@ -42,8 +42,9 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
         console.log(`data.user_id:${data.user_id}`);
         console.log(` condetion1: ${userID != null}`);
         console.log(` condetion2: ${data.user_id != userID.textContent}`);
+        console.log(` condetion3: ${data.user_id.to_s != userID.textContent.to_s}`);
         
-        console.log(` **********condetion3: ${1 != 1}`);
+        console.log(` **********condetion3: ${(true) && (true)}`);
       }
       else
       {
