@@ -35,15 +35,21 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     else
     {
       console.log("match page not update");
-      console.log(`userID: ${userID.textContent}`);
-      console.log(`data.user_id:${data.user_id}`);
       
-      console.log(` condetion1: ${userID != null}`);
       if(userID != null)
       {
-        console.log(` condetion2: ${data.user_id.to_s != userID.textContent.to_s}`);
+        console.log(`userID: ${userID.textContent}`);
+        console.log(`data.user_id:${data.user_id}`);
+        console.log(` condetion1: ${userID != null}`);
+        console.log(` condetion2: ${data.user_id != userID.textContent}`);
+        
+        console.log(` **********condetion3: ${1 != 1}`);
       }
-      
+      else
+      {
+        console.log(`userID: null`);
+        console.log(`data.user_id:${data.user_id}`);
+      }
     }
     
     
