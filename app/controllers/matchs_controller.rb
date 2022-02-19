@@ -29,7 +29,7 @@ class MatchsController < ApplicationController
       flash[:success] = "対局室へ移動しました"
       
       # 入室の旨をチャット参加者に配信
-      broadcast(@match)
+      broadcast(@match.user_id)
       
       redirect_to matchs_path
     elsif Match.find_by(user_id: params[:user_id])
@@ -58,7 +58,7 @@ class MatchsController < ApplicationController
     # end
     
     #更新した旨を表示
-    broadcast(@match)
+    #broadcast(@match.user_id)
     
     if @opponent.status == 1
       opp = User.find(@opponent.opponent_id)
@@ -80,12 +80,17 @@ class MatchsController < ApplicationController
   end
   
   def destroy
+    
+    # 削除対象のインスタンスを取得
     @match = Match.find(@user.match.id)
+    
+    # 退出の旨をチャット参加者に配信
+    broadcast(@match.user_id)
+    
+    #インスタンスを削除する
     @match.destroy
     flash[:success] = "対局室から退室しました"
     
-    # 退出の旨をチャット参加者に配信
-    broadcast(@match)
     redirect_to root_path
   end
   
@@ -95,8 +100,9 @@ class MatchsController < ApplicationController
     params.require(:match).permit(:id, :opponent_id, :status)
    end
    
-   def broadcast(match_)
+   def broadcast(id)
+     
      # チャット参加者に配信
-     ActionCable.server.broadcast('match_channel', message: "enter", content: match_)
+     ActionCable.server.broadcast('match_channel', user_id: id)
    end
 end

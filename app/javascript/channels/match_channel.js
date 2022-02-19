@@ -18,14 +18,16 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     //const messages = document.getElementById("samples");
     
     var userID = document.getElementById("UserID");
-    console.log(`userID: ${userID}`);
-    console.log(` match.user_id:${data.content.user_id}`);
-    console.log(` opponent_id:${data.content.opponent_id}`);
-    console.log(` status:${data.content.status}`);
     
-    if((data.content.user_id != userID) && (userID != null))
+    //console.log(` match.user_id:${data.content.user_id}`);
+    //console.log(` opponent_id:${data.content.opponent_id}`);
+    //console.log(` status:${data.content.status}`);
+    
+    if((userID != null) && (data.user_id.to_s != userID.textContent.to_s))
     {
       console.log("match page update");
+      console.log(`userID: ${userID.textContent}`);
+      console.log(` data.user_id:${data.user_id}`);
       
       window.location.href = '/matchs';
       //$.ajax({url: '/matchs', type: "GET"});
