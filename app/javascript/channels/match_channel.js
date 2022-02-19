@@ -27,7 +27,7 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     {
       console.log("match page update");
       console.log(`userID: ${userID.textContent}`);
-      console.log(` data.user_id:${data.user_id}`);
+      console.log(`data.user_id:${data.user_id}`);
       
       window.location.href = '/matchs';
       //$.ajax({url: '/matchs', type: "GET"});
@@ -36,7 +36,14 @@ const appMatch = consumer.subscriptions.create("MatchChannel", {
     {
       console.log("match page not update");
       console.log(`userID: ${userID.textContent}`);
-      console.log(` data.user_id:${data.user_id}`);
+      console.log(`data.user_id:${data.user_id}`);
+      
+      console.log(` condetion1: ${userID != null}`);
+      if(userID != null)
+      {
+        console.log(` condetion2: ${data.user_id.to_s != userID.textContent.to_s}`);
+      }
+      
     }
     
     
