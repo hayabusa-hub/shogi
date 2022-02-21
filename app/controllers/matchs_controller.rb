@@ -57,6 +57,8 @@ class MatchsController < ApplicationController
     @opponent = Match.find_by(user_id: params[:opponent_id])
     @opponent.opponent_id = @match.user_id
     
+    5.times {puts "*********status:#{params[:status]}***********"}
+    
     #対戦要求を出した場合
     if(WAITING == @match.status)
       opp = User.find(@match.opponent_id)
@@ -158,7 +160,6 @@ class MatchsController < ApplicationController
       game = Game.new()
       first, second = make_turn(user1, user2)
       game.board_init(first, second)
-      debugger
       return game.id
     end
    
