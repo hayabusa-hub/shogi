@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_21_232722) do
+ActiveRecord::Schema.define(version: 2022_02_21_021306) do
 
   create_table "games", force: :cascade do |t|
     t.integer "first_user_id"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 2021_12_21_232722) do
     t.integer "status", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "game_id"
     t.index ["user_id"], name: "index_matches_on_user_id", unique: true
   end
 

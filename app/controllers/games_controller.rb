@@ -4,6 +4,7 @@ class GamesController < ApplicationController
   include SessionsHelper
   
   def init
+    @user = current_user()
     @game = Game.find(params[:id])
     
     @first = FIRST
@@ -29,16 +30,17 @@ class GamesController < ApplicationController
   end
 
   def create
-    first, second = make_turn(params[:user1], params[:user2])
-    @game = Game.new()
-    @game.board_init(first, second)
+    # debugger
+    # first, second = make_turn(params[:user1], params[:user2])
+    # @game = Game.new()
+    # @game.board_init(first, second)
     
-    if @game.save
-      redirect_to game_path(@game)
-    else
-      flash[:danger] = "error has occurred"
-      redirect_to matchs_path
-    end
+    # if @game.save
+    #   redirect_to game_path(@game)
+    # else
+    #   flash[:danger] = "error has occurred"
+    #   redirect_to matchs_path
+    # end
   end
 
   def edit
@@ -91,21 +93,20 @@ class GamesController < ApplicationController
     if @game.save
       redirect_to game_path(@game)
     end
-    
   end
   
   private
-    def make_turn(user1, user2)
-      tmp = rand(2)
-      if(tmp == 0)
-        a = user1
-        b = user2
-      else
-        a = user2
-        b = user1
-      end
-      return a, b
-    end
+    # def make_turn(user1, user2)
+    #   tmp = rand(2)
+    #   if(tmp == 0)
+    #     a = user1
+    #     b = user2
+    #   else
+    #     a = user2
+    #     b = user1
+    #   end
+    #   return a, b
+    # end
     
     def my_turn(game)
       if(game.first_user_id == current_user.id)

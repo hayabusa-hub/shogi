@@ -4,12 +4,18 @@
 <div id="finish">
   <% winner = params[:before].to_s %>
   <% if @game.winner == @my_turn %>
-    <%= image_tag("/shogi/pose_win.png") %>
+    <% image_path = "/shogi/pose_win.png" %>
   <% elsif @game.winner == @my_turn^3 %>
-    <%= image_tag("/shogi/pose_lose.png") %>
+    <% image_path = "/shogi/pose_lose.png" %>
   <% else %>
-    <%= image_tag("/shogi/pose_draw.png") %>
+    <% image_path = "/shogi/pose_draw.png" %>
   <% end %>
+  
+  <%= link_to image_tag(image_path), match_path(@user.match.id), method: :delete,
+  data: 
+  { confirm: "ホーム画面に戻りますか？"
+  } %>
+  
 </div>
 
 <%= render 'display_field', {edit: true, method: :patch} %>

@@ -11,6 +11,7 @@ class GameTest < ActiveSupport::TestCase
     @game = Game.new()
     @game.board_init(@test1.id, @test2.id)
     @game.save
+   
     
     @FIRST = 1
     @SECOND = 2

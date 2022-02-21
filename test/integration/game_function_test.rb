@@ -7,6 +7,10 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @game = Game.new()
     @game.board_init(@test1.id, @test2.id)
     @game.save
+    @match1 = Match.create(user_id: @test1, opponent_id: @test2, status: 3, game_id: @game)
+    @match2 = Match.create(user_id: @test2, opponent_id: @test1, status: 3, game_id: @game)
+    @test1.match = @match1
+    @test2.match = @match2
     
     @FIRST = 1
     @SECOND = 2
@@ -23,9 +27,11 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     if 1 == turn
       @game.first_user_id = @test1.id
       @game.second_user_id = @test2.id
+      @user = @test1
     elsif 2 == turn
       @game.first_user_id = @test2.id
       @game.second_user_id = @test1.id
+      @user = @test2
     end
   end
   
@@ -1826,8 +1832,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
                  "200020000" +
                  "000020000" +
                  "000010000"
-    #oute_leave(18, 9, @FIRST, board, turn_board, false)
-    #oute_leave(54, 63, @SECOND, board, turn_board, true)
+    oute_leave(18, 9, @FIRST, board, turn_board, false)
+    oute_leave(54, 63, @SECOND, board, turn_board, true)
     
     board =      "000060000" + 
                  "000010000" + 
@@ -1848,8 +1854,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
                  "000020000" +
                  "200000000" +
                  "000010000"
-    #oute_leave(18, 9, @FIRST, board, turn_board, true)
-    #oute_leave(63, 72, @SECOND, board, turn_board, false)
+    oute_leave(18, 9, @FIRST, board, turn_board, true)
+    oute_leave(63, 72, @SECOND, board, turn_board, false)
     
     board =      "230500000" + 
                  "040006e0f" + 

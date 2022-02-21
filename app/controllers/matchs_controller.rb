@@ -15,10 +15,10 @@ class MatchsController < ApplicationController
     @match = Match.find_by(user_id: @user.id)
     @matches = Match.where(status: STANDBY).paginate(page: params[:page])
     
-    # 対局する場合、GAME画面へ移動する
-    # if(PLAYING == @match.status)
-    #   render "shared/_game_create"
-    # end
+    #対局する場合、GAME画面へ移動する
+    if(PLAYING == @match.status)
+      redirect_to game_path(@match.game_id)
+    end
     
     # if @match.status == 2
     #   flash[:danger] = "対戦要求を拒否されました"
@@ -41,6 +41,7 @@ class MatchsController < ApplicationController
       redirect_to matchs_path
     else
       flash[:danger] = "対局室への移動へ失敗しました"
+      debugger
       redirect_to root_path
     end
   end
@@ -53,11 +54,9 @@ class MatchsController < ApplicationController
     @match = Match.find_by(user_id: @user.id)
     @match.opponent_id = params[:opponent_id]
     @match.status = params[:status]
-    @match.save
     
     @opponent = Match.find_by(user_id: params[:opponent_id])
     @opponent.opponent_id = @match.user_id
-    @opponent.save
     
     #対戦要求を出した場合
     if(WAITING == @match.status)
@@ -69,9 +68,7 @@ class MatchsController < ApplicationController
       if(DECLINE == @match.status)
         #状態を更新
         @match.status = STANDBY
-        @match.save
         @opponent.status = STANDBY
-        @opponent.save
         
         msg = "対戦要求を拒否されました"
         
@@ -79,13 +76,19 @@ class MatchsController < ApplicationController
       elsif(PLAYING == @match.status)
         #状態を更新
         @opponent.status = PLAYING
-        @opponent.save
         
-        flash[:info] = "対局開始！！！"
+        msg = "対局開始！！！"
         
-        render "shared/_game_create"
+        #render "shared/_game_create"
+        game_id = make_game(@match.user_id, @opponent.user_id)
+        @match.game_id = game_id
+        @opponent.game_id = game_id
       end
     end
+    
+    #モデルの保存
+    @match.save
+    @opponent.save
     
     #更新した旨を通知
     broadcast(@match.user_id)
@@ -147,13 +150,32 @@ class MatchsController < ApplicationController
   
   private
   
-   def match_params
-    params.require(:match).permit(:id, :opponent_id, :status)
-   end
+    def match_params
+     params.require(:match).permit(:id, :opponent_id, :status)
+    end
    
-   def broadcast(id)
+    def make_game(user1, user2)
+      game = Game.new()
+      first, second = make_turn(user1, user2)
+      game.board_init(first, second)
+      return game.id
+    end
+   
+    def make_turn(user1, user2)
+      tmp = rand(2)
+      if(tmp == 0)
+        a = user1
+        b = user2
+      else
+        a = user2
+        b = user1
+      end
+      return a, b
+    end
+   
+    def broadcast(id)
      
-     # チャット参加者に配信
-     ActionCable.server.broadcast('match_channel', user_id: id)
-   end
+      # チャット参加者に配信
+      ActionCable.server.broadcast('match_channel', user_id: id)
+    end
 end
