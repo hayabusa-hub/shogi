@@ -56,11 +56,17 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     assert_select "input[value=?]", "承諾"
     #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
     assert_select "input[value=?]", "拒否"
-    patch match_path(@michael.match, opponent_id: @alice.id, status: 3)
+    patch match_path(@alice.match, opponent_id: @michael.id, status: 3)
+    
+    #Michaelの確認
+    login_as(@michael)
     matchs = Match.find_by(user_id: @michael.id)
     assert matchs.user_id == @michael.id
     assert matchs.opponent_id == @alice.id
     assert matchs.status == 3
+    
+    #Aliceの確認
+    login_as(@alice)
     matchs = Match.find_by(user_id: @alice.id)
     assert matchs.user_id == @alice.id
     assert matchs.opponent_id == @michael.id
@@ -89,7 +95,7 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     assert matchs.user_id == @michael.id
     assert matchs.opponent_id == @alice.id
     # assert matchs.status == 3
-    follow_redirect!
+    #follow_redirect!
     
     #ゲーム画面へ移動する
     # assert_redirected_to

@@ -1,7 +1,8 @@
 class Game < ApplicationRecord
-  attr_accessor :board_hash
-  attr_accessor :first_oute_seq
-  attr_accessor :second_oute_seq
+  
+  # attr_accessor :board_hash
+  # attr_accessor :first_oute_seq
+  # attr_accessor :second_oute_seq
   
   # @board_hash = {}
   
