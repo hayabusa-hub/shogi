@@ -41,7 +41,6 @@ class MatchsController < ApplicationController
       redirect_to matchs_path
     else
       flash[:danger] = "対局室への移動へ失敗しました"
-      debugger
       redirect_to root_path
     end
   end
@@ -79,8 +78,9 @@ class MatchsController < ApplicationController
         
         msg = "対局開始！！！"
         
-        #render "shared/_game_create"
+        #ゲームモデルを作成
         game_id = make_game(@match.user_id, @opponent.user_id)
+        5.times {puts "*********game_id:#{game_id}***********"}
         @match.game_id = game_id
         @opponent.game_id = game_id
       end
@@ -158,6 +158,7 @@ class MatchsController < ApplicationController
       game = Game.new()
       first, second = make_turn(user1, user2)
       game.board_init(first, second)
+      debugger
       return game.id
     end
    
