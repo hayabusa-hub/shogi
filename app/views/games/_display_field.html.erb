@@ -1,5 +1,6 @@
 <p><%= "先手:#{@game.first_user_id}" %></p>
 <p><%= "後手:#{@game.second_user_id}" %></p>
+<p id="GameID" hidden><%= @game.id %></p>
 
 <% if @game.turn == 1 %>
  <% turn = "先手" %>

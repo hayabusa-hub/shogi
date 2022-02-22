@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   has_many :match
+  after_update {GameBroadCastJob.perform_later self}
   
   attr_accessor :board_hash
   attr_accessor :first_oute_seq

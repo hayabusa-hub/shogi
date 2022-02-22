@@ -1,19 +1,19 @@
 <h1>User wait for game</h1>
 <p>UserID:<span id="UserID"><%= "#{@user.id}" %></span></p>
 
-<% if @opponent_candi %>
-  <%= "#{@opponent_candi.user.id}から対戦を申し込まれています" %>
+<% if @opponent %>
+  <%= "#{@opponent.user.id}から対戦を申し込まれています" %>
   
   <%#= link_to "承諾", match_path(@opponent, opponent_id: @user.id, status: 3) , method: :patch %>
   <%= form_with(model: @match, method: :patch, local: true) do |f|%>
-    <div><%= hidden_field_tag :opponent_id, @opponent_candi.user_id %></div>
+    <div><%= hidden_field_tag :opponent_id, @opponent.user_id %></div>
     <div><%= hidden_field_tag :status, 3 %></div>
     <%= f.submit "承諾", class: "btn btn-default" %>
   <% end %>
   
   <%#= link_to "拒否", match_path(@opponent, opponent_id: @user.id, status: 2) , method: :patch %>
   <%= form_with(model: @match, method: :patch, local: true) do |f|%>
-    <div><%= hidden_field_tag :opponent_id, @opponent_candi.user_id %></div>
+    <div><%= hidden_field_tag :opponent_id, @opponent.user_id %></div>
     <div><%= hidden_field_tag :status, 2 %></div>
     <%= f.submit "拒否", class: "btn btn-default" %>
   <% end %>

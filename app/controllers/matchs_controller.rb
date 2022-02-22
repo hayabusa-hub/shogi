@@ -11,7 +11,6 @@ class MatchsController < ApplicationController
   
   def index()
     @opponent_candi = Match.find_by(opponent_id: @user.id, status: WAITING)
-    @opponent = Match.find_by(opponent_id: @user.id, status: PLAYING)
     @match = Match.find_by(user_id: @user.id)
     @matches = Match.where(status: STANDBY).paginate(page: params[:page])
     
@@ -57,8 +56,6 @@ class MatchsController < ApplicationController
     @opponent = Match.find_by(user_id: params[:opponent_id])
     @opponent.opponent_id = @match.user_id
     
-    5.times {puts "*********status:#{params[:status]}***********"}
-    
     #対戦要求を出した場合
     if(WAITING == @match.status)
       opp = User.find(@match.opponent_id)
@@ -82,7 +79,6 @@ class MatchsController < ApplicationController
         
         #ゲームモデルを作成
         game_id = make_game(@match.user_id, @opponent.user_id)
-        5.times {puts "*********game_id:#{game_id}***********"}
         @match.game_id = game_id
         @opponent.game_id = game_id
       end
