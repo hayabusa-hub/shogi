@@ -13,17 +13,15 @@ consumer.subscriptions.create("GameChannel", {
   received(data) {
     // Called when there's incoming data on the websocket for this channel
     console.log("game data received");
-    console.log(`game_id: ${data.game_id}`);
     
     // ゲームIDを取得
     var gameID = document.getElementById("GameID");
     console.log(`userID: ${gameID.textContent}`);
+    console.log(`game_id: ${data.game_id}`);
     
-    if((gameID != null) && (data.game_id != gameID.textContent))
+    if((gameID != null) && (data.game_id == gameID.textContent))
     {
       console.log("game page update");
-      console.log(`gameID: ${gameID.textContent}`);
-      console.log(`data.game_id:${data.game_id}`);
       
       window.location.href = `/games/${gameID}`;
     }
