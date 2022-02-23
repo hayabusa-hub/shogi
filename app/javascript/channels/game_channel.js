@@ -23,7 +23,7 @@ consumer.subscriptions.create("GameChannel", {
     {
       console.log("game page update");
       
-      window.location.href = `/games/${gameID}`;
+      window.location.href = `/games/${gameID.textContent}`;
     }
     else
     {
