@@ -10,7 +10,7 @@ class MatchsController < ApplicationController
   end
   
   def index()
-    @opponent_candi = Match.find_by(opponent_id: @user.id, status: WAITING)
+    @opponent = Match.find_by(opponent_id: @user.id, status: WAITING)
     @match = Match.find_by(user_id: @user.id)
     @matches = Match.where(status: STANDBY).paginate(page: params[:page])
     
