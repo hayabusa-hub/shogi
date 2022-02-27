@@ -46,33 +46,50 @@ class GamesController < ApplicationController
   def edit
   end
 
-  def update
-    before_pos = params[:before].to_i
-    after_pos = params[:after].to_i
-    piece = get_piece(@game, before_pos)
-    is_promote = get_is_promote(params[:promote])
+  # def update
+  #   before_pos = params[:before].to_i
+  #   after_pos = params[:after].to_i
+  #   piece = get_piece(@game, before_pos)
+  #   is_promote = get_is_promote(params[:promote])
     
-    if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
-      redirect_to game_path(@game)
-    else
-      flash[:danger] = @game.errors.messages[:name][0]
-      redirect_to game_path(@game)
-    end
-  end
+  #   unless @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
+  #     flash[:danger] = @game.errors.messages[:name][0]
+  #   end
+    
+  #   #ゲーム画面へ移動する
+  #   respond_to do |format|
+  #     format.html { redirect_to @game }
+  #     format.js
+  #   end
+  # end
   
-  def put_process
-    before_pos = params[:before].to_i
-    after_pos = params[:after].to_i
+  def update
+    before_pos = params[:game][:before].to_i
+    after_pos = params[:game][:after].to_i
     piece = get_piece(@game, before_pos)
-    
-    if @game.legal?(piece, before_pos, after_pos)
-      if @game.judge_promote(piece, before_pos, after_pos)
-        render("/games/confirm")
-      else
-        update()
-      end
+    is_promote = get_is_promote(params[:game][:promote])
+    if -1 == after_pos
+      redirect_to edit_game_path(@game, before: before_pos)
     else
-      redirect_to game_path(@game)
+      if @game.legal?(piece, before_pos, after_pos)
+        if (nil == is_promote) and (@game.judge_promote(piece, before_pos, after_pos))
+          render("/games/confirm")
+        else
+          if(nil == is_promote)
+            is_promote = false
+          end
+          if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
+          else
+            flash[:danger] = @game.errors.messages[:name][0]
+          end
+        end
+      end
+      
+      #ゲーム画面へ移動する
+      respond_to do |format|
+        format.html { redirect_to @game }
+        format.js
+      end
     end
   end
 
@@ -166,8 +183,10 @@ class GamesController < ApplicationController
     def get_is_promote(str)
       if str == "true"
         true
-      else
+      elsif str == "false"
         false
+      else
+        nil
       end
     end
 end

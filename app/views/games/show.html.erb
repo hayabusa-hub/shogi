@@ -1,7 +1,7 @@
 <h1>Games#show</h1>
 <p>Find me in app/views/games/show.html.erb</p>
 
-<%= render 'display_field', {edit: false, method: :get} %>
+<%= render 'display_field', {edit: false, method: :get, before: -1, after: -1, promote: -1} %>
 
 <div onclick="document.forms[0].submit()">
   <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true) do |f| %>
@@ -14,3 +14,9 @@
     <% end %>
   <% end %>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("td#<%= params[:before] %>").addClass("board_primary");
+  });
+</script>

@@ -37,4 +37,13 @@ module GamesHelper
       edit_game_path(@game, before: pos)
     end
   end
+  
+  def getParams(before, after, promote, pos)
+    if -1 == before
+      before = pos
+    elsif -1 == after
+      after = pos
+    end
+    return before, after, promote
+  end
 end

@@ -1,10 +1,10 @@
 <h1>Games#edit</h1>
 <p>Find me in app/views/games/edit.html.erb</p>
 
-<%= render 'display_field', {edit: true, method: :patch} %>
+<%= render 'display_field', {edit: true, method: :patch, before: params[:before].to_i, after: -1, promote: -1} %>
 
 <script type="text/javascript">
   $(document).ready(function() {
-    $("td#<%= params[:before] %>").addClass("board_primary");
+    $("img#<%= params[:before] %>").addClass("board_primary");
   });
 </script>

@@ -25,9 +25,20 @@
   <tr>
     <% for col in @order %>
     <% pos = row*9 + col %>
-    <td id="<%= pos %>"  class="board">
+    <td class="board">
       <% image_path = get_image_path(@game.board[pos], @game.turn_board[pos].to_i) %>
-      <%= link_to(image_tag(image_path, size: '50x50'), get_link_path(edit, pos), method: method) %>
+      <%#= link_to(image_tag(image_path, size: '50x50'), get_link_path(edit, pos), method: method) %>
+      <% before_pos, after_pos, isPromote = getParams(before, after, promote, pos)%>
+      
+      <%= form_with(model: @game, local: true) do |f| %>
+        <%= f.hidden_field :before,  value: before_pos  %>
+        <%= f.hidden_field :after,   value: after_pos  %>
+        <%= f.hidden_field :promote, value: isPromote  %>
+        <%= button_tag type: :submit do %>
+          <%= image_tag(image_path, size: '50x50', id: pos) %>
+        <% end %>
+      <% end %>
+      
     </td>
     <% end %>
     <td>
@@ -40,3 +51,4 @@
   <%= render 'display_own_piece', {class_name: :back, turn: @display^3, edit: edit, method: method} %>
 </table>
 </div>
+
