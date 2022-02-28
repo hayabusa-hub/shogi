@@ -7,6 +7,8 @@ class Game < ApplicationRecord
   attr_accessor :first_oute_seq
   attr_accessor :second_oute_seq
   
+  include GamesHelper
+  
   # @board_hash = {}
   
   # def initialize(attributes = {})
@@ -415,7 +417,7 @@ class Game < ApplicationRecord
     
     #持ち駒をすべて着手する
     for piece in 0..8 do
-      pos = 100*turn + piece
+      pos = getPosition(turn, piece)
       
       num = get_own_piece_num(piece.to_s, turn)
       

@@ -74,6 +74,7 @@ class GamesController < ApplicationController
       if @game.legal?(piece, before_pos, after_pos)
         if (nil == is_promote) and (@game.judge_promote(piece, before_pos, after_pos))
           render("/games/confirm")
+          return
         else
           if(nil == is_promote)
             is_promote = false

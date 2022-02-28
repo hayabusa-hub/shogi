@@ -141,10 +141,10 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     login_as(@michael)
     post matchs_path, params: {user_id: @michael.id}
     follow_redirect!
-    assert_not flash[:danger].empty?
+    assert_not flash[:info].empty?
     matchs = Match.find_by(user_id: @michael.id)
     assert matchs.user_id == @michael.id
-    assert matchs.opponent_id == 0
+    # assert matchs.opponent_id == 0
     assert matchs.status == 1
     get root_path
     get matchs_path

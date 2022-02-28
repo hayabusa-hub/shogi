@@ -93,8 +93,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       num = ownPieceCount(opp_piece, turn)
       before_piece = @game.board[before_pos]
       
-      get edit_game_path(@game), params: {before: before_pos}
-      patch game_path(@game, before: before_pos, after: i)
+      get edit_game_path(@game), params: {game: {before: before_pos}}
+      patch game_path(@game, game: {before: before_pos, after: i})
       
       # if(true == flash.empty?)
       #     debugger
@@ -127,8 +127,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         num = ownPieceCount(opp_piece, turn)
         
         # 着手
-        get edit_game_path(@game), params: {before: before_pos}
-        patch game_path(@game, before: before_pos, after: i)
+        get edit_game_path(@game), params: {game: {before: before_pos}}
+        patch game_path(@game, game: {before: before_pos, after: i, promote: false})
         # if(false == flash.empty?)
         #   debugger
         # end
@@ -177,8 +177,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         flash[:danger] = nil
         
         # 着手
-        get edit_game_path(@game), params: {before: before_pos}
-        patch game_path(@game, before: before_pos, after: i)
+        get edit_game_path(@game), params: {game: {before: before_pos}}
+        patch game_path(@game, game: {before: before_pos, after: i, promote: false})
         if(false == flash.empty?)
           debugger
         end
@@ -262,7 +262,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       
       # 着手
       get edit_game_path(@game), params: {before: before}
-      patch "/games/#{@game.id}/putProcess?before=#{before}&amp;after=#{after}"
+      patch game_path(@game, game: {before: before, after: after, promote: -1})
+      #patch "/games/#{@game.id}/putProcess?before=#{before}&amp;after=#{after}"
       
       if judge
         assert_select "div#backRegion", count: 1
@@ -301,8 +302,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @game.save
     
     # 着手
-    get edit_game_path(@game), params: {before: before_pos}
-    patch game_path(@game, before: before_pos, after: after_pos, promote: promote)
+    get edit_game_path(@game), params: {game: {before: before_pos}}
+    patch game_path(@game, game: {before: before_pos, after: after_pos, promote: promote})
     
     after_piece = @game.get_promote_piece(piece)
     
@@ -1656,8 +1657,9 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     if judge
       before_pos = 21
       after_pos = 13
-      get edit_game_path(@game), params: {before: before_pos}
-      patch game_path(@game, before: before_pos, after: after_pos)
+      get edit_game_path(@game), params: {game: {before: before_pos}}
+      patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false})
+      
       follow_redirect!
       assert @game.reload.winner == @FIRST
       assert_select "div#finish", count: 1
@@ -1665,13 +1667,13 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     else
       before_pos = 18
       after_pos = 9
-      get edit_game_path(@game), params: {before: before_pos}
-      patch game_path(@game, before: before_pos, after: after_pos)
+      get edit_game_path(@game), params: {game: {before: before_pos} }
+      patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false} )
       
       before_pos = 59
       after_pos = 67
-      get edit_game_path(@game), params: {before: before_pos}
-      patch game_path(@game, before: before_pos, after: after_pos)
+      get edit_game_path(@game), params: {game: {before: before_pos} }
+      patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false} )
       
       follow_redirect!
       assert @game.reload.winner == @SECOND
@@ -1706,8 +1708,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       # before_piece = @game.board[before_pos]
     
       #着手する
-      get edit_game_path(@game), params: {before: before_pos}
-      patch game_path(@game, before: before_pos, after: after_pos)
+      get edit_game_path(@game), params: {game: {before: before_pos}}
+      patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false})
       
       if is_judge
         # 正しく着手されているか
@@ -1797,8 +1799,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     num = ownPieceCount(piece, turn)
     
     #着手する
-    get edit_game_path(@game), params: {before: before_pos}
-    patch game_path(@game, before: before_pos, after: after_pos)
+    get edit_game_path(@game), params: {game: {before: before_pos}}
+    patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false})
     
     if is_judge
       #着手成功

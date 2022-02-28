@@ -46,4 +46,8 @@ module GamesHelper
     end
     return before, after, promote
   end
+  
+  def getPosition(turn, piece)
+    return 100*turn + piece.to_i
+  end
 end

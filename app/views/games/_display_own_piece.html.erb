@@ -5,7 +5,19 @@
     <% if num >= 1 %>
     <li>
       <% image_path = get_image_path(piece.to_s, turn) %>
-      <%= link_to(image_tag(image_path, size: '35x35'), get_link_path(edit, 100*turn + piece), method: method) %>
+      <%#= link_to(image_tag(image_path, size: '35x35'), get_link_path(edit, 100*turn + piece), method: method) %>
+      
+      <% pos = getPosition(turn, piece)   %>
+      
+      <%= form_with(model: @game, local: true) do |f| %>
+        <%= f.hidden_field :before,  value: pos %>
+        <%= f.hidden_field :after,   value: -1  %>
+        <%= f.hidden_field :promote, value: -1  %>
+        <%= button_tag type: :submit do %>
+          <%= image_tag(image_path, size: '50x50', id: pos) %>
+        <% end %>
+      <% end %>
+      
       <% if num >= 2 %>
         <%= " × #{num}" %>
       <% end %>

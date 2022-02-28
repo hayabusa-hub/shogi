@@ -54,10 +54,13 @@ class MatchsController < ApplicationController
     @match.status = params[:status]
     
     @opponent = Match.find_by(user_id: params[:opponent_id])
-    @opponent.opponent_id = @match.user_id
+    
     
     #対戦要求を出した場合
     if(WAITING == @match.status)
+      #状態を更新
+      @opponent.opponent_id = @match.user_id
+      
       opp = User.find(@match.opponent_id)
       msg = "#{opp.name}へ対戦要求を出しました"
     else

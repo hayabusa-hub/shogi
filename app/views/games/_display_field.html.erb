@@ -47,8 +47,8 @@
   </tr>
   <% end %>
   
-  <%= render 'display_own_piece', {class_name: "front", turn: @display, edit: edit, method: method} %>
-  <%= render 'display_own_piece', {class_name: :back, turn: @display^3, edit: edit, method: method} %>
+  <%= render 'display_own_piece', {class_name: "front", turn: @display} %>
+  <%= render 'display_own_piece', {class_name: :back, turn: @display^3} %>
 </table>
 </div>
 
