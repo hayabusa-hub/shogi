@@ -168,7 +168,7 @@ class Game < ApplicationRecord
     
     ############################
     if nil == move[pieceConvert[piece.to_sym]]
-      #debugger
+      # debugger
     end
     ############################
     

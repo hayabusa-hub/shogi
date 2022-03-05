@@ -83,7 +83,6 @@ class GamesController < ApplicationController
         (@game.judge_promote(piece, before_pos, after_pos))
         
         #成駒判定
-        #render("/games/confirm")
         redirect_to "/games/#{@game.id}/confirm?before=#{before_pos}&amp;after=#{after_pos}"
         return
       else
@@ -92,10 +91,11 @@ class GamesController < ApplicationController
         end
         
         if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
-          respond_to do |format|
-            format.html { redirect_to @game }
-            format.js
-          end
+          # respond_to do |format|
+          #   format.html { redirect_to @game }
+          #   format.js
+          # end
+          redirect_to @game 
         else
           flash[:danger] = @game.errors.messages[:name][0]
           redirect_to @game 
