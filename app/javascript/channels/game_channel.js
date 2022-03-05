@@ -12,6 +12,7 @@ consumer.subscriptions.create("GameChannel", {
 
   received(data) {
     // Called when there's incoming data on the websocket for this channel
+    
     console.log("game data received");
     
     // ゲームIDを取得
@@ -23,7 +24,8 @@ consumer.subscriptions.create("GameChannel", {
     {
       console.log("game page update");
       
-      window.location.href = `/games/${gameID.textContent}`;
+      /*global $*/
+      $.ajax({url: `/games/${gameID.textContent}`, type: "GET"});
     }
     else
     {

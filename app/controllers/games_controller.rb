@@ -75,7 +75,7 @@ class GamesController < ApplicationController
       # end
       
       #ターンが正しいか
-      
+      #
       redirect_to edit_game_path(@game, before: before_pos)
     else
       if @game.legal?(piece, before_pos, after_pos) and 

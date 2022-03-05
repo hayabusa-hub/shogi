@@ -13,7 +13,7 @@ gem 'devise-i18n'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails',      '6.0.3'
 # jQuery
-# gem 'jquery-rails'
+gem 'jquery-rails', '4.4.0'
 # Use Active Model has_secure_password
 gem 'bcrypt',      '3.1.13'
 # Use paginate function
