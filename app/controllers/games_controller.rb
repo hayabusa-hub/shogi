@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :init, only: [:show, :edit, :update, :edit_board, :put_process]
+  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm]
   
   include SessionsHelper
   
@@ -69,28 +69,39 @@ class GamesController < ApplicationController
     piece = get_piece(@game, before_pos)
     is_promote = get_is_promote(params[:game][:promote])
     if -1 == after_pos
+      # respond_to do |format|
+      #   format.html { redirect_to edit_game_path(@game, before: before_pos) }
+      #   format.js
+      # end
+      
+      #ターンが正しいか
+      
       redirect_to edit_game_path(@game, before: before_pos)
     else
-      if @game.legal?(piece, before_pos, after_pos)
-        if (nil == is_promote) and (@game.judge_promote(piece, before_pos, after_pos))
-          render("/games/confirm")
-          return
+      if @game.legal?(piece, before_pos, after_pos) and 
+        (nil == is_promote) and 
+        (@game.judge_promote(piece, before_pos, after_pos))
+        
+        #成駒判定
+        #render("/games/confirm")
+        redirect_to "/games/#{@game.id}/confirm?before=#{before_pos}&amp;after=#{after_pos}"
+        return
+      else
+        if(nil == is_promote)
+          is_promote = false
+        end
+        
+        if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
+          respond_to do |format|
+            format.html { redirect_to @game }
+            format.js
+          end
         else
-          if(nil == is_promote)
-            is_promote = false
-          end
-          if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
-          else
-            flash[:danger] = @game.errors.messages[:name][0]
-          end
+          flash[:danger] = @game.errors.messages[:name][0]
+          redirect_to @game 
         end
       end
       
-      #ゲーム画面へ移動する
-      respond_to do |format|
-        format.html { redirect_to @game }
-        format.js
-      end
     end
   end
 
@@ -111,6 +122,11 @@ class GamesController < ApplicationController
     if @game.save
       redirect_to game_path(@game)
     end
+  end
+  
+  def confirm
+    @before_pos = params[:before].to_i
+    @after_pos  = params[:after].to_i
   end
   
   private

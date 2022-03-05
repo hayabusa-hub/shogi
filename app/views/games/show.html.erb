@@ -3,8 +3,8 @@
 
 <%= render 'display_field', {before: -1, after: -1, promote: -1} %>
 
-<div onclick="document.forms[0].submit()">
-  <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true) do |f| %>
+<div class="displayCheckBox" onclick="document.getElementById('editBoard').submit()">
+  <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true, id: "editBoard") do |f| %>
     <% if @my_turn == @first %>
       <%= f.label "反転(先手)" %>
       <%= f.check_box :first_board, checked: is_reverse?(@display) %>
@@ -14,9 +14,3 @@
     <% end %>
   <% end %>
 </div>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("td#<%= params[:before] %>").addClass("board_primary");
-  });
-</script>

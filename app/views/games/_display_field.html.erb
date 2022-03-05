@@ -30,7 +30,7 @@
       <%#= link_to(image_tag(image_path, size: '50x50'), get_link_path(edit, pos), method: method) %>
       <% before_pos, after_pos, isPromote = getParams(before, after, promote, pos)%>
       
-      <%= form_with(model: @game, local: true) do |f| %>
+      <%= form_with(model: @game, local: false) do |f| %>
         <%= f.hidden_field :before,  value: before_pos  %>
         <%= f.hidden_field :after,   value: after_pos  %>
         <%= f.hidden_field :promote, value: isPromote  %>

@@ -9,7 +9,7 @@
       
       <% pos = getPosition(turn, piece)   %>
       
-      <%= form_with(model: @game, local: true) do |f| %>
+      <%= form_with(model: @game, local: false) do |f| %>
         <%= f.hidden_field :before,  value: pos %>
         <%= f.hidden_field :after,   value: -1  %>
         <%= f.hidden_field :promote, value: -1  %>

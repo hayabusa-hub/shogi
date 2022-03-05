@@ -230,54 +230,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     
   end
   
-  def checkDisplaySelect(array1, array2, array3, piece, array4, turn)
-    
-    initial = "000000000" + 
-              "000000000" + 
-              "000000000" + 
-              "000000000" + 
-              "000000000" +
-              "000000000" +
-              "000000000" +
-              "000000000" +
-              "000000000"
-    
-    array1.length.times do |i|
-      
-      #手番を強引に変更する
-      @game.turn = turn
-      set_turn(turn)
-      
-      #ゲーム画面を更新
-      @game.board = initial
-      @game.board[array1[i].to_i] = piece
-      @game.turn_board = initial
-      @game.turn_board[array1[i].to_i] = turn.to_s
-      @game.save
-      
-      before = array1[i]
-      after = array2[i]
-      judge = array3[i]
-      after_piece = array4[i]
-      
-      # 着手
-      get edit_game_path(@game), params: {before: before}
-      patch game_path(@game, game: {before: before, after: after, promote: -1})
-      #patch "/games/#{@game.id}/putProcess?before=#{before}&amp;after=#{after}"
-      
-      if judge
-        assert_select "div#backRegion", count: 1
-      else
-        if @game.reload.board[after] != after_piece
-          debugger
-        end
-        assert_select "div#backRegion", count: 0
-        assert @game.reload.board[after] == after_piece
-      end
-      
-    end
-  end
-  
   def check_promote(before_pos, after_pos, promote, piece, turn)
     
     initial = "000000000" + 
@@ -1545,9 +1497,57 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   end
   
   ###成判定
+  def checkDisplaySelect(array1, array2, array3, piece, array4, turn)
+    
+    initial = "000000000" + 
+              "000000000" + 
+              "000000000" + 
+              "000000000" + 
+              "000000000" +
+              "000000000" +
+              "000000000" +
+              "000000000" +
+              "000000000"
+    
+    array1.length.times do |i|
+      
+      #手番を強引に変更する
+      @game.turn = turn
+      set_turn(turn)
+      
+      #ゲーム画面を更新
+      @game.board = initial
+      @game.board[array1[i].to_i] = piece
+      @game.turn_board = initial
+      @game.turn_board[array1[i].to_i] = turn.to_s
+      @game.save
+      
+      before = array1[i]
+      after = array2[i]
+      judge = array3[i]
+      after_piece = array4[i]
+      
+      # 着手
+      get edit_game_path(@game), params: {before: before}
+      patch game_path(@game, game: {before: before, after: after})
+      
+      follow_redirect!
+      
+      if judge
+        assert_template "games/confirm"
+        assert_select "div#backRegion", count: 1
+      else
+        if @game.reload.board[after] != after_piece
+          debugger
+        end
+        assert_template "games/show"
+        assert_select "div#backRegion", count: 0
+        assert @game.reload.board[after] == after_piece
+      end
+    end
+  end
   
   test "display_promote" do
-    
     #歩
     checkDisplaySelect([36, 27, 18, 9],  [27, 18, 9, 0],   [false, true, true, false], "1", ["1", "9", "9", "9"], 1)
     checkDisplaySelect([36, 45, 54, 63], [45, 54, 63, 72], [false, true, true, false], "1", ["1", "9", "9", "9"], 2)
