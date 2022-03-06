@@ -1,36 +1,36 @@
-<p><%= "先手:#{@game.first_user_id}" %></p>
-<p><%= "後手:#{@game.second_user_id}" %></p>
-<p id="GameID" hidden><%= @game.id %></p>
+<p><%= "先手:#{game.first_user_id}" %></p>
+<p><%= "後手:#{game.second_user_id}" %></p>
+<p id="GameID" hidden><%= game.id %></p>
 
-<% if @game.turn == 1 %>
+<% if game.turn == GamesHelper::FIRST %>
  <% turn = "先手" %>
-<% elsif @game.turn == 2 %>
+<% elsif game.turn == GamesHelper::SECOND %>
  <% turn = "後手" %>
 <% else %>
  <% turn = "エラーが発生しました" %>
 <% end %>
 <p><%= "現在の手番:#{turn}"%></p>
 
-<div class="board_table">
-<table border=1>
+<!--<div class="board_list">-->
+<table border=1 class="board_table">
   <tr>
-    <% for col in @order %>
+    <% for col in order %>
     <td>
-      <%= @X[col]%>
+      <%= GamesHelper::X[col]%>
     </td>
     <% end %>
   </tr>
 
-  <% for row in @order %>
+  <% for row in order %>
   <tr>
-    <% for col in @order %>
+    <% for col in order %>
     <% pos = row*9 + col %>
     <td class="board">
-      <% image_path = get_image_path(@game.board[pos], @game.turn_board[pos].to_i) %>
+      <% image_path = get_image_path(game.board[pos], game.turn_board[pos].to_i) %>
       <%#= link_to(image_tag(image_path, size: '50x50'), get_link_path(edit, pos), method: method) %>
       <% before_pos, after_pos, isPromote = getParams(before, after, promote, pos)%>
       
-      <%= form_with(model: @game, local: false) do |f| %>
+      <%= form_with(model: game, local: false) do |f| %>
         <%= f.hidden_field :before,  value: before_pos  %>
         <%= f.hidden_field :after,   value: after_pos  %>
         <%= f.hidden_field :promote, value: isPromote  %>
@@ -42,13 +42,18 @@
     </td>
     <% end %>
     <td>
-      <%= @Y[row] %>
+      <%= GamesHelper::Y[row] %>
     </td>
   </tr>
   <% end %>
   
-  <%= render 'display_own_piece', {class_name: "front", turn: @display} %>
-  <%= render 'display_own_piece', {class_name: :back, turn: @display^3} %>
+  <!--<div id="frontOwnPiece">-->
+    <%#= render 'display_own_piece', {game: game, class_name: :front, turn: display} %>
+  <!--</div>-->
+  <!--<div id="backOwnPiece">-->
+    <%#= render 'display_own_piece', {game: game, class_name: :back, turn: display^3} %>
+  <!--</div>-->
+  
 </table>
-</div>
+<!--</div>-->
 

@@ -1,14 +1,26 @@
 <h1>Games#show</h1>
 <p>Find me in app/views/games/show.html.erb</p>
 
-<%= render 'display_field', {before: -1, after: -1, promote: -1} %>
+<div class="displayField">
+  <%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1} %>
+  
+  <div class="frontOwnPiece">
+    <%= render 'display_own_piece', {game: @game, class_name: :front, turn: @display} %>
+  </div>
+  
+  <div class="backOwnPiece">
+    <%= render 'display_own_piece', {game: @game, class_name: :back, turn: @display^3} %>
+  </div>
+</div>
+
+
 
 <div class="displayCheckBox" onclick="document.getElementById('editBoard').submit()">
   <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true, id: "editBoard") do |f| %>
-    <% if @my_turn == @first %>
+    <% if @my_turn == GamesHelper::FIRST %>
       <%= f.label "反転(先手)" %>
       <%= f.check_box :first_board, checked: is_reverse?(@display) %>
-    <% elsif @my_turn == @second %>
+    <% elsif @my_turn == GamesHelper::SECOND %>
       <%= f.label "反転(後手)" %>
       <%= f.check_box :second_board, checked: is_reverse?(@display) %>
     <% end %>

@@ -4,6 +4,7 @@ class MatchsController < ApplicationController
   before_action :init
   
   include SessionsHelper
+  include GamesHelper
   
   def init
     @user = current_user()

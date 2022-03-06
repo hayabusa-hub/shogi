@@ -2,15 +2,16 @@ class GamesController < ApplicationController
   before_action :init, only: [:show, :edit, :update, :edit_board, :confirm]
   
   include SessionsHelper
+  include GamesHelper
   
   def init
     @user = current_user()
     @game = Game.find(params[:id])
     
-    @first = FIRST
-    @second = SECOND
-    @X = X
-    @Y = Y
+    # @first = FIRST
+    # @second = SECOND
+    # @X = X
+    # @Y = Y
     
     @my_turn = my_turn(@game)
     @display = display_mode(@game, @my_turn)
@@ -68,6 +69,7 @@ class GamesController < ApplicationController
     after_pos = params[:game][:after].to_i
     piece = get_piece(@game, before_pos)
     is_promote = get_is_promote(params[:game][:promote])
+    
     if -1 == after_pos
       # respond_to do |format|
       #   format.html { redirect_to edit_game_path(@game, before: before_pos) }

@@ -57,38 +57,74 @@ li{
   margin: 0;
 }
 
-.board_table{
-  position: relative;
-  width: 480px;
-  left: 0px;
-  // right: 0;
-  // margin: auto;
-  // align: center;
-  margin: auto;
-}
-
 .board_primary{
   color: blue;
   background-color:rgba(0,0,255,0.7);
 }
 
+.board_table{
+  // position: relative;
+  // width: 480px;
+  margin: auto;
+  // margin-left: 0;
+  // margin-right: 0;
+  // display: inline-block;
+  align: center;
+  // vertical-align: middle;
+  
+  // display: block;
+  // margin-left: auto;
+  // margin-right: auto;
+}
+
+// ボード
+.displayField{
+  position: relative;
+}
+
+//手前持ち駒の位置
 .front{
   position: absolute;
-  right: -250px;
+  right: 100px;
   bottom: 0;
-  // background-color: rgb(255,255,0);
+  .image{
+    display: inline-block;
+  }
 }
 
+// 奥持ち駒の位置
 .back{
   position: absolute;
-  left: -150px;
-  top: 0;
-  // background-color: rgb(255,255,0);
+  left: 100px;
+  top: 100px;
+  .image{
+    display: inline-block
+  }
 }
 
-.displayCheckBox{
+.center{
   // position: absolute;
-  // top: 300px;
+  text-align : center;
+  // top: 50%;
+  transform: translate(0, 50%)
+}
+
+// 盤面反転用のチェックボックス
+.displayCheckBox{
+}
+
+.notPromote{
+  position: absolute;
+  text-align : center;
+  left: 45%;
+  top: 50%;
+}
+
+.promote{
+  position: absolute;
+  text-align : center;
+  left: 50%;
+  top: 50%;
 }
 
 // .mask{

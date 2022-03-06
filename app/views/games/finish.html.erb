@@ -11,11 +11,12 @@
     <% image_path = "/shogi/pose_draw.png" %>
   <% end %>
   
-  <%= link_to image_tag(image_path), match_path(@user.match.id), method: :delete,
-  data: 
-  { confirm: "ホーム画面に戻りますか？"
-  } %>
+  <div class="center">
+    <%= link_to image_tag(image_path), match_path(@user.match.id), method: :delete,
+      data: 
+      { confirm: "ホーム画面に戻りますか？"} %>
+  </div>
   
 </div>
 
-<%= render 'display_field', {before: -1, after: -1, promote: -1} %>
+<%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1} %>

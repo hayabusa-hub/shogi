@@ -11,26 +11,27 @@
   
   <%#= link_to(image_tag(image_path_not_promote, size: '50x50'), game_path(@game, before: params[:before], after: params[:after], promote: false), method: :patch) %>
   <%#= link_to(image_tag(image_path_promote, size: '50x50'), game_path(@game, before: params[:before], after: params[:after], promote: true), method: :patch) %>
-  
-  <%= form_with(model: @game, local: false) do |f| %>
-    <%= f.hidden_field :before,  value: @before_pos %>
-    <%= f.hidden_field :after,   value: @after_pos  %>
-    <%= f.hidden_field :promote, value: false  %>
-    <%= button_tag type: :submit do %>
-      <%= image_tag(image_path_not_promote, size: '50x50', id: @before_pos) %>
+  <div class="notPromote">
+    <%= form_with(model: @game, local: false) do |f| %>
+      <%= f.hidden_field :before,  value: @before_pos %>
+      <%= f.hidden_field :after,   value: @after_pos  %>
+      <%= f.hidden_field :promote, value: false  %>
+      <%= button_tag type: :submit do %>
+        <%= image_tag(image_path_not_promote, size: '50x50', id: @before_pos) %>
+      <% end %>
     <% end %>
-  <% end %>
+  </div>
   
-  <%= form_with(model: @game, local: false) do |f| %>
-    <%= f.hidden_field :before,  value: @before_pos %>
-    <%= f.hidden_field :after,   value: @after_pos  %>
-    <%= f.hidden_field :promote, value: true  %>
-    <%= button_tag type: :submit do %>
-      <%= image_tag(image_path_promote, size: '50x50', id: @before_pos) %>
+  <div class="promote">
+    <%= form_with(model: @game, local: false) do |f| %>
+      <%= f.hidden_field :before,  value: @before_pos %>
+      <%= f.hidden_field :after,   value: @after_pos  %>
+      <%= f.hidden_field :promote, value: true  %>
+      <%= button_tag type: :submit do %>
+        <%= image_tag(image_path_promote, size: '50x50', id: @before_pos) %>
+      <% end %>
     <% end %>
-  <% end %>
-  
-  
+  </div>
 </div>
 
-<%= render 'display_field', {before: -1, after: -1, promote: -1}%>
+<%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}%>

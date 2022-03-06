@@ -1,7 +1,6 @@
-<div>
 <ul class="<%=class_name%>">
   <% for piece in 1..8 do %>
-    <% num = @game.get_own_piece_num(piece.to_s, turn)%>
+    <% num = game.get_own_piece_num(piece.to_s, turn)%>
     <% if num >= 1 %>
     <li>
       <% image_path = get_image_path(piece.to_s, turn) %>
@@ -9,7 +8,7 @@
       
       <% pos = getPosition(turn, piece)   %>
       
-      <%= form_with(model: @game, local: false) do |f| %>
+      <%= form_with(model: game, local: false, class: "image") do |f| %>
         <%= f.hidden_field :before,  value: pos %>
         <%= f.hidden_field :after,   value: -1  %>
         <%= f.hidden_field :promote, value: -1  %>
@@ -25,4 +24,3 @@
     <% end %>
   <% end %>
 </ul>
-</div>
