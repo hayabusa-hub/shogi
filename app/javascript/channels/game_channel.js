@@ -25,7 +25,7 @@ consumer.subscriptions.create("GameChannel", {
       console.log("game page update");
       
       /*global $*/
-      $.ajax({url: `/games/${gameID.textContent}`, type: "GET"});
+      $.ajax({url: `/games/${data.game_id}/update_board`, type: "GET"});
     }
     else
     {

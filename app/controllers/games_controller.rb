@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm]
+  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm, :update_board]
   
   include SessionsHelper
   include GamesHelper
@@ -129,6 +129,12 @@ class GamesController < ApplicationController
   def confirm
     @before_pos = params[:before].to_i
     @after_pos  = params[:after].to_i
+  end
+  
+  def update_board
+    respond_to do |format|
+      format.js
+    end
   end
   
   private

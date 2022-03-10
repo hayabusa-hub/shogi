@@ -31,7 +31,7 @@ class Game < ApplicationRecord
     
     ##########################
     if nil == self.board_hash
-      debugger
+      #debugger
     end
     #########################
   end
@@ -83,7 +83,7 @@ class Game < ApplicationRecord
     
     ##########################
     if nil == self.board_hash
-      debugger
+      #debugger
     end
     #########################
   end
@@ -630,7 +630,7 @@ class Game < ApplicationRecord
       
       ########################
       if nil == self.board_hash
-        debugger
+        #debugger
       end
       ########################
       if nil == @board_hash[key]
@@ -663,7 +663,7 @@ class Game < ApplicationRecord
       elsif 2 == turn
         self.second_oute_seq
       else
-        debugger
+        #debugger
       end
     end
     
@@ -671,7 +671,7 @@ class Game < ApplicationRecord
       key = (board + turn_board + own_piece).to_sym
       
       if self.board_hash[key] >= 4
-        debugger
+        #debugger
         if self.first_oute_seq
           #後手勝ち
           self.winner = 2

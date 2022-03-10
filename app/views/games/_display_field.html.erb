@@ -2,14 +2,14 @@
 <p><%= "後手:#{game.second_user_id}" %></p>
 <p id="GameID" hidden><%= game.id %></p>
 
-<% if game.turn == GamesHelper::FIRST %>
- <% turn = "先手" %>
-<% elsif game.turn == GamesHelper::SECOND %>
- <% turn = "後手" %>
-<% else %>
- <% turn = "エラーが発生しました" %>
-<% end %>
-<p><%= "現在の手番:#{turn}"%></p>
+<!--<% if game.turn == GamesHelper::FIRST %>-->
+<!-- <% turn = "先手" %>-->
+<!--<% elsif game.turn == GamesHelper::SECOND %>-->
+<!-- <% turn = "後手" %>-->
+<!--<% else %>-->
+<!-- <% turn = "エラーが発生しました" %>-->
+<!--<% end %>-->
+<!--<p><%= "現在の手番:#{turn}"%></p>-->
 
 <!--<div class="board_list">-->
 <table border=1 class="board_table">
