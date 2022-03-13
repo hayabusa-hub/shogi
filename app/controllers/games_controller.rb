@@ -16,6 +16,9 @@ class GamesController < ApplicationController
   end
 
   def show
+    if @game.winner != 0
+      render("/games/finish")
+    end
   end
 
   def new

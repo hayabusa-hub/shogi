@@ -12,11 +12,15 @@ module GamesHelper
   PLAYING = 3 #ゲーム中
   
   def get_image_path(piece, turn)
-    image_path = "/shogi/"
-    if (turn != @display) && (turn != 0)
-      image_path += "opp_"
+    image_path = ""
+    if nil != piece
+      image_path = "/shogi/"
+      if (turn != @display) && (turn != 0)
+        image_path += "opp_"
+      end
+      image_path += piece.to_s + ".png"
     end
-    image_path += piece.to_s + ".png"
+    
     return image_path
   end
   
