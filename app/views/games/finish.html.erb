@@ -1,22 +1,21 @@
-<h1>Games/finish</h1>
-<p>Find me in app/views/games/edit.html.erb</p>
+<!--<h1>Games/finish</h1>-->
+<!--<p>Find me in app/views/games/edit.html.erb</p>-->
 
-<div id="finish">
-  <% winner = params[:before].to_s %>
-  <% if @game.winner == @my_turn %>
-    <% image_path = "/shogi/pose_win.png" %>
-  <% elsif @game.winner == @my_turn^3 %>
-    <% image_path = "/shogi/pose_lose.png" %>
-  <% else %>
-    <% image_path = "/shogi/pose_draw.png" %>
-  <% end %>
+<!--<div id="finish">-->
+<!--  <% winner = params[:before].to_s %>-->
+<!--  <% if @game.winner == @my_turn %>-->
+<!--    <% image_path = "/shogi/pose_win.png" %>-->
+<!--  <% elsif @game.winner == @my_turn^3 %>-->
+<!--    <% image_path = "/shogi/pose_lose.png" %>-->
+<!--  <% else %>-->
+<!--    <% image_path = "/shogi/pose_draw.png" %>-->
+<!--  <% end %>-->
   
-  <div class="center">
-    <%= link_to image_tag(image_path), match_path(@user.match.id), method: :delete,
-      data: 
-      { confirm: "ホーム画面に戻りますか？"} %>
-  </div>
-  
-</div>
+<!--  <div class="center">-->
+<!--    <%= link_to image_tag(image_path), match_path(@user.match.id), method: :delete,-->
+<!--      data: -->
+<!--      { confirm: "ホーム画面に戻りますか？"} %>-->
+<!--  </div>-->
+<!--</div>-->
 
-<%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1} %>
+<!--<%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1} %>-->

@@ -3,17 +3,7 @@
 
 <div class="displayField">
   <%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1} %>
-  
-  <div class="frontOwnPiece">
-    <%= render 'display_own_piece', {game: @game, class_name: :front, turn: @display} %>
-  </div>
-  
-  <div class="backOwnPiece">
-    <%= render 'display_own_piece', {game: @game, class_name: :back, turn: @display^3} %>
-  </div>
 </div>
-
-
 
 <div class="displayCheckBox" onclick="document.getElementById('editBoard').submit()">
   <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true, id: "editBoard") do |f| %>

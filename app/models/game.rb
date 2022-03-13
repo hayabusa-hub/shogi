@@ -1,7 +1,7 @@
 class Game < ApplicationRecord
   has_many :match
   # after_update {GameBroadCastJob.perform_later self}
-  after_update {ActionCable.server.broadcast("game_channel", game_id: self.id)}
+  #after_update {ActionCable.server.broadcast("game_channel", game_id: self.id)}
   
   attr_accessor :board_hash
   attr_accessor :first_oute_seq

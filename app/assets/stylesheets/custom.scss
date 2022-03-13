@@ -49,7 +49,7 @@ li{
 }
 
 /* game  */ 
-.board{
+.board_cell{
   // list-style: none;
   // margin-bottom: 10px;
   // display: inline-block;
@@ -60,6 +60,12 @@ li{
 .board_primary{
   color: blue;
   background-color:rgba(0,0,255,0.7);
+}
+
+.displayBoard{
+  position: relative;
+  margin: auto;
+  align: center;
 }
 
 .board_table{
@@ -79,14 +85,14 @@ li{
 
 // ボード
 .displayField{
-  position: relative;
+  // position: relative;
 }
 
 //手前持ち駒の位置
 .front{
   position: absolute;
-  right: 100px;
-  bottom: 0;
+  right: -100px;
+  bottom: 0px;
   .image{
     display: inline-block;
   }
@@ -95,11 +101,17 @@ li{
 // 奥持ち駒の位置
 .back{
   position: absolute;
-  left: 100px;
-  top: 100px;
+  left: -100px;
+  top: 20px;
   .image{
-    display: inline-block
+    display: inline-block;
   }
+}
+
+// ボードのヘッダーの位置
+.textCenter{
+  // margin: auto;
+  text-align : center;
 }
 
 .center{

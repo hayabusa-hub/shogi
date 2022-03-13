@@ -1,2 +1,2 @@
 $(".displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}) %>");
-$("#backRegion").hide();
+$("img#<%= @before_pos %>").removeClass("board_primary");

@@ -7,12 +7,6 @@ class GamesController < ApplicationController
   def init
     @user = current_user()
     @game = Game.find(params[:id])
-    
-    # @first = FIRST
-    # @second = SECOND
-    # @X = X
-    # @Y = Y
-    
     @my_turn = my_turn(@game)
     @display = display_mode(@game, @my_turn)
     @order = get_order(@display)
@@ -22,85 +16,81 @@ class GamesController < ApplicationController
   end
 
   def show
-    if @game.winner != 0
-      render("/games/finish")
-    end
   end
 
   def new
   end
 
   def create
-    # debugger
-    # first, second = make_turn(params[:user1], params[:user2])
-    # @game = Game.new()
-    # @game.board_init(first, second)
-    
-    # if @game.save
-    #   redirect_to game_path(@game)
-    # else
-    #   flash[:danger] = "error has occurred"
-    #   redirect_to matchs_path
-    # end
   end
 
   def edit
   end
-
-  # def update
-  #   before_pos = params[:before].to_i
-  #   after_pos = params[:after].to_i
-  #   piece = get_piece(@game, before_pos)
-  #   is_promote = get_is_promote(params[:promote])
-    
-  #   unless @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
-  #     flash[:danger] = @game.errors.messages[:name][0]
-  #   end
-    
-  #   #ゲーム画面へ移動する
-  #   respond_to do |format|
-  #     format.html { redirect_to @game }
-  #     format.js
-  #   end
-  # end
   
   def update
-    before_pos = params[:game][:before].to_i
-    after_pos = params[:game][:after].to_i
-    piece = get_piece(@game, before_pos)
-    is_promote = get_is_promote(params[:game][:promote])
+    @before_pos = params[:game][:before].to_i
+    @after_pos = params[:game][:after].to_i
+    @piece = get_piece(@game, @before_pos)
+    @is_promote = get_is_promote(params[:game][:promote])
     
-    if -1 == after_pos
-      # respond_to do |format|
-      #   format.html { redirect_to edit_game_path(@game, before: before_pos) }
-      #   format.js
-      # end
+    #debug用
+    5.times {puts "********* params    : #{params} ***********"}
+    5.times {puts "********* before_pos: #{@before_pos} ***********"}
+    5.times {puts "********* after_pos : #{@after_pos} ***********"}
+    
+    if -1 == @after_pos
+      #ターンが正しいか確認する
+      # if 
       
-      #ターンが正しいか
-      #
-      redirect_to edit_game_path(@game, before: before_pos)
+      #選んだ箇所を着色する
+      respond_to do |format|
+        format.html
+        format.js   { render 'games/select.js.erb'}
+      end
     else
-      if @game.legal?(piece, before_pos, after_pos) and 
-        (nil == is_promote) and 
-        (@game.judge_promote(piece, before_pos, after_pos))
+      if @game.legal?(@piece, @before_pos, @after_pos) and 
+        (nil == @is_promote) and 
+        (@game.judge_promote(@piece, @before_pos, @after_pos))
         
         #成駒判定
-        redirect_to "/games/#{@game.id}/confirm?before=#{before_pos}&amp;after=#{after_pos}"
+        respond_to do |format|
+          format.html
+          format.js   { render 'games/confirm.js.erb'}
+        end
         return
       else
-        if(nil == is_promote)
-          is_promote = false
+        if(nil == @is_promote)
+          @is_promote = false
         end
         
-        if @game.put_piece?(@my_turn, piece, before_pos, after_pos, is_promote)
-          # respond_to do |format|
-          #   format.html { redirect_to @game }
-          #   format.js
-          # end
-          redirect_to @game 
+        if @game.put_piece?(@my_turn, @piece, @before_pos, @after_pos, @is_promote)
+          
+          #braodcastにより、盤面更新を通知する
+          ActionCable.server.broadcast("game_channel", game_id: @game.id)
+          5.times {puts "********* broadcast ***********"} #debug用
+          
+          #盤面情報を更新する
+          if 0 == @game.winner
+            #ゲームが続く場合
+            respond_to do |format|
+              format.html { redirect_to @game}
+              format.js   { render 'games/update_board.js.erb'}
+            end
+          else
+            #ゲームが終了する場合
+            respond_to do |format|
+              format.html
+              format.js   { render 'games/finish.js.erb'}
+            end
+          end
         else
           flash[:danger] = @game.errors.messages[:name][0]
-          redirect_to @game 
+          
+          #選択を解除する
+          respond_to do |format|
+            format.html
+            format.js   { render 'games/release.js.erb'}
+          end
         end
       end
       
@@ -138,18 +128,6 @@ class GamesController < ApplicationController
   end
   
   private
-    # def make_turn(user1, user2)
-    #   tmp = rand(2)
-    #   if(tmp == 0)
-    #     a = user1
-    #     b = user2
-    #   else
-    #     a = user2
-    #     b = user1
-    #   end
-    #   return a, b
-    # end
-    
     def my_turn(game)
       if(game.first_user_id == current_user.id)
         FIRST
