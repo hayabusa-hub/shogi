@@ -1,2 +1,5 @@
 $(".displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}) %>");
 $("#backRegion").hide();
+<% if 0 != @game.winner %>
+  $("#finish").show();
+<% end %>

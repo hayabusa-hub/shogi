@@ -1,6 +1,6 @@
 import consumer from "./consumer"
 
-consumer.subscriptions.create("GameChannel", {
+const App = consumer.subscriptions.create("GameChannel", {
   connected() {
     // Called when the subscription is ready for use on the server
     console.log("connected_game")
@@ -20,16 +20,18 @@ consumer.subscriptions.create("GameChannel", {
     console.log(`userID: ${gameID.textContent}`);
     console.log(`game_id: ${data.game_id}`);
     
-    if((gameID != null) && (data.game_id == gameID.textContent))
-    {
+    if((gameID != null) && (data.game_id == gameID.textContent)){
       console.log("game page update");
       
       /*global $*/
       $.ajax({url: `/games/${data.game_id}/update_board`, type: "GET"});
     }
-    else
-    {
+    else{
       console.log("game page not update");
     }
+  },
+  
+  speak: function(){
+    return this.perform('speak');
   }
 });

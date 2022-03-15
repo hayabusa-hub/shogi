@@ -1,3 +1,0 @@
-$("#displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}) %>");
-$("#frontOwnPiece").html("<%= escape_javascript(render 'games/display_own_piece', {game: @game, class_name: :front, turn: @display) %>");
-$("#backOwnPiece").html("<%= escape_javascript(render 'games/display_own_piece', {game: @game, class_name: :back,  turn: @display^3);

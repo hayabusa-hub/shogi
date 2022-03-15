@@ -70,22 +70,14 @@ class GamesController < ApplicationController
           
           #braodcastにより、盤面更新を通知する
           ActionCable.server.broadcast("game_channel", game_id: @game.id)
-          5.times {puts "********* broadcast ***********"} #debug用
+          5.times {puts "********* put piece ***********"} #debug用
           
           #盤面情報を更新する
-          if 0 == @game.winner
-            #ゲームが続く場合
-            respond_to do |format|
-              format.html { redirect_to @game}
-              format.js   { render 'games/update_board.js.erb'}
-            end
-          else
-            #ゲームが終了する場合
-            respond_to do |format|
-              format.html
-              format.js   { render 'games/finish.js.erb'}
-            end
-          end
+          #respond_to do |format|
+            #format.html { redirect_to @game}
+            #format.js   { render 'games/update_board.js.erb'}
+            #format.js   { render 'games/speak.js.erb'}
+          #end
         else
           flash[:danger] = @game.errors.messages[:name][0]
           
