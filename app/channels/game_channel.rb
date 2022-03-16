@@ -10,6 +10,10 @@ class GameChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
   end
   
+  def receive(data)
+    ActionCable.server.broadcast("game_channel", game_id: data.id)
+  end
+  
   def speak(data)
     5.times {puts "********* broadcast ***********"} #debug用
     ActionCable.server.broadcast("game_channel", game_id: data.id)
