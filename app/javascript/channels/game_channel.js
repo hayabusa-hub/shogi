@@ -1,9 +1,9 @@
-import consumer from "./consumer"
+import consumer from "./consumer";
 
 const App = consumer.subscriptions.create("GameChannel", {
   connected() {
     // Called when the subscription is ready for use on the server
-    console.log("connected_game")
+    console.log("connected_game");
   },
 
   disconnected() {

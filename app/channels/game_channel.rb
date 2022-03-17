@@ -3,6 +3,7 @@ class GameChannel < ApplicationCable::Channel
   
   def subscribed
     # stream_from "some_channel"
+    5.times {puts "********* params: #{params} ***********"} #debug用
     stream_from "game_channel"
   end
 

@@ -69,7 +69,7 @@ class GamesController < ApplicationController
         if @game.put_piece?(@my_turn, @piece, @before_pos, @after_pos, @is_promote)
           
           #braodcastにより、盤面更新を通知する
-          #ActionCable.server.broadcast("game_channel", game_id: @game.id)
+          # ActionCable.server.broadcast("game_channel", game_id: @game.id)
           GameBroadCastJob.perform_later(@game)
           5.times {puts "********* put piece ***********"} #debug用
           
