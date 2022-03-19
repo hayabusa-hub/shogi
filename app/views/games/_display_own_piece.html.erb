@@ -1,4 +1,4 @@
-<tbody class="<%=class_name%>">
+<tbody id="<%=id_name%>">
   <% for piece in 1..8 do %>
     <% num = game.get_own_piece_num(piece.to_s, turn)%>
     <% if num >= 1 %>

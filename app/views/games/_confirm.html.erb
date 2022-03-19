@@ -1,0 +1,10 @@
+<li id="<%=id_name%>">
+  <%= form_with(model: game, local: false) do |f| %>
+    <%= f.hidden_field :before,  value: before_pos %>
+    <%= f.hidden_field :after,   value: after_pos  %>
+    <%= f.hidden_field :promote, value: is_promote  %>
+    <%= button_tag type: :submit do %>
+      <%= image_tag(image, size: '50x50', id: before_pos) %>
+    <% end %>
+  <% end %>
+</li>

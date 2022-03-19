@@ -12,15 +12,16 @@
 <p><%= "現在の手番:#{turn}"%></p>
 
 <table border=0 class="displayBoard">
-  <tbody class="board_table">
-    <tr>
-      <% for col in order %>
-      <td class="textCenter">
-        <%= GamesHelper::X[col]%>
-      </td>
-      <% end %>
-    </tr>
   
+  <tr>
+    <% for col in order %>
+    <td class="textCenter">
+      <%= GamesHelper::X[col]%>
+    </td>
+    <% end %>
+  </tr>
+    
+  <tbody class="board_table">
     <% for row in order %>
     <tr>
       <% for col in order %>
@@ -46,39 +47,27 @@
     </tr>
     <% end %>
     
-    <%= render 'display_own_piece', {game: game, class_name: :front, turn: display} %>
-    <%= render 'display_own_piece', {game: game, class_name: :back,  turn: display^3} %>
+    <%= render 'display_own_piece', {game: game, id_name: :front, turn: display} %>
+    <%= render 'display_own_piece', {game: game, id_name: :back,  turn: display^3} %>
   </tbody>
 </table>
 
-<div id="backRegion" hidden>
+<div id="confirmPromote" class="backFull" hidden>
   <% image_path_not_promote = get_image_path(@piece, @my_turn) %>
   <% image_path_promote     = get_image_path(@game.get_promote_piece(@piece), @my_turn) %>
   
-  <div class="notPromote">
-    <%= form_with(model: @game, local: false) do |f| %>
-      <%= f.hidden_field :before,  value: @before_pos %>
-      <%= f.hidden_field :after,   value: @after_pos  %>
-      <%= f.hidden_field :promote, value: false  %>
-      <%= button_tag type: :submit do %>
-        <%= image_tag(image_path_not_promote, size: '50x50', id: @before_pos) %>
-      <% end %>
-    <% end %>
-  </div>
-  
-  <div class="promote">
-    <%= form_with(model: @game, local: false) do |f| %>
-      <%= f.hidden_field :before,  value: @before_pos %>
-      <%= f.hidden_field :after,   value: @after_pos  %>
-      <%= f.hidden_field :promote, value: true  %>
-      <%= button_tag type: :submit do %>
-        <%= image_tag(image_path_promote, size: '50x50', id: @before_pos) %>
-      <% end %>
-    <% end %>
-  </div>
+  <ul class="center_ul">
+    <%= render 'confirm', {game: @game, id_name: :notPromote, 
+                           before_pos: @before_pos, after_pos: @after_pos , 
+                           is_promote: false, image: image_path_not_promote} %>
+                           
+    <%= render 'confirm', {game: @game, id_name: :promote, 
+                           before_pos: @before_pos, after_pos: @after_pos , 
+                           is_promote: true, image: image_path_promote} %>
+  </ul>
 </div>
 
-<div id="finish" hidden>
+<div id="finish" class="backFull" hidden>
   <% winner = params[:before].to_s %>
   <% if @game.winner == @my_turn %>
     <% image_path = "/shogi/pose_win.png" %>
