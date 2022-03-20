@@ -11,6 +11,23 @@ module GamesHelper
   DECLINE = 2
   PLAYING = 3 #ゲーム中
   
+  #駒
+  NOTHING  = ""
+  FU       = "1"
+  KYOUSYA  = "2"
+  KEIMA    = "3"
+  GIN      = "4"
+  KIN      = "5"
+  GYOKU    = "6"
+  KAKU     = "7"
+  HISYA    = "8"
+  TOKIN    = "9"
+  NARIKYOU = "a"
+  NARIKEI  = "b"
+  NARIGIN  = "c"
+  UMA      = "e"
+  RYUU     = "f"
+  
   def get_image_path(piece, turn)
     image_path = ""
     if nil != piece

@@ -3,7 +3,7 @@ class GameChannel < ApplicationCable::Channel
   
   def subscribed
     # stream_from "some_channel"
-    5.times {puts "********* params: #{params} ***********"} #debug用
+    # 5.times {puts "********* params: #{params} ***********"} #debug用
     stream_from "game_channel"
   end
 
@@ -16,7 +16,7 @@ class GameChannel < ApplicationCable::Channel
   end
   
   def speak(data)
-    5.times {puts "********* broadcast ***********"} #debug用
+    # 5.times {puts "********* broadcast ***********"} #debug用
     ActionCable.server.broadcast("game_channel", game_id: data.id)
   end
 end

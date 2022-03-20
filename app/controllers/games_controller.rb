@@ -37,18 +37,18 @@ class GamesController < ApplicationController
     @is_promote = get_is_promote(params[:game][:promote])
     
     #debug用
-    5.times {puts "********* params    : #{params} ***********"}
-    5.times {puts "********* before_pos: #{@before_pos} ***********"}
-    5.times {puts "********* after_pos : #{@after_pos} ***********"}
+    # 5.times {puts "********* params    : #{params} ***********"}
+    # 5.times {puts "********* before_pos: #{@before_pos} ***********"}
+    # 5.times {puts "********* after_pos : #{@after_pos} ***********"}
     
     if -1 == @after_pos
       #ターンが正しいか確認する
-      # if 
-      
-      #選んだ箇所を着色する
-      respond_to do |format|
-        format.html
-        format.js   { render 'games/select.js.erb'}
+      if @my_turn == get_turn(@game, @before_pos)
+        #選んだ箇所を着色する
+        respond_to do |format|
+          format.html
+          format.js   { render 'games/select.js.erb'}
+        end
       end
     else
       if @game.legal?(@piece, @before_pos, @after_pos) and 
@@ -71,7 +71,7 @@ class GamesController < ApplicationController
           #braodcastにより、盤面更新を通知する
           ActionCable.server.broadcast("game_channel", game_id: @game.id)
           # GameBroadCastJob.perform_later(@game)
-          5.times {puts "********* put piece ***********"} #debug用
+          # 5.times {puts "********* put piece ***********"} #debug用
           
           #盤面情報を更新する
           #respond_to do |format|
@@ -80,7 +80,7 @@ class GamesController < ApplicationController
             #format.js   { render 'games/speak.js.erb'}
           #end
         else
-          flash[:danger] = @game.errors.messages[:name][0]
+          flash.now[:danger] = @game.errors.messages[:name][0]
           
           #選択を解除する
           respond_to do |format|
@@ -170,6 +170,16 @@ class GamesController < ApplicationController
         game.board[pos]
       elsif(pos >= 100)
         (pos % 100).to_s
+      else
+        nil
+      end
+    end
+    
+    def get_turn(game, pos)
+      if(0 <= pos and pos <= 80)
+        game.turn_board[pos].to_i
+      elsif(pos >= 100)
+        (pos / 100)
       else
         nil
       end
