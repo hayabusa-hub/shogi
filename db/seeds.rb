@@ -6,13 +6,10 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-# メインのサンプルユーザーを1人作成する
-User.create!(name:  "User1",
-             email: "user1@example.com",
+# メインのサンプルユーザーを10人作成する
+for num in 1..10 do
+  User.create!(name:  "User#{num}",
+             email: "user#{num}@example.com",
              password:              "aaaaaa",
              password_confirmation: "aaaaaa")
-
-User.create!(name:  "User2",
-             email: "user2@example.com",
-             password:              "aaaaaa",
-             password_confirmation: "aaaaaa")
+end
