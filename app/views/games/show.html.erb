@@ -25,3 +25,11 @@
     <% end %>
   <% end %>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    if(0 != <%= @game.winner %>){
+      $("#finish").show();
+    }
+  });
+</script>
