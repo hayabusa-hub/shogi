@@ -1,0 +1,16 @@
+<header class="navbar navbar-fixed-top navbar-inverse">
+  <div class="container">
+    <%= link_to "ホーム画面", root_path, id: "logo" %>
+    <nav>
+      <ul class="nav navbar-nav navbar-right">
+        <% if logged_in? %>
+          <li><%= link_to "マイページ", current_user() %></li>
+          <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
+        <% else %>
+          <li><%= link_to "ログイン", login_path %></li>
+          <li><%= link_to "新規作成", "/signup" %></li>
+        <% end %>
+      </ul>
+    </nav>
+  </div>
+</header>

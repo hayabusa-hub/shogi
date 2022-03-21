@@ -12,7 +12,7 @@ module GamesHelper
   PLAYING = 3 #ゲーム中
   
   #駒
-  NOTHING  = ""
+  NOTHING  = "0"
   FU       = "1"
   KYOUSYA  = "2"
   KEIMA    = "3"

@@ -1,7 +1,3 @@
-<p><%= "先手:#{game.first_user_id}" %></p>
-<p><%= "後手:#{game.second_user_id}" %></p>
-<p id="GameID" hidden><%= game.id %></p>
-
 <% if game.turn == GamesHelper::FIRST %>
  <% turn = "先手" %>
 <% elsif game.turn == GamesHelper::SECOND %>
