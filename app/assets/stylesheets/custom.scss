@@ -8,7 +8,6 @@ body {
 }
 
 h1{
-  // line-height: 1;
   font-size: 3em;
   letter-spacing: -2px;
   margin-bottom: 30px;
@@ -16,8 +15,6 @@ h1{
 }
 
 input {
-  /*border: 1px solid #bbb;*/
-  /*width: 50%;*/
   margin-bottom: 15px;
   display: block;
 }
@@ -66,31 +63,20 @@ li{
   width: 100%; height: 100%;
   background: rgba(100, 100, 100, .8);
   z-index: 2147483647;
-  
-  // left: -50vw; 
-  // top: -50vw;
-  // width: 100vw;
-  // height: 100vh;
-  
-  // margin: 0 -50vw;
-  // margin: 0 calc(50% - 50vw);
 }
 
-// #backRegion{
-//   position: absolute;
-//   left: 0; top: 0;
-//   width: 100%; height: 100%;
-//   background: rgba(100, 100, 100, .8);
-//   z-index: 2147483647;
-// }
-
-// #finish{
-//   position: absolute;
-//   left: 0; top: 0;
-//   width: 100%; height: 100%;
-//   background: rgba(100, 100, 100, .8);
-//   z-index: 2147483647;
-// }
+// フラッシュメッセージ表示
+.flash{
+  display: block;
+  position: fixed;
+  left: 50%;
+  width: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  z-index: 1100;
+}
 
 /* match  */
 .user_list{
@@ -103,9 +89,6 @@ li{
 
 /* game  */ 
 .board_cell{
-  // list-style: none;
-  // margin-bottom: 10px;
-  // display: inline-block;
   align: center;
   margin: 0;
 }
@@ -125,18 +108,8 @@ li{
 
 // 盤全体
 .board_table{
-  // position: relative;
-  // width: 480px;
   margin: auto;
-  // margin-left: 0;
-  // margin-right: 0;
-  // display: inline-block;
   align: center;
-  // vertical-align: middle;
-  
-  // display: block;
-  // margin-left: auto;
-  // margin-right: auto;
 }
 
 //手前持ち駒の表示位置
@@ -159,43 +132,27 @@ li{
   }
 }
 
-// 不成画像の表示位置
-#notPromote{
-  // position: absolute;
-  // text-align : center;
-  // left: 50%;
-  // top: 50%;
+// inline-blockへ変換
+.inlineBlock{
   display: inline-block;
-}
-
-// 成画像の表示位置
-#promote{
-  // position: absolute;
-  // text-align : center;
-  // left: 50%;
-  // top: 50%;
-  display: inline-block;
+  
 }
 
 // ボードのヘッダーの位置など
 .textCenter{
-  // margin: auto;
   text-align : center;
 }
 
 // 中央表示　ゲーム終了画面など
 .center{
-  // position: absolute;
-  // vertical-align: middle;
-  
   text-align : center;
-  // top: 50%;
   transform: translate(0, 50%)
 }
 
 // リストの中央表示
 .center_ul{
   position: absolute;
-  left: 42%;
+  left: 50%;
   top: 50%;
+  transform: translate(-50%, -50%);
 }

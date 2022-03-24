@@ -1,4 +1,4 @@
-<li id="<%=id_name%>">
+<li id="<%=id_name%>" class="inlineBlock">
   <%= form_with(model: game, local: false) do |f| %>
     <%= f.hidden_field :before,  value: before_pos %>
     <%= f.hidden_field :after,   value: after_pos  %>

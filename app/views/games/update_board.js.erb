@@ -1,3 +1,4 @@
+$(".flash_messages").html("<%= escape_javascript(render 'layouts/flash_messages') %>");
 $(".displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}) %>");
 $("#confirmPromote").hide();
 <% if 0 != @game.winner %>

@@ -40,6 +40,7 @@ class GamesController < ApplicationController
     
     if -1 == @after_pos
       #ターンが正しいか確認する
+      #if 0 != get_turn(@game, @before_pos)
       if @my_turn == get_turn(@game, @before_pos)
         #選んだ箇所を着色する
         respond_to do |format|
