@@ -233,10 +233,10 @@ class Game < ApplicationRecord
     #return
     
     #手番が正しいか確認する
-    # if user_turn != self.turn
-    #   self.errors.add(:name, 'あなたの手番ではありません')
-    #   return false
-    # end
+    if user_turn != self.turn
+      self.errors.add(:name, 'あなたの手番ではありません')
+      return false
+    end
     
     #移動元に、自分の指定駒が存在するか確認する
     if(0 <= before_pos and before_pos <= 80)
@@ -284,7 +284,7 @@ class Game < ApplicationRecord
 
     #着手が合法か確認する
     unless self.legal?(piece, before_pos, after_pos, self.turn)
-      self.errors.add(:name, 'その場所に移動することはできません')
+      self.errors.add(:name, 'その場所に着手することはできません')
       return false
     end
     
