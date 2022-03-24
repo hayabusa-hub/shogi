@@ -14,15 +14,13 @@ h1{
   text-align: center;
 }
 
-input {
-  margin-bottom: 15px;
-  display: block;
-}
-
 li{
   list-style: none;
 }
 
+input{
+  margin-bottom: 15px;
+}
 
 /* header */
 #logo {
@@ -155,4 +153,22 @@ li{
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* ゲストログイン */
+.guest{
+  margin: 5% 0;
+  label{
+    display: block;
+    font-size: 20px;
+    vertical-align: middle;
+  }
+  select{
+    font-size: 15px;
+    vertical-align: middle;
+  }
+  input{
+    margin-bottom: 0px;
+    vertical-align: middle;
+  }
 }

@@ -16,3 +16,24 @@
     <p><%= link_to "アカウント新規作成", signup_path%></p>
   </div>
 </div>
+
+<div class="guest">
+  <label for="button">ゲストログイン</label>
+  <select name="user-name" class="inlineBlock">
+    <% for num in 1..10 do %>
+      <option value="<%= num %>"><%= "User#{num}" %></option>
+    <% end %>
+  </select>
+  <input id="button" type="button" value="入力">
+</div>
+
+<script type="text/javascript">
+  $('#button').on('click', function() {
+    var num = $('[name=user-name]').val();
+    var mail = `user${num}@example.com`
+    var pass = "aaaaaa"
+    $('#session_email').val(mail);
+    $('#session_password').val(pass);
+  });
+</script>
+
