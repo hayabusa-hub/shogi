@@ -1,24 +1,30 @@
-# README
+# 将棋
+[サイトURL](https://stark-retreat-97514.herokuapp.com/)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 概要
+- アプリ上で、他のユーザーと将棋の通信対戦ができます。
 
-Things you may want to cover:
+## 機能
+- ユーザー機能
+  - ユーザー作成
+- マッチング機能
+  - 対戦要求
+  - 対戦要求の承諾
+  - 対戦要求の拒否
+- 対戦機能
+  - 将棋対戦機能
+  - 非同期通信による着手機能
+  - WebSocketによる着手検知機能
+  - 盤面反転機能
 
-* Ruby version
+## 使用技術
+- デプロイ
+  - Heroku
+- データベース
+  - PostgreSQL
+- テスト
+  - Minitest
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## バージョン
+- Ruby 2.6.6
+- Ruby on rails 6.0.3
