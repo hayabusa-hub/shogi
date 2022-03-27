@@ -3,23 +3,24 @@
     <% num = game.get_own_piece_num(piece.to_s, turn)%>
     <% if num >= 1 %>
       <tr>
-      <td>
-        <% image_path = get_image_path(piece.to_s, turn) %>
-        <% pos = getPosition(turn, piece)   %>
-    
-        <%= form_with(model: @game, local: false, class: "image") do |f| %>
-          <%= f.hidden_field :before,  value: pos %>
-          <%= f.hidden_field :after,   value: -1  %>
-          <%= f.hidden_field :promote, value: -1  %>
-          <%= button_tag type: :submit do %>
-            <%= image_tag(image_path, size: '50x50', id: pos) %>
+        <td>
+          <% image_path = get_image_path(piece.to_s, turn) %>
+          <% pos = getPosition(turn, piece)   %>
+      
+          <%= form_with(model: @game, local: false, class: "image") do |f| %>
+            <%= f.hidden_field :before,  value: pos %>
+            <%= f.hidden_field :after,   value: -1  %>
+            <%= f.hidden_field :promote, value: -1  %>
+            <%= button_tag type: :submit do %>
+              <%= image_tag(image_path, size: '50x50', id: pos) %>
+            <% end %>
           <% end %>
-        <% end %>
-    
-        <% if num >= 2 %>
-          <%= " × #{num}" %>
-        <% end %>
-      </td>
+        </td>
+        <td class="border-none">
+          <% if num >= 2 %>
+            <%= " × #{num}" %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   <% end %>

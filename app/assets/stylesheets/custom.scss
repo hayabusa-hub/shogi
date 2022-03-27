@@ -1,6 +1,7 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+$board-color: rgba(249,194,112,1);;
 
 /* universal */
 body {
@@ -20,6 +21,11 @@ li{
 
 input{
   margin-bottom: 15px;
+}
+
+button{
+  background-color: $board-color;
+  border: none;
 }
 
 /* header */
@@ -102,12 +108,19 @@ input{
   position: relative;
   margin: auto;
   align: center;
+  background-color: $board-color;
 }
 
 // 盤全体
 .board_table{
   margin: auto;
   align: center;
+}
+
+// 駒のない箇所
+.empty_cell{
+  width: 50px;
+  height: 50px;
 }
 
 //手前持ち駒の表示位置
@@ -130,10 +143,14 @@ input{
   }
 }
 
+// 境界線を描画しない
+.border-none{
+  border: none;
+}
+
 // inline-blockへ変換
 .inlineBlock{
   display: inline-block;
-  
 }
 
 // ボードのヘッダーの位置など

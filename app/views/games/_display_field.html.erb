@@ -7,7 +7,7 @@
 <% end %>
 <p><%= "現在の手番:#{turn}"%></p>
 
-<table border=0 class="displayBoard">
+<table border=3 class="displayBoard">
   
   <tr>
     <% for col in order %>
@@ -31,10 +31,13 @@
           <%= f.hidden_field :after,   value: after_pos  %>
           <%= f.hidden_field :promote, value: isPromote  %>
           <%= button_tag type: :submit do %>
-            <%= image_tag(image_path, size: '50x50', id: pos) %>
+            <% if GamesHelper::NOTHING == game.board[pos] %>
+              <div class="empty_cell"></div>
+            <% else %>
+              <%= image_tag(image_path, size: '50x50', id: pos, class: :board_cell) %>
+            <% end %>
           <% end %>
         <% end %>
-        
       </td>
       <% end %>
       <td>
