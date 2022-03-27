@@ -82,7 +82,7 @@ class MatchsController < ApplicationController
         msg = "対局開始！！！"
         
         #ゲームモデルを作成
-        game_id = make_game(@match.user_id, @opponent.user_id)
+        game_id = make_game(@match.user, @opponent.user)
         @match.game_id = game_id
         @opponent.game_id = game_id
       end
@@ -166,11 +166,11 @@ class MatchsController < ApplicationController
     def make_turn(user1, user2)
       tmp = rand(2)
       if(tmp == 0)
-        a = user1
-        b = user2
+        a = user1.name
+        b = user2.name
       else
-        a = user2
-        b = user1
+        a = user2.name
+        b = user1.name
       end
       return a, b
     end

@@ -82,4 +82,15 @@ module GamesHelper
   def getPosition(turn, piece)
     return 100*turn + piece.to_i
   end
+  
+  def getUserInfo(display, game)
+    if(FIRST == display)
+      msg = "[先手]: #{game.first_user_name}"
+    elsif(SECOND == display)
+      msg = "[後手]: #{game.second_user_name}"
+    else
+      msg = ""
+    end
+    return msg
+  end
 end

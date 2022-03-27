@@ -69,7 +69,36 @@ button{
   z-index: 2147483647;
 }
 
-// フラッシュメッセージ表示
+// 境界線を描画しない
+.border-none{
+  border: none;
+}
+
+// inline-blockへ変換
+.inlineBlock{
+  display: inline-block;
+}
+
+// ボードのヘッダーの位置など
+.textCenter{
+  text-align : center;
+}
+
+// 中央表示　ゲーム終了画面など
+.center{
+  text-align : center;
+  transform: translate(0, 50%)
+}
+
+// リストの中央表示
+.center_ul{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* フラッシュメッセージ表示 */
 .flash{
   display: block;
   position: fixed;
@@ -143,33 +172,21 @@ button{
   }
 }
 
-// 境界線を描画しない
-.border-none{
-  border: none;
-}
-
-// inline-blockへ変換
-.inlineBlock{
-  display: inline-block;
-}
-
-// ボードのヘッダーの位置など
-.textCenter{
-  text-align : center;
-}
-
-// 中央表示　ゲーム終了画面など
-.center{
-  text-align : center;
-  transform: translate(0, 50%)
-}
-
-// リストの中央表示
-.center_ul{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+/* ユーザー情報の表示 */
+.user_info{
+  font-size: 25px;
+  .front{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(0%, 100%);
+  }
+  .back{
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(0%, -100%);
+  }
 }
 
 /* ゲストログイン */

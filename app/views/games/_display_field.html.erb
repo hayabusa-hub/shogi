@@ -1,11 +1,11 @@
-<% if game.turn == GamesHelper::FIRST %>
- <% turn = "先手" %>
-<% elsif game.turn == GamesHelper::SECOND %>
- <% turn = "後手" %>
-<% else %>
- <% turn = "エラーが発生しました" %>
-<% end %>
-<p><%= "現在の手番:#{turn}"%></p>
+<!--<%# if game.turn == GamesHelper::FIRST %>-->
+<!-- <%# turn = "先手" %>-->
+<!--<%# elsif game.turn == GamesHelper::SECOND %>-->
+<!-- <%# turn = "後手" %>-->
+<!--<%# else %>-->
+<!-- <%# turn = "エラーが発生しました" %>-->
+<!--<%# end %>-->
+<!--<p><%#= "現在の手番:#{turn}"%></p>-->
 
 <table border=3 class="displayBoard">
   
@@ -48,6 +48,9 @@
     
     <%= render 'display_own_piece', {game: game, id_name: :front, turn: display} %>
     <%= render 'display_own_piece', {game: game, id_name: :back,  turn: display^3} %>
+    
+    <%= render 'display_user_name', {game: game, class_name: :front, turn: display} %>
+    <%= render 'display_user_name', {game: game, class_name: :back,  turn: display^3} %>
   </tbody>
 </table>
 

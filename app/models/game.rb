@@ -41,8 +41,8 @@ class Game < ApplicationRecord
   # end
   
   def board_init(first, second)
-    self.first_user_id = first
-    self.second_user_id = second
+    self.first_user_name = first
+    self.second_user_name = second
     self.turn = 1
     self.board      = "234565432" + 
                       "080000070" + 

@@ -123,9 +123,9 @@ class GamesController < ApplicationController
   
   private
     def my_turn(game)
-      if(game.first_user_id == current_user.id)
+      if(game.first_user_name == current_user.name)
         FIRST
-      elsif(game.second_user_id == current_user.id)
+      elsif(game.second_user_name == current_user.name)
         SECOND
       else
         nil

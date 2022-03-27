@@ -1,14 +1,14 @@
 <h1>対局</h1>
 <p id="GameID" hidden><%= @game.id %></p>
 
-<% if @my_turn == GamesHelper::FIRST %>
- <% my_turn_str = "先手" %>
-<% elsif @my_turn == GamesHelper::SECOND %>
- <% my_turn_str = "後手" %>
-<% else %>
- <% my_turn_str = "エラーが発生しました" %>
-<% end %>
-<p><%= "あなたの手番：#{my_turn_str}"  %></p>
+<!--<%# if @my_turn == GamesHelper::FIRST %>-->
+<!-- <%# my_turn_str = "先手" %>-->
+<!--<%# elsif @my_turn == GamesHelper::SECOND %>-->
+<!-- <%# my_turn_str = "後手" %>-->
+<!--<%# else %>-->
+<!-- <%# my_turn_str = "エラーが発生しました" %>-->
+<!--<%# end %>-->
+<!--<p><%#= "あなたの手番：#{my_turn_str}"  %></p>-->
 
 <div class="displayField">
   <%= render 'display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1} %>
