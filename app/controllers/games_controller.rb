@@ -16,6 +16,11 @@ class GamesController < ApplicationController
   end
 
   def show
+    if @my_turn == @game.turn
+      flash[:info] = "あなたの手番です"
+    else
+      flash[:info] = "相手の手番です"
+    end
   end
 
   def new
