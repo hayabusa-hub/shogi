@@ -1,3 +1,8 @@
+<% if @my_turn == @game.turn %>
+  <% flash.now[:info] = "あなたの手番です" %>
+<% else %>
+  <% flash.now[:info] = "相手の手番です" %>
+<% end %>
 $(".flash_messages").html("<%= escape_javascript(render 'layouts/flash_messages') %>");
 $(".displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}) %>");
 $("#confirmPromote").hide();
