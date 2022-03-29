@@ -51,13 +51,11 @@ module GamesHelper
     return hash
   end
   
-  def is_reverse?(display)
-    if(display == FIRST)
+  def is_reverse?(my_turn, display)
+    if my_turn == display
       false
-    elsif(display == SECOND)
-      true
     else
-      nil
+      true
     end
   end
   

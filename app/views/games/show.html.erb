@@ -18,10 +18,10 @@
   <%= form_with(url: "/games/#{@game.id}/editBoard", model: @game, local: true, id: "editBoard") do |f| %>
     <% if @my_turn == GamesHelper::FIRST %>
       <%= f.label "反転(先手)" %>
-      <%= f.check_box :first_board, checked: is_reverse?(@display) %>
+      <%= f.check_box :first_board, checked: is_reverse?(@my_turn, @display) %>
     <% elsif @my_turn == GamesHelper::SECOND %>
       <%= f.label "反転(後手)" %>
-      <%= f.check_box :second_board, checked: is_reverse?(@display) %>
+      <%= f.check_box :second_board, checked: is_reverse?(@my_turn, @display) %>
     <% end %>
   <% end %>
 </div>

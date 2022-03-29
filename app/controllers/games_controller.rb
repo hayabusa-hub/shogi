@@ -100,19 +100,16 @@ class GamesController < ApplicationController
   end
   
   def edit_board
-    if(@my_turn == FIRST)
+    # チェックボックスの値を取得する
+    if FIRST == @my_turn
       mode = params[:game][:first_board].to_i
-    elsif(@my_turn == SECOND)
+    elsif SECOND == @my_turn
       mode = params[:game][:second_board].to_i
-    else
     end
     
-    @game = Game.find(params[:id])
     set_board_display_mode(@game, mode, @my_turn)
     
-    if @game.save
-      redirect_to game_path(@game)
-    end
+    redirect_to game_path(@game)
   end
   
   def confirm
@@ -158,14 +155,20 @@ class GamesController < ApplicationController
     end
     
     def set_board_display_mode(game, value, turn)
+      ret = true
       if(turn == FIRST)
         game.first_user_board = value
       elsif(turn == SECOND)
         game.second_user_board = value
       else
-        return false
+        ret = false
       end
-      return true
+      
+      unless game.save
+        ret = false
+      end
+      
+      return ret
     end
     
     def get_piece(game, pos)
