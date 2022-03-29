@@ -138,7 +138,7 @@ class GamesController < ApplicationController
       if(@my_turn == FIRST)
         @game.first_user_board.to_i + 1
       elsif(@my_turn = SECOND)
-        @game.second_user_board.to_i + 1
+        (@game.second_user_board.to_i + 1) % 2 + 1
       else
         nil
       end
