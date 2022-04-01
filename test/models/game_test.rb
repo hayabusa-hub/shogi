@@ -20,11 +20,11 @@ class GameTest < ActiveSupport::TestCase
   
   def set_turn(turn)
     if 1 == turn
-      @game.first_user_id = @test1.id
-      @game.second_user_id = @test2.id
+      @game.first_user_name = @test1.name
+      @game.second_user_name = @test2.name
     elsif 2 == turn
-      @game.first_user_id = @test2.id
-      @game.second_user_id = @test1.id
+      @game.first_user_name = @test2.name
+      @game.second_user_name = @test1.name
     end
   end
   

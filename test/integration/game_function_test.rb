@@ -5,7 +5,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @test1 = users(:test1)
     @test2 = users(:test2)
     @game = Game.new()
-    @game.board_init(@test1.id, @test2.id)
+    @game.board_init(@test1.name, @test2.name)
     @game.save
     @match1 = Match.create(user_id: @test1, opponent_id: @test2, status: 3, game_id: @game)
     @match2 = Match.create(user_id: @test2, opponent_id: @test1, status: 3, game_id: @game)
@@ -25,14 +25,19 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   
   def set_turn(turn)
     if 1 == turn
-      @game.first_user_id = @test1.id
-      @game.second_user_id = @test2.id
+      @game.first_user_name = @test1.name
+      @game.second_user_name = @test2.name
       @user = @test1
     elsif 2 == turn
-      @game.first_user_id = @test2.id
-      @game.second_user_id = @test1.id
+      @game.first_user_name = @test2.name
+      @game.second_user_name = @test1.name
       @user = @test2
+    else
+      return false
     end
+    @game.turn = turn
+    @game.save
+    return true
   end
   
   def ownPieceCount(piece, turn)
@@ -78,7 +83,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @game.turn_board = turn_board
     @game.own_piece = own_piece
     #手番を強引に変更する
-    @game.turn = turn
     set_turn(turn)
     
     @game.save
@@ -115,7 +119,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         @game.turn_board = turn_board
         @game.own_piece = own_piece
          #手番を強引に変更する
-        @game.turn = turn
         set_turn(turn)
         @game.save
       
@@ -168,7 +171,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         setOwnPieceCount(piece, turn, num)
         
          #手番を強引に変更する
-        @game.turn = turn
         set_turn(turn)
         @game.save
       
@@ -241,7 +243,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
               "000000000"
     
     #手番を強引に変更する
-    @game.turn = turn
     set_turn(turn)
       
     #ゲーム画面を更新
@@ -264,8 +265,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   end
   
   test "make game model process" do
-    assert @game.first_user_id == users(:test1).id
-    assert @game.second_user_id == users(:test2).id
+    assert @game.first_user_name == users(:test1).name
+    assert @game.second_user_name == users(:test2).name
     assert @game.turn == 1
     assert @game.board== "234565432" + 
                          "080000070" + 
@@ -1509,7 +1510,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     array1.length.times do |i|
       
       #手番を強引に変更する
-      @game.turn = turn
       set_turn(turn)
       
       #ゲーム画面を更新
@@ -1650,6 +1650,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
                       "000000000" +
                       "000010000"
     @game.save
+    set_turn(@FIRST)
     
     if judge
       before_pos = 21
@@ -1664,6 +1665,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       after_pos = 9
       patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false} ), xhr: true
       
+      set_turn(@SECOND)
       before_pos = 59
       after_pos = 67
       patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false} ), xhr: true
@@ -1689,7 +1691,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       @game.board = board
       @game.turn_board = turn_board
       @game.own_piece = own_piece
-      @game.turn = turn
       set_turn(turn)
       @game.save
       
@@ -1780,7 +1781,6 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   def oute_leave(before_pos, after_pos, turn, board, turn_board, is_judge)
     @game.board = board
     @game.turn_board = turn_board
-    @game.turn = turn
     set_turn(turn)
     @game.save
       
