@@ -23,10 +23,12 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     post login_path, params: { session: { email: @user.email,
                                           password: "password" } }
     follow_redirect!
-    assert session[:user_id]
+    assert session[:user_id] == @user.id
+    assert_not_empty cookies[:remember_token]
     
     #ログアウトする
     delete logout_path
-    # assert_not logged_in?
+    assert nil == session[:user_id]
+    assert_empty cookies[:remember_token]
   end
 end
