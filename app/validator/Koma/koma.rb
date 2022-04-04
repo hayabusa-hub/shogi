@@ -59,11 +59,11 @@ class Koma
   end
   
   def self.get_org_piece
-    return false
+    return NOTHING
   end
   
   def self.get_promote_piece
-    return false
+    return NOTHING
   end
   
   def self.get_own_piece_num(turn, own_piece)
@@ -72,7 +72,7 @@ class Koma
   
   def self.set_own_piece(num, turn, own_piece)
     have = get_own_piece_num(turn, own_piece)
-    if(have+num >= 0 && get_org_piece > 0)
+    if(have+num >= 0 && get_org_piece != NOTHING)
       ret = set_own_piece_num(turn, have+num, own_piece)
     else
       ret = false
@@ -153,7 +153,7 @@ class Koma
         end
       else
         #歩、香車、桂馬は移動できない段でないことを確認する
-        if check_legal_pos(after_pos)
+        if check_legal_pos(after_pos, turn)
           canMove = true
         end
         
