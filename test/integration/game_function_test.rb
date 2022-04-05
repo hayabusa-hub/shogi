@@ -36,8 +36,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       return false
     end
     @game.turn = turn
-    @game.save
-    return true
+    
+    return @game.save
   end
   
   def ownPieceCount(piece, turn)
@@ -100,12 +100,9 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       #着手
       patch game_path(@game, game: {before: before_pos, after: i}), xhr: true
       
-      # if(true == flash.empty?)
-      #     debugger
-      # end
-      #assert_not flash[:danger].empty?
-      assert @game.reload.board[before_pos] == before_piece
-      #assert @game.reload.turn_board[before_pos] == turn.to_s
+      if (0 <= before_pos) and (before_pos <= 80)
+        assert @game.reload.board[before_pos] == before_piece
+      end
       assert num == ownPieceCount(opp_piece, turn)
     end
   end
@@ -164,6 +161,7 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
       for i in array do
         
         #ゲーム画面を更新
+        @game = Game.find(@game.id)
         @game.board = board
         @game.turn_board = turn_board
         @game.own_piece = own_piece
@@ -179,12 +177,12 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
         
         # 着手
         patch game_path(@game, game: {before: before_pos, after: i, promote: false}), xhr: true
-        if(false == flash.empty?)
+        if(nil != flash[:danger])
           debugger
         end
         
         # 正しく着手されているか
-        assert flash.empty?
+        assert nil == flash[:danger]
         assert @game.reload.board[i] == piece.to_s
         assert @game.reload.turn_board[i] == turn.to_s
         

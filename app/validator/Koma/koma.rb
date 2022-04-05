@@ -153,7 +153,7 @@ class Koma
         end
       else
         #歩、香車、桂馬は移動できない段でないことを確認する
-        if check_legal_pos(after_pos, turn)
+        if check_legal_pos(after_pos, turn) and (turn_board[after_pos] == NOTHING)
           canMove = true
         end
         
