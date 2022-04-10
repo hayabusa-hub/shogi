@@ -1,4 +1,8 @@
 class UsersController < ApplicationController
+  include SessionsHelper
+  
+  before_action :logged_in_user, only: [:edit, :update]
+  before_action :correct_user, only: [:edit, :update]
   
   # def index
   # end
@@ -41,5 +45,22 @@ class UsersController < ApplicationController
   private
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+    
+    #ログイン済みユーザーか確認する
+    def logged_in_user
+      if false == logged_in?
+        store_location()
+        flash[:danger] = "ログインしてください"
+        redirect_to login_url
+      end
+    end
+    
+    #正しいユーザーかどうか確認
+    def correct_user
+      @user = User.find(params[:id])
+      if false == current_user?(@user)
+        redirect_to root_path
+      end
     end
 end

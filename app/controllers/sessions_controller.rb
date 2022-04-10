@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
       log_in(user)
       remember(user)
       flash[:success] = "ログインしました"
-      redirect_to(root_path)
+      redirect_back_or(root_path)
     else
       flash.now[:danger] = "メールアドレスまたはパスワードが間違っています"
       render "sessions/new"
