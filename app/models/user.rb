@@ -10,7 +10,8 @@ class User < ApplicationRecord
                        length: {maximum: 255},
                        uniqueness: true
   validates :password, presence: true,
-                       length: {minimum: 6}
+                       length: {minimum: 6},
+                       allow_nil: true
                        
   # 保存直前のアクションを設定
   before_save {self.email.downcase!}

@@ -1,8 +1,12 @@
-<h1>profile page</h1>
-<p>
-  <%= "name: #{@user.name}\n"%>
-</p>
-<p>
-  <%= "email: #{@user.email}"%>
-</p>
-
+<h1>ユーザー情報</h1>
+<div class="row">
+  <div class="col-md-4 col-md-offset-4">
+    <ul>
+      <li><p><%= "ユーザー名　　： #{@user.name}\n"%></p></li>
+      <li><p><%= "メールアドレス： #{@user.email}"%></p></li>
+    </ul>
+  </div>
+  <div class="col-md-2 col-md-offset-5">
+    <%= link_to "編集", edit_user_path(current_user()), class: "btn btn-primary btn-block"%>
+  </div>
+</div>
