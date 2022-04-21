@@ -1,13 +1,41 @@
 require 'test_helper'
 
 class MatchFunctionTest < ActionDispatch::IntegrationTest
+  include GamesHelper
   def setup
     @michael = users(:michael)
     @alice = users(:alice)
+    @test1 = users(:test1)
+    @test2 = users(:test2)
+  end
+  
+  #指定したユーザーが対局室へ入場する
+  def enter_room(user)
+    #ログイン
+    login_as(user)
+    
+    #対局室へ移動
+    post matchs_path, params: {user_id: user.id}
+  end
+  
+  #user1がuser2へ対戦要求を出す
+  def request_match(user1, user2, status)
+    #user2としてログインし、対局室へ入場
+    enter_room(user2)
+    
+    #ログアウト
+    delete logout_path
+    
+    #user1としてログインし、対局室へ入場
+    enter_room(user1)
+    
+    #user1からuser2へ対戦要求を行う
+    patch match_path(user1.match), params: { opponent_id: user2.id, status: status }
   end
   
   #正常系 ホームの「対局室へ移動」をクリックしたときに対局室へ移動するか　そのときにMatchモデルが生成されるか
   test "move to battle room" do
+    login_as(@michael)
     get root_path
     assert_difference "Match.count", 1 do
       post matchs_path, params: {user_id: @michael.id}
@@ -24,136 +52,133 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     assert matchs.user_id == @michael.id
   end
   
-  #異常系
-  # test do
-  # end
-  
   #対戦要求を承諾したときの挙動
   test "behavior accept match" do
     
-    #ログイン
-    get login_path
-    login_as(@michael)
+    #test1からtest2へ対戦要求を行う
+    request_match(@test1, @test2, WAITING)
     
-    #対局室へ移動
-    get root_path
-    post matchs_path, params: {user_id: @michael.id}
-    
-    #Aliceへ対戦要求を行う
-    patch match_path(@michael.match), params: { opponent_id: @alice.id, status: 1 }
-    matchs = Match.find_by(user_id: @michael.id)
-    assert matchs.user_id == @michael.id
-    assert matchs.opponent_id == @alice.id
+    #test1の確認
+    matchs = Match.find_by(user_id: @test1.id)
+    assert matchs.user_id == @test1.id
+    assert matchs.opponent_id == @test2.id
     assert matchs.status == 1
     
-    #Aliceが対戦要求を承諾する
-    delete logout_path
-    get root_path
-    login_as(@alice)
-    post matchs_path, params: {user_id: @alice.id}
+    #test2の確認
+    matchs = Match.find_by(user_id: @test2.id)
+    assert matchs.user_id == @test2.id
+    assert matchs.opponent_id == @test1.id
+    assert matchs.status == 1
+    
+    #test2の画面の確認
+    enter_room(@test2)
     follow_redirect!
-    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 3) , text: "承諾"
     assert_select "input[value=?]", "承諾"
-    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
     assert_select "input[value=?]", "拒否"
-    patch match_path(@alice.match, opponent_id: @michael.id, status: 3)
     
-    #Michaelの確認
-    login_as(@michael)
-    matchs = Match.find_by(user_id: @michael.id)
-    assert matchs.user_id == @michael.id
-    assert matchs.opponent_id == @alice.id
-    assert matchs.status == 3
+    #test2が対戦要求を承諾する
+    patch match_path(@test2.match, opponent_id: @test1.id, status: PLAYING)
     
-    #Aliceの確認
-    login_as(@alice)
-    matchs = Match.find_by(user_id: @alice.id)
-    assert matchs.user_id == @alice.id
-    assert matchs.opponent_id == @michael.id
-    assert matchs.status == 3
+    #test1の確認
+    login_as(@test1)
+    matchs = Match.find_by(user_id: @test1.id)
+    assert matchs.user_id == @test1.id
+    assert matchs.opponent_id == @test2.id
+    assert matchs.status == PLAYING
+    
+    #test2の確認
+    login_as(@test2)
+    matchs = Match.find_by(user_id: @test2.id)
+    assert matchs.user_id == @test2.id
+    assert matchs.opponent_id == @test1.id
+    assert matchs.status == PLAYING
     
     #ゲーム画面へ移動し、ゲームモデルが作成されることを確認する
-    # assert_redirected_to
-  end
-  
-  #対戦要求を出し承諾を得たときの挙動
-  test "behavior accepted match" do
-    #ログイン
-    get login_path
-    login_as(@michael)
-    
-    #対局室へ移動
-    get root_path
-    post matchs_path, params: {user_id: @michael.id}
-    
-    #Aliceへ対戦要求を行う
-    #patch match_path(@michael.match), params: { opponent_id: @alice.id, status: 3 }
-    matchs = Match.find_by(user_id: @michael.id)
-    matchs.opponent_id = @alice.id
-    matchs.status = 3
-    matchs.save
-    assert matchs.user_id == @michael.id
-    assert matchs.opponent_id == @alice.id
-    # assert matchs.status == 3
-    #follow_redirect!
-    
-    #ゲーム画面へ移動する
     # assert_redirected_to
   end
   
   #対戦要求を拒否したときの挙動
   test "behavior match decline" do
     
-    #ログイン
-    get login_path
-    login_as(@michael)
+    #test1からtest2へ対戦要求を行う
+    request_match(@test1, @test2, WAITING)
     
-    #対局室へ移動
-    get root_path
-    post matchs_path, params: {user_id: @michael.id}
+    #test1の確認
+    matchs = Match.find_by(user_id: @test1.id)
+    assert matchs.user_id == @test1.id
+    assert matchs.opponent_id == @test2.id
+    assert matchs.status == WAITING
     
-    #Aliceへ対戦要求を行う
-    patch match_path(@michael.match), params: { opponent_id: @alice.id, status: 1 }
-    matchs = Match.find_by(user_id: @michael.id)
-    assert matchs.user_id == @michael.id
-    assert matchs.opponent_id == @alice.id
-    assert matchs.status == 1
-    
-    #Aliceが対戦要求を拒否する
-    delete logout_path
-    get root_path
-    login_as(@alice)
-    post matchs_path, params: {user_id: @alice.id}
+    #test2の画面の確認
+    enter_room(@test2)
     follow_redirect!
-    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 3) , text: "承諾"
     assert_select "input[value=?]", "承諾"
-    #assert_select "a[href=?]", match_path(@michael.match, opponent_id: @alice.id, status: 2) , text: "拒否"
     assert_select "input[value=?]", "拒否"
-    patch match_path(@michael.match, opponent_id: @alice.id, status: 2)
-    matchs = Match.find_by(user_id: @michael.id)
-    assert matchs.user_id == @michael.id
-    assert matchs.opponent_id == @alice.id
-    #assert matchs.status == 2
+    
+    #test2が対戦要求を拒否する
+    patch match_path(@test2.match, opponent_id: @test1.id, status: DECLINE)
+    
+    #test1の確認
+    matchs = Match.find_by(user_id: @test1.id)
+    assert matchs.user_id == @test1.id
+    assert matchs.opponent_id == 0
+    assert matchs.status == STANDBY
+    
+    #test2の確認
+    matchs = Match.find_by(user_id: @test2.id)
+    assert matchs.user_id == @test2.id
+    assert matchs.opponent_id == 0
+    assert matchs.status == STANDBY
     
     #対戦要求が拒否された旨を表示する
     delete logout_path
     get root_path
-    login_as(@michael)
-    post matchs_path, params: {user_id: @michael.id}
+    login_as(@test1)
+    post matchs_path, params: {user_id: @test1.id}
     follow_redirect!
     assert_not flash[:info].empty?
-    matchs = Match.find_by(user_id: @michael.id)
-    assert matchs.user_id == @michael.id
-    # assert matchs.opponent_id == 0
-    assert matchs.status == 1
+    matchs = Match.find_by(user_id: @test1.id)
+    assert matchs.user_id == @test1.id
+    assert matchs.opponent_id == 0
+    assert matchs.status == 0
     get root_path
     get matchs_path
     assert flash.empty?
     
     #対局室から移動する
-    delete match_path(@michael)
+    delete match_path(@test1)
     assert_redirected_to root_path
-    matchs = Match.find_by(user_id: @michael.id)
+    matchs = Match.find_by(user_id: @test1.id)
     assert matchs == nil
+  end
+  
+  #対戦要求がすでに別のユーザーから出されている場合は、対戦要求できない
+  test "duplicate match request" do
+    @test1 = users(:test1)
+    @test2 = users(:test2)
+    
+    #test1がマイケルへ対戦要求を行う
+    request_match(@test1, @michael, WAITING)
+    
+    #マイケルがアリスへ対戦要求を行う
+    request_match(@test2, @michael, WAITING)
+    
+    #マイケルの状態
+    match_ = Match.find_by(user_id: @michael.id)
+    assert match_.user_id == @michael.id
+    assert match_.opponent_id == @test1.id
+    assert match_.status == WAITING
+    
+    #test1の状態
+    match_ = Match.find_by(user_id: @test1.id)
+    assert match_.user_id == @test1.id
+    assert match_.opponent_id == @michael.id
+    assert match_.status == WAITING
+    
+    #test2の状態
+    match_ = Match.find_by(user_id: @test2.id)
+    assert match_.user_id == @test2.id
+    assert match_.opponent_id == 0
+    assert match_.status == STANDBY
   end
 end

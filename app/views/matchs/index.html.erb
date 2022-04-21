@@ -2,78 +2,15 @@
 <p hidden>UserID:<span id="UserID"><%= "#{@user.id}" %></span></p>
 <h2>対戦待ちユーザー</h2>
 
-<% if @opponent %>
-  <ul>
-    <li>
-      <p class="user_list"><%= "#{@opponent.user.name}から対戦を申し込まれています" %></p>
-  
-      <%#= link_to "承諾", match_path(@opponent, opponent_id: @user.id, status: 3) , method: :patch %>
-      <%= form_with(model: @match, method: :patch, local: true, class: "user_list") do |f|%>
-        <div><%= hidden_field_tag :opponent_id, @opponent.user_id %></div>
-        <div><%= hidden_field_tag :status, 3 %></div>
-        <%= f.submit "承諾", class: "btn btn-default" %>
-      <% end %>
-      
-      <%#= link_to "拒否", match_path(@opponent, opponent_id: @user.id, status: 2) , method: :patch %>
-      <%= form_with(model: @match, method: :patch, local: true, class: "user_list") do |f|%>
-        <div><%= hidden_field_tag :opponent_id, @opponent.user_id %></div>
-        <div><%= hidden_field_tag :status, 2 %></div>
-        <%= f.submit "拒否", class: "btn btn-default" %>
-      <% end %>
-    </li>
-  </ul>
-  <% end %>
-
-<div id="matchTable">
-  <ul>
-  <% @matches.each do |matchs| %>
-    <% if matchs.user_id != @user.id %>
-      <li>
-        <p class="user_list"><%= matchs.user.name %></p>
-        <%#= link_to "対戦", match_path(@match, opponent_id: matchs.user_id, status: 1) , method: :patch %>
-        <%= form_with(model: @match, local: true, class: "user_list") do |f|%>
-          <div><%= hidden_field_tag :opponent_id, matchs.user_id %></div>
-          <div><%= hidden_field_tag :status, 1 %></div>
-          <%= f.submit "対戦", class: "btn btn-default" %>
-        <% end %>
-      </li>
-    <% end %>
-  <% end %>
-  </ul>
+<div id="requestTable">
+  <%= render 'request_table', {user_match: @match, opp_match: @opponent} %>
 </div>
 
+<div id="matchTable">
+  <%= render 'match_table', {user_match: @match, user_matches: @matches} %>
+</div>
 
-<%#= link_to "退出する", match_path(@match) , method: :delete %>
 <%= form_with(model: @match,method: :delete, local: true) do |f|%>
   <%= f.submit "退出する", class: "btn btn-primary" %>
 <% end %>
-
-<%#= will_paginate %>
-
-<script type="text/javascript">
-  // $(document).ready(function() {
-  //   $("p.jQuery").text("jQuery稼働テスト(稼働中)");
-  // });
-  //appMatch.speak()
-  
-  // setInterval(function(){
-  //   appMatch.speak()
-  // },3000);
-  
-  // window.addEventListener("keypress", function(e) {
-  //   if (e.keyCode === 13) {
-  //     appMatch.speak();
-  //     e.target.value = '';
-  //     e.preventDefault();
-  //   }
-  // })
-  
-  // window.addEventListener("keypress", function(e) {
-  //   if (e.keyCode === 13) {
-  //     appMatch.speak(e.target.value);
-  //     e.target.value = '';
-  //     e.preventDefault();
-  //   }
-  // })
-</script>
 

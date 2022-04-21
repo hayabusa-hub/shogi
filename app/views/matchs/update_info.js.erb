@@ -1,0 +1,2 @@
+$("#requestTable").html("<%= escape_javascript(render 'matchs/request_table', {user_match: @match, opp_match: @opponent}) %>");
+$("#matchTable").html("<%= escape_javascript(render 'matchs/match_table', {user_match: @match, user_matches: @matches}) %>");
