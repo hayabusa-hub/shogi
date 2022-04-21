@@ -7,6 +7,7 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     @alice = users(:alice)
     @test1 = users(:test1)
     @test2 = users(:test2)
+    @test3 = users(:test3)
   end
   
   #指定したユーザーが対局室へ入場する
@@ -154,8 +155,6 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
   
   #対戦要求がすでに別のユーザーから出されている場合は、対戦要求できない
   test "duplicate match request" do
-    @test1 = users(:test1)
-    @test2 = users(:test2)
     
     #test1がマイケルへ対戦要求を行う
     request_match(@test1, @michael, WAITING)
@@ -178,6 +177,34 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     #test2の状態
     match_ = Match.find_by(user_id: @test2.id)
     assert match_.user_id == @test2.id
+    assert match_.opponent_id == 0
+    assert match_.status == STANDBY
+  end
+  
+  #対戦要求を同時に2つ以上出せない
+  test "cannot request match to multiple users at the same time" do
+    
+    #test1がtest2へ対戦要求を行う
+    request_match(@test1, @test2, WAITING)
+    
+    #test1がtest3へ対戦要求を行う
+    request_match(@test1, @test3, WAITING)
+    
+    #test1の状態
+    match_ = Match.find_by(user_id: @test1.id)
+    assert match_.user_id == @test1.id
+    assert match_.opponent_id == @test2.id
+    assert match_.status == WAITING
+    
+    #test2の状態
+    match_ = Match.find_by(user_id: @test2.id)
+    assert match_.user_id == @test2.id
+    assert match_.opponent_id == @test1.id
+    assert match_.status == WAITING
+    
+    #test3の状態
+    match_ = Match.find_by(user_id: @test3.id)
+    assert match_.user_id == @test3.id
     assert match_.opponent_id == 0
     assert match_.status == STANDBY
   end

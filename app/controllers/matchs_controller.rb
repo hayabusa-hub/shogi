@@ -52,21 +52,31 @@ class MatchsController < ApplicationController
   def update
     
     @match = Match.find_by(user_id: @user.id)
-    @match.opponent_id = params[:opponent_id]
-    @match.status = params[:status]
-    @match.save
+    # before_status = @match.status
+    
+    # @match.opponent_id = params[:opponent_id]
+    # @match.status = params[:status]
+    # @match.save
     @opponent = Match.find_by(user_id: params[:opponent_id])
     
     #対戦要求を出した場合
-    if(WAITING == @match.status)
-      if(STANDBY == @opponent.status)
-        #状態を更新
-        @opponent.opponent_id = @match.user_id
-        @opponent.status = WAITING
-        @opponent.save
-        opp = User.find(@match.opponent_id)
-        msg = "#{opp.name}へ対戦要求を出しました"
-        broadcast(@opponent.user_id)
+    if(WAITING == params[:status].to_i)
+      if(STANDBY == @opponent.status) 
+        if(STANDBY == @match.status)
+          #状態を更新
+          @match.opponent_id = params[:opponent_id]
+          @match.status = params[:status]
+          @match.save
+          @opponent.opponent_id = @match.user_id
+          @opponent.status = WAITING
+          @opponent.save
+          opp = User.find(@match.opponent_id)
+          msg = "#{opp.name}へ対戦要求を出しました"
+          broadcast(@opponent.user_id)
+        else
+          opp = User.find(@match.opponent_id)
+          msg = "複数の対戦要求を出すことはできません"
+        end
       else
         @match.opponent_id = 0
         @match.status = STANDBY
@@ -76,7 +86,7 @@ class MatchsController < ApplicationController
     else
       
       #対戦要求を拒否した場合
-      if(DECLINE == @match.status)
+      if(DECLINE == params[:status].to_i)
         #状態を更新
         @match.status = STANDBY
         @match.opponent_id = 0
@@ -88,8 +98,9 @@ class MatchsController < ApplicationController
         msg = "対戦要求を拒否しました"
         broadcast(@opponent.user_id)
       #対戦要求を承諾した場合
-      elsif(PLAYING == @match.status)
+      elsif(PLAYING == params[:status].to_i)
         #状態を更新
+        @match.opponent_id = params[:opponent_id]
         @match.status = PLAYING
         @opponent.status = PLAYING
         
@@ -97,6 +108,8 @@ class MatchsController < ApplicationController
         game_id = make_game(@match.user, @opponent.user)
         @match.game_id = game_id
         @opponent.game_id = game_id
+        
+        #保存
         @match.save
         @opponent.save
         
