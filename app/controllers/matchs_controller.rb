@@ -19,7 +19,7 @@ class MatchsController < ApplicationController
   # end
   
   def index()
-    @opponent = Match.find_by(opponent_id: @user.id, status: WAITING)
+    @opponent = Match.find_by(opponent_id: @user.id)
     @match = Match.find_by(user_id: @user.id)
     @matches = Match.where(status: STANDBY).paginate(page: params[:page])
     
@@ -52,30 +52,30 @@ class MatchsController < ApplicationController
   def update
     
     @match = Match.find_by(user_id: @user.id)
-    # before_status = @match.status
-    
-    # @match.opponent_id = params[:opponent_id]
-    # @match.status = params[:status]
-    # @match.save
     @opponent = Match.find_by(user_id: params[:opponent_id])
     
     #対戦要求を出した場合
-    if(WAITING == params[:status].to_i)
-      if(STANDBY == @opponent.status) 
+    if(REQUEST == params[:status].to_i)
+      if(STANDBY == @opponent.status)
+        opp = User.find_by(id: params[:opponent_id])
         if(STANDBY == @match.status)
           #状態を更新
           @match.opponent_id = params[:opponent_id]
-          @match.status = params[:status]
+          @match.status = REQUEST
           @match.save
           @opponent.opponent_id = @match.user_id
           @opponent.status = WAITING
           @opponent.save
-          opp = User.find(@match.opponent_id)
+          
           msg = "#{opp.name}へ対戦要求を出しました"
           broadcast(@opponent.user_id)
-        else
-          opp = User.find(@match.opponent_id)
+        elsif(REQUEST == @match.status)
           msg = "複数の対戦要求を出すことはできません"
+        elsif(WAITING == @match.status)
+          msg = "既に#{opp.name}から対戦要求が出されています"
+        else
+          #ここにはこない
+          5.times {puts "********* @match.status is invalid value: #{@match.status} ***********"}
         end
       else
         @match.opponent_id = 0
@@ -177,7 +177,7 @@ class MatchsController < ApplicationController
     flash[:info] = "対局室から退室しました"
     
     # 退出の旨をチャット参加者に配信
-    broadcast(0)
+    broadcast()
     
     redirect_to root_path
   end
@@ -264,7 +264,7 @@ class MatchsController < ApplicationController
       return a, b
     end
     
-    def broadcast(id, reload=false)
+    def broadcast(id=0, reload=false)
       
       data = {}
       data[:from_id] = @user.id

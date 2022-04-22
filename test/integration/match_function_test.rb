@@ -57,21 +57,21 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
   test "behavior accept match" do
     
     #test1からtest2へ対戦要求を行う
-    request_match(@test1, @test2, WAITING)
+    request_match(@test1, @test2, REQUEST)
     
     #test1の確認
     matchs = Match.find_by(user_id: @test1.id)
     assert matchs.user_id == @test1.id
     assert matchs.opponent_id == @test2.id
-    assert matchs.status == 1
+    assert matchs.status == REQUEST
+    follow_redirect!
+    assert_select "input[value=?]", "取り消し"
     
     #test2の確認
     matchs = Match.find_by(user_id: @test2.id)
     assert matchs.user_id == @test2.id
     assert matchs.opponent_id == @test1.id
-    assert matchs.status == 1
-    
-    #test2の画面の確認
+    assert matchs.status == WAITING
     enter_room(@test2)
     follow_redirect!
     assert_select "input[value=?]", "承諾"
@@ -102,13 +102,13 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
   test "behavior match decline" do
     
     #test1からtest2へ対戦要求を行う
-    request_match(@test1, @test2, WAITING)
+    request_match(@test1, @test2, REQUEST)
     
     #test1の確認
     matchs = Match.find_by(user_id: @test1.id)
     assert matchs.user_id == @test1.id
     assert matchs.opponent_id == @test2.id
-    assert matchs.status == WAITING
+    assert matchs.status == REQUEST
     
     #test2の画面の確認
     enter_room(@test2)
@@ -157,10 +157,10 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
   test "duplicate match request" do
     
     #test1がマイケルへ対戦要求を行う
-    request_match(@test1, @michael, WAITING)
+    request_match(@test1, @michael, REQUEST)
     
     #マイケルがアリスへ対戦要求を行う
-    request_match(@test2, @michael, WAITING)
+    request_match(@test2, @michael, REQUEST)
     
     #マイケルの状態
     match_ = Match.find_by(user_id: @michael.id)
@@ -172,7 +172,7 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     match_ = Match.find_by(user_id: @test1.id)
     assert match_.user_id == @test1.id
     assert match_.opponent_id == @michael.id
-    assert match_.status == WAITING
+    assert match_.status == REQUEST
     
     #test2の状態
     match_ = Match.find_by(user_id: @test2.id)
@@ -185,16 +185,16 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
   test "cannot request match to multiple users at the same time" do
     
     #test1がtest2へ対戦要求を行う
-    request_match(@test1, @test2, WAITING)
+    request_match(@test1, @test2, REQUEST)
     
     #test1がtest3へ対戦要求を行う
-    request_match(@test1, @test3, WAITING)
+    request_match(@test1, @test3, REQUEST)
     
     #test1の状態
     match_ = Match.find_by(user_id: @test1.id)
     assert match_.user_id == @test1.id
     assert match_.opponent_id == @test2.id
-    assert match_.status == WAITING
+    assert match_.status == REQUEST
     
     #test2の状態
     match_ = Match.find_by(user_id: @test2.id)
@@ -205,6 +205,28 @@ class MatchFunctionTest < ActionDispatch::IntegrationTest
     #test3の状態
     match_ = Match.find_by(user_id: @test3.id)
     assert match_.user_id == @test3.id
+    assert match_.opponent_id == 0
+    assert match_.status == STANDBY
+  end
+  
+  #対戦要求の取り消し
+  test "cancel request match" do
+    
+    #test1がtest2へ対戦要求を行う
+    request_match(@test1, @test2, REQUEST)
+    
+    #test1が対戦要求を取り消す
+    patch match_path(@test1.match, opponent_id: @test2.id, status: DECLINE)
+    
+    #test1の状態
+    match_ = Match.find_by(user_id: @test1.id)
+    assert match_.user_id == @test1.id
+    assert match_.opponent_id == 0
+    assert match_.status == STANDBY
+    
+    #test2の状態
+    match_ = Match.find_by(user_id: @test2.id)
+    assert match_.user_id == @test2.id
     assert match_.opponent_id == 0
     assert match_.status == STANDBY
   end

@@ -6,7 +6,7 @@
           <p class="user_list"><%= matchs.user.name %></p>
           <%= form_with(model: user_match, local: false, class: "user_list") do |f|%>
             <div><%= hidden_field_tag :opponent_id, matchs.user_id %></div>
-            <div><%= hidden_field_tag :status, 1 %></div>
+            <div><%= hidden_field_tag :status, GamesHelper::REQUEST %></div>
             <%= f.submit "対戦", class: "btn btn-default" %>
           <% end %>
         </li>
