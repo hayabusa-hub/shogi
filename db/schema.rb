@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 2022_03_30_015610) do
     t.integer "status", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "game_id"
+    t.integer "game_id", default: -1
     t.index ["user_id"], name: "index_matches_on_user_id", unique: true
   end
 

@@ -63,6 +63,7 @@ class GamesController < ApplicationController
           format.html
           format.js   { render 'games/confirm.js.erb'}
         end
+        
         return
       else
         if(nil == @is_promote)
@@ -72,17 +73,10 @@ class GamesController < ApplicationController
         if @game.put_piece?(@my_turn, @piece, @before_pos, @after_pos, @is_promote)
           
           #braodcastにより、盤面更新を通知する
-          ActionCable.server.broadcast("game_channel", game_id: @game.id)
-          # GameBroadCastJob.perform_later(@game)
-          # 5.times {puts "********* put piece ***********"} #debug用
-          
-          #盤面情報を更新する
-          #respond_to do |format|
-            #format.html { redirect_to @game}
-            #format.js   { render 'games/update_board.js.erb'}
-            #format.js   { render 'games/speak.js.erb'}
-          #end
+          # ActionCable.server.broadcast("game_channel", game_id: @game.id)
+          gameBroadcast(@game.id, false)
         else
+          
           flash.now[:danger] = @game.errors.messages[:name][0]
           
           #選択を解除する
@@ -120,6 +114,49 @@ class GamesController < ApplicationController
   def update_board
     respond_to do |format|
       format.js
+    end
+  end
+  
+  def disconnect
+    
+    flag = true
+    @game = Game.find(params[:id])
+    @user = current_user()
+    @opp_match = Match.find_by(user_id: @user.match.opponent_id)
+    
+    #10秒間相手の接続が回復しない場合は接続切れとする
+    start_time = Time.now
+    while(Time.now - start_time <= 10) do
+      @opp_match.reload
+      if(PLAYING == @opp_match.status)
+        flag = false
+        break
+      end
+    end
+    
+    5.times {puts "********* disconnect: #{flag} ***********"} #debug用
+    5.times {puts "********* pass time: #{Time.now - start_time} ***********"} #debug用
+    
+    #接続が回復しない場合は、接続切れ処理を行う
+    if(flag)
+      quit(@game, @user)
+    end
+  end
+  
+  def quit(game, winner)
+    if(winner.name == @game.first_user_name)
+      game.winner = FIRST
+    elsif(winner.name == @game.second_user_name)
+      game.winner = SECOND
+    else
+      #ここにはこない
+      5.times {puts "********* User name is not correct ***********"}
+    end
+    game.save
+    
+    #盤面を更新
+    respond_to do |format|
+      format.js { render 'games/update_board.js.erb'}
     end
   end
   

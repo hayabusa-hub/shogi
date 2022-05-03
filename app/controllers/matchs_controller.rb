@@ -24,8 +24,10 @@ class MatchsController < ApplicationController
     @matches = Match.where(status: STANDBY).paginate(page: params[:page])
     
     #対局する場合、GAME画面へ移動する
-    if(@match != nil) && (PLAYING == @match.status)
-      redirect_to game_path(@match.game_id)
+    if(@match != nil)
+      if(PLAYING == @match.status) or (DISCONNECT == @match.status)
+        redirect_to game_path(@match.game_id)
+      end
     end
   end
   

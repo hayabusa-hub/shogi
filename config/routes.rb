@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get    "/games/:id/update_board" => "games#update_board"
   post   "/login"                  => "sessions#create"
   patch  "/games/:id/editBoard"    => "games#edit_board"
+  patch  "/games/:id/disconnect"   => "games#disconnect"
   # patch  "/matches/:id/request"    => "matchs#request_match"
   # patch  "/matches/:id/accept"     => "matchs#accept_match"
   # patch  "/matches/:id/decline"    => "matchs#decline_match"

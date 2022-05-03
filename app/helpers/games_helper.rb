@@ -6,11 +6,12 @@ module GamesHelper
   Y = ["一", "二", "三", "四", "五", "六", "七", "八", "九"]
   ORDER= [0, 1, 2, 3, 4, 5, 6, 7, 8]
   
-  STANDBY = 0 #対戦待ち
-  WAITING = 1 #対戦要求が出されている
-  REQUEST = 2 #対戦要求を出している
-  DECLINE = 3
-  PLAYING = 4 #ゲーム中
+  STANDBY    = 0 #対戦待ち
+  WAITING    = 1 #対戦要求が出されている
+  REQUEST    = 2 #対戦要求を出している
+  DECLINE    = 3 #対戦要求を拒絶
+  PLAYING    = 4 #ゲーム中
+  DISCONNECT = 5 #切断中
   
   #駒
   NOTHING  = "0"
@@ -91,5 +92,12 @@ module GamesHelper
       msg = ""
     end
     return msg
+  end
+  
+  def gameBroadcast(game_id, quit=false)
+    data = {}
+    data[:game_id] = game_id
+    data[:quit]  = quit
+    ActionCable.server.broadcast("game_channel_#{game_id}", data: data)
   end
 end
