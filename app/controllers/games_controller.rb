@@ -144,9 +144,9 @@ class GamesController < ApplicationController
   end
   
   def quit(game, winner)
-    if(winner.name == @game.first_user_name)
+    if(winner.name == game.first_user_name)
       game.winner = FIRST
-    elsif(winner.name == @game.second_user_name)
+    elsif(winner.name == game.second_user_name)
       game.winner = SECOND
     else
       #ここにはこない
@@ -156,6 +156,7 @@ class GamesController < ApplicationController
     
     #盤面を更新
     respond_to do |format|
+      format.js { redirect_to game_path(game.id)}
       format.js { render 'games/update_board.js.erb'}
     end
   end
