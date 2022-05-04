@@ -9,6 +9,9 @@ class MatchsController < ApplicationController
   # loginユーザーとparams[:id]が一致しているかチェックする
   def init
     @user = current_user()
+    @opponent = Match.find_by(opponent_id: @user.id)
+    @match = Match.find_by(user_id: @user.id)
+    @matches = Match.where(status: STANDBY).paginate(page: params[:page])
   end
   
   # def update_user_list
@@ -19,9 +22,9 @@ class MatchsController < ApplicationController
   # end
   
   def index()
-    @opponent = Match.find_by(opponent_id: @user.id)
-    @match = Match.find_by(user_id: @user.id)
-    @matches = Match.where(status: STANDBY).paginate(page: params[:page])
+    # @opponent = Match.find_by(opponent_id: @user.id)
+    # @match = Match.find_by(user_id: @user.id)
+    # @matches = Match.where(status: STANDBY).paginate(page: params[:page])
     
     #対局する場合、GAME画面へ移動する
     if(@match != nil)
@@ -53,7 +56,7 @@ class MatchsController < ApplicationController
   
   def update
     
-    @match = Match.find_by(user_id: @user.id)
+    # @match = Match.find_by(user_id: @user.id)
     @opponent = Match.find_by(user_id: params[:opponent_id])
     
     #対戦要求を出した場合
@@ -186,9 +189,9 @@ class MatchsController < ApplicationController
   
   def update_info
     # if @user.id != params[:id].to_i
-    @opponent = Match.find_by(opponent_id: @user.id, status: WAITING)
-    @match = Match.find_by(user_id: @user.id)
-    @matches = Match.where(status: STANDBY)
+    # @opponent = Match.find_by(opponent_id: @user.id)
+    # @match = Match.find_by(user_id: @user.id)
+    # @matches = Match.where(status: STANDBY)
     # debugger
     # 5.times {puts "********* match_opponent: #{@opponent} update_info js ***********"}
     

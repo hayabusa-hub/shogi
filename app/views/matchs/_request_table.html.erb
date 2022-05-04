@@ -10,7 +10,7 @@
         <%= f.submit "取り消し", class: "btn btn-default" %>
       <% end %>
     </li>
-  <% else %>
+  <% elsif user_match.status == GamesHelper::WAITING %>
     <li>
       <p class="user_list"><%= "#{opp_match.user.name}から対戦を申し込まれています" %></p>
   
