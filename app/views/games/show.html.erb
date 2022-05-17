@@ -32,4 +32,12 @@
       $("#finish").show();
     }
   });
+  
+  setInterval(function(){
+    if(0 == <%= @game.reload.winner %>){
+      $.ajax({url: `/games/${<%= @game.id %>}/update_time`, type: "PATCH", beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-CSRF-Token", $('meta[name="csrf-token"]').attr('content'))
+        },});
+    }
+  }, 1000)
 </script>

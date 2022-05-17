@@ -51,6 +51,13 @@
     
     <%= render 'display_user_name', {game: game, class_name: :front, turn: display} %>
     <%= render 'display_user_name', {game: game, class_name: :back,  turn: display^3} %>
+    
+    <div class="firstDisplayTimer">
+      <%= render 'display_time', {class_name: :front, left_time: desplayTime(game.first_have_time) } %>
+    </div>
+    <div class="secondDisplayTimer">
+      <%= render 'display_time', {class_name: :back, left_time: desplayTime(game.second_have_time) } %>
+    </div>
   </tbody>
 </table>
 

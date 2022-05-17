@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_30_015610) do
+ActiveRecord::Schema.define(version: 2022_05_13_075131) do
 
   create_table "games", force: :cascade do |t|
     t.text "board"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(version: 2022_03_30_015610) do
     t.integer "winner", default: 0
     t.string "first_user_name"
     t.string "second_user_name"
+    t.integer "first_have_time", default: 0
+    t.integer "second_have_time", default: 0
   end
 
   create_table "matches", force: :cascade do |t|

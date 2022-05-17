@@ -22,6 +22,9 @@ const App = consumer.subscriptions.create("GameChannel", {
       console.log(" game is end");
       $.ajax({url: `/games/${data.data["game_id"]}/disconnect`, type: "PATCH"});
     }
+    else if(true == data.data["time"]){
+      $.ajax({url: `/games/${data.data["game_id"]}/update_time`, type: "PATCH"});
+    }
     else{
       console.log(" update game board");
       $.ajax({url: `/games/${data.data["game_id"]}/update_board`, type: "GET"});

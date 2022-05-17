@@ -98,6 +98,20 @@ module GamesHelper
     data = {}
     data[:game_id] = game_id
     data[:quit]  = quit
+    data[:time]  = false
     ActionCable.server.broadcast("game_channel_#{game_id}", data: data)
+  end
+  
+  def gameTimeBroadcast(game_id)
+    data = {}
+    data[:quit]  = false
+    data[:time]  = true
+    ActionCable.server.broadcast("game_channel_#{game_id}", data: data)
+  end
+  
+  def desplayTime(time)
+    minites = time / 60
+    seconds = time % 60
+    return "#{minites}:#{seconds}"
   end
 end

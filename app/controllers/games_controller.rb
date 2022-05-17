@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm, :update_board]
+  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm, :update_board, :update_time]
   
   include SessionsHelper
   include GamesHelper
@@ -156,9 +156,48 @@ class GamesController < ApplicationController
     
     #盤面を更新
     respond_to do |format|
-      format.js { redirect_to game_path(game.id)}
+      format.html { redirect_to game_path(game.id)}
       format.js { render 'games/update_board.js.erb'}
     end
+  end
+  
+  def update_time
+    
+    if(@game.turn == @my_turn)
+      
+      #持ち時間を更新する(１秒減らす)
+      if @my_turn == FIRST
+        @game.first_have_time -= 1
+        time = @game.first_have_time
+      elsif @my_turn == SECOND
+        @game.second_have_time -= 1
+        time = @game.second_have_time
+      else
+        #ここにはこない
+      end
+      
+      #保存
+      @game.save
+      
+      #####################debug用#####################
+      5.times {puts "********* Left time: #{time} ***********"}
+      #################################################
+    else
+      time = 1 #自分の手番でないときも残り時間を更新したいため
+    end
+    
+    #持ち時間が無くなった場合は、負けとする
+    if time <= 0
+      opp = User.find(@user.match.opponent_id)
+      quit(@game, opp)
+    else
+      
+      #ページを非同期通信により更新する
+      respond_to do |format|
+        format.js { render 'games/update_time.js.erb'}
+      end
+    end
+    
   end
   
   private

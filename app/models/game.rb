@@ -70,6 +70,8 @@ class Game < ApplicationRecord
     self.second_oute_seq = false
     #self.board_hash = {}
     init_board_hash
+    self.first_have_time = 600
+    self.second_have_time = 600
     self.save
   end
   

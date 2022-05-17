@@ -1,0 +1,7 @@
+$(".firstDisplayTimer").html("<%= escape_javascript(render 'games/display_time', 
+  { class_name: :front, 
+    left_time: desplayTime(@game.first_have_time) } ) %>");
+    
+$(".secondDisplayTimer").html("<%= escape_javascript(render 'games/display_time', 
+  { class_name: :back, 
+    left_time: desplayTime(@game.second_have_time) } ) %>");
