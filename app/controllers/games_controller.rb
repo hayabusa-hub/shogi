@@ -190,11 +190,16 @@ class GamesController < ApplicationController
     if time <= 0
       opp = User.find(@user.match.opponent_id)
       quit(@game, opp)
-    else
+    elsif 0 == @game.winner
       
       #ページを非同期通信により更新する
       respond_to do |format|
         format.js { render 'games/update_time.js.erb'}
+      end
+    else
+      #盤面を更新
+      respond_to do |format|
+        format.js { render 'games/update_board.js.erb'}
       end
     end
     
