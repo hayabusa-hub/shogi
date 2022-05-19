@@ -1,8 +1,10 @@
-$(".firstDisplayTimer").html("<%= escape_javascript(render 'games/display_time', 
-  { class_name: :front, 
-    left_time: desplayTime(@game.first_have_time) } ) %>");
+$(".frontDisplayUser").html("<%= escape_javascript(render 'display_user_name', 
+  { game: @game, 
+    class_name: :front, 
+    turn: @display } ) %>");
     
-$(".secondDisplayTimer").html("<%= escape_javascript(render 'games/display_time', 
-  { class_name: :back, 
-    left_time: desplayTime(@game.second_have_time) } ) %>");
+$(".backDisplayUser").html("<%= escape_javascript(render 'display_user_name', 
+  { game: @game, 
+    class_name: :back,  
+    turn: @display^3} ) %>");
     

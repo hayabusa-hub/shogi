@@ -49,15 +49,18 @@
     <%= render 'display_own_piece', {game: game, id_name: :front, turn: display} %>
     <%= render 'display_own_piece', {game: game, id_name: :back,  turn: display^3} %>
     
-    <%= render 'display_user_name', {game: game, class_name: :front, turn: display} %>
-    <%= render 'display_user_name', {game: game, class_name: :back,  turn: display^3} %>
+    <tbody class="frontDisplayUser">
+      <%= render 'display_user_name', 
+          {game: game, 
+           class_name: :front, 
+           turn: display } %>
+    </tbody>
     
-    <div class="firstDisplayTimer">
-      <%= render 'display_time', {class_name: :front, left_time: desplayTime(game.first_have_time) } %>
-    </div>
-    <div class="secondDisplayTimer">
-      <%= render 'display_time', {class_name: :back, left_time: desplayTime(game.second_have_time) } %>
-    </div>
+    <tbody class="backDisplayUser">
+      <%= render 'display_user_name', 
+          {game: game, 
+          turn: display^3} %>
+    </tbody>
   </tbody>
 </table>
 

@@ -94,6 +94,17 @@ module GamesHelper
     return msg
   end
   
+  def getLeftTime(display, game)
+    if(FIRST == display)
+      time = desplayTime(game.first_have_time)
+    elsif(SECOND == display)
+      time = desplayTime(game.second_have_time)
+    else
+      time = ""
+    end
+    return time
+  end
+  
   def gameBroadcast(game_id, quit=false)
     data = {}
     data[:game_id] = game_id
@@ -110,8 +121,8 @@ module GamesHelper
   end
   
   def desplayTime(time)
-    minites = time / 60
-    seconds = time % 60
+    minites = "#{time / 60}".rjust(2, "0")
+    seconds = "#{time % 60}".rjust(2, "0")
     return "#{minites}:#{seconds}"
   end
 end
