@@ -18,11 +18,7 @@ const App = consumer.subscriptions.create("GameChannel", {
     /*global $*/
     console.log("game data received");
     
-    if(true == data.data["quit"]){
-      console.log(" game is end");
-      $.ajax({url: `/games/${data.data["game_id"]}/disconnect`, type: "PATCH"});
-    }
-    else if(true == data.data["time"]){
+    if(true == data.data["time"]){
       $.ajax({url: `/games/${data.data["game_id"]}/update_time`, type: "PATCH"});
     }
     else{

@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   get    "/games/:id/update_board" => "games#update_board"
   post   "/login"                  => "sessions#create"
   patch  "/games/:id/editBoard"    => "games#edit_board"
-  patch  "/games/:id/disconnect"   => "games#disconnect"
   patch  "/games/:id/update_time"  => "games#update_time"
   delete "/logout"                 => "sessions#destroy"
   resources :users

@@ -30,9 +30,6 @@ class GameChannel < ApplicationCable::Channel
       5.times {puts "********* unsubscribed user: #{current_user.name}, game_id: #{current_user.match.game_id} ***********"} #debug用
       user_match.status = DISCONNECT
       user_match.save
-      
-      #対戦相手へ切断したことを通知する
-      gameBroadcast(current_user.match.game_id, true)
     end
   end
   

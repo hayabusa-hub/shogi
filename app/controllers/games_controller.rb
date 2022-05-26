@@ -74,7 +74,7 @@ class GamesController < ApplicationController
           
           #braodcastにより、盤面更新を通知する
           # ActionCable.server.broadcast("game_channel", game_id: @game.id)
-          gameBroadcast(@game.id, false)
+          gameBroadcast(@game.id)
         else
           
           flash.now[:danger] = @game.errors.messages[:name][0]
@@ -117,31 +117,31 @@ class GamesController < ApplicationController
     end
   end
   
-  def disconnect
+  # def disconnect
     
-    flag = true
-    @game = Game.find(params[:id])
-    @user = current_user()
-    @opp_match = Match.find_by(user_id: @user.match.opponent_id)
+  #   flag = true
+  #   @game = Game.find(params[:id])
+  #   @user = current_user()
+  #   @opp_match = Match.find_by(user_id: @user.match.opponent_id)
     
-    #10秒間相手の接続が回復しない場合は接続切れとする
-    start_time = Time.now
-    while(Time.now - start_time <= 10) do
-      @opp_match.reload
-      if(PLAYING == @opp_match.status)
-        flag = false
-        break
-      end
-    end
+  #   #10秒間相手の接続が回復しない場合は接続切れとする
+  #   start_time = Time.now
+  #   while(Time.now - start_time <= 10) do
+  #     @opp_match.reload
+  #     if(PLAYING == @opp_match.status)
+  #       flag = false
+  #       break
+  #     end
+  #   end
     
-    5.times {puts "********* disconnect: #{flag} ***********"} #debug用
-    5.times {puts "********* pass time: #{Time.now - start_time} ***********"} #debug用
+  #   5.times {puts "********* disconnect: #{flag} ***********"} #debug用
+  #   5.times {puts "********* pass time: #{Time.now - start_time} ***********"} #debug用
     
-    #接続が回復しない場合は、接続切れ処理を行う
-    if(flag)
-      quit(@game, @user)
-    end
-  end
+  #   #接続が回復しない場合は、接続切れ処理を行う
+  #   if(flag)
+  #     quit(@game, @user)
+  #   end
+  # end
   
   def quit(game, winner)
     if(winner.name == game.first_user_name)
@@ -163,45 +163,97 @@ class GamesController < ApplicationController
   
   def update_time
     
-    if(@game.turn == @my_turn)
+    @opp_match = Match.find_by(user_id: @user.match.opponent_id)
+    
+    #対戦相手が接続切れの場合
+    if(DISCONNECT == @opp_match.status)
       
-      #持ち時間を更新する(１秒減らす)
-      if @my_turn == FIRST
-        @game.first_have_time -= 1
-        time = @game.first_have_time
-      elsif @my_turn == SECOND
-        @game.second_have_time -= 1
-        time = @game.second_have_time
-      else
-        #ここにはこない
+      #接続切れ時間の更新
+      @game.disconnect_time += 1
+      @game.save
+      
+      #接続切れ処理を行う
+      if @game.disconnect_time >= DISCONNECT_TIME
+        quit(@game, @user)
+      end
+      
+    else
+      @game.disconnect_time = 0
+      
+      time = 1
+      if(@game.turn == @my_turn) and (0 == @game.winner)
+        
+        #持ち時間を更新する(１秒減らす)
+        if @my_turn == FIRST
+          @game.first_have_time -= 1
+          time = @game.first_have_time
+        elsif @my_turn == SECOND
+          @game.second_have_time -= 1
+          time = @game.second_have_time
+        else
+          #ここにはこない
+        end
       end
       
       #保存
       @game.save
       
-      #####################debug用#####################
-      5.times {puts "********* Left time: #{time} ***********"}
-      #################################################
-    else
-      time = 1 #自分の手番でないときも残り時間を更新したいため
+      #持ち時間が無くなった場合は、負けとする
+      if time <= 0
+        opp = User.find(@user.match.opponent_id)
+        quit(@game, opp)
+      elsif 0 == @game.winner
+        
+        #ゲームが続いている場合は残り時間のみを更新する
+        respond_to do |format|
+          format.js { render 'games/update_time.js.erb'}
+        end
+      else
+        #ゲームが終了した場合は、ページ全体を更新する
+        respond_to do |format|
+          format.js { render 'games/update_board.js.erb'}
+        end
+      end
     end
-    
-    #持ち時間が無くなった場合は、負けとする
-    if time <= 0
-      opp = User.find(@user.match.opponent_id)
-      quit(@game, opp)
-    elsif 0 == @game.winner
+    # if(@game.turn == @my_turn)
       
-      #ページを非同期通信により更新する
-      respond_to do |format|
-        format.js { render 'games/update_time.js.erb'}
-      end
-    else
-      #盤面を更新
-      respond_to do |format|
-        format.js { render 'games/update_board.js.erb'}
-      end
-    end
+    #   #持ち時間を更新する(１秒減らす)
+    #   if @my_turn == FIRST
+    #     @game.first_have_time -= 1
+    #     time = @game.first_have_time
+    #   elsif @my_turn == SECOND
+    #     @game.second_have_time -= 1
+    #     time = @game.second_have_time
+    #   else
+    #     #ここにはこない
+    #   end
+      
+    #   #保存
+    #   @game.save
+      
+    #   #####################debug用#####################
+    #   5.times {puts "********* Left time: #{time} ***********"}
+    #   #################################################
+    # else
+    #   time = 1 #自分の手番でないときも残り時間を更新したいため
+    # end
+    
+    # #持ち時間が無くなった場合は、負けとする
+    # if time <= 0
+    #   opp = User.find(@user.match.opponent_id)
+    #   quit(@game, opp)
+    # elsif 0 == @game.winner
+      
+    #   #ゲームが続いている場合は残り時間のみを更新する
+    #   respond_to do |format|
+    #     format.js { render 'games/update_time.js.erb'}
+    #   end
+    # else
+    #   #ゲームが終了した場合は、ページ全体を更新する
+    #   respond_to do |format|
+    #     format.js { render 'games/update_board.js.erb'}
+    #   end
+    # end
     
   end
   
