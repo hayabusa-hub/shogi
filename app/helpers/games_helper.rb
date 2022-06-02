@@ -12,7 +12,12 @@ module GamesHelper
   REQUEST    = 2 #対戦要求を出している
   DECLINE    = 3 #対戦要求を拒絶
   PLAYING    = 4 #ゲーム中
-  DISCONNECT = 5 #切断中
+  # DISCONNECT = 5 #切断中
+  
+  #game.connect
+  CONNECTED = 0
+  FIRST_DISCONNECT = 1
+  SECOND_DISCONNECT = 2
   
   #駒
   NOTHING  = "0"
@@ -123,5 +128,19 @@ module GamesHelper
     minites = "#{time / 60}".rjust(2, "0")
     seconds = "#{time % 60}".rjust(2, "0")
     return "#{minites}:#{seconds}"
+  end
+  
+  def my_turn(game)
+    if(game.first_user_name == current_user.name)
+      FIRST
+    elsif(game.second_user_name == current_user.name)
+      SECOND
+    else
+      nil
+    end
+  end
+  
+  def isConnected(game, display)
+    return display != (game.connect & display)
   end
 end

@@ -6,11 +6,12 @@ class GameChannel < ApplicationCable::Channel
     # stream_from "some_channel"
     # current_user.appear
     user_match = Match.find_by(id: current_user.match.id)
-    if nil != user_match
-      if DISCONNECT == user_match.status
+    if (nil != user_match) and (-1 != user_match.game_id)
+      game = Game.find_by(id: current_user.match.game_id)
+      if (user_match.game_id) and (CONNECTED != game.connect)
         #接続時の処理
-        user_match.status = PLAYING
-        user_match.save
+        game.connect = CONNECTED
+        game.save
         
         5.times {puts "********* reconnect ***********"} #debug用
       end
@@ -28,8 +29,9 @@ class GameChannel < ApplicationCable::Channel
     user_match = Match.find_by(id: current_user.match.id)
     if (nil != user_match) and (-1 != user_match.game_id)
       5.times {puts "********* unsubscribed user: #{current_user.name}, game_id: #{current_user.match.game_id} ***********"} #debug用
-      user_match.status = DISCONNECT
-      user_match.save
+      game = Game.find_by(id: current_user.match.game_id)
+      game.connect = my_turn(game)
+      game.save
     end
   end
   

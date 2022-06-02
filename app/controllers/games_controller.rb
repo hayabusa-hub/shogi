@@ -163,10 +163,8 @@ class GamesController < ApplicationController
   
   def update_time
     
-    @opp_match = Match.find_by(user_id: @user.match.opponent_id)
-    
     #対戦相手が接続切れの場合
-    if(DISCONNECT == @opp_match.status)
+    if(@my_turn^3 == @game.connect)
       
       #接続切れ時間の更新
       @game.disconnect_time += 1
@@ -178,7 +176,6 @@ class GamesController < ApplicationController
       end
       
     else
-      @game.disconnect_time = 0
       
       time = 1
       if(@game.turn == @my_turn) and (0 == @game.winner)
@@ -193,9 +190,14 @@ class GamesController < ApplicationController
         else
           #ここにはこない
         end
+      else
+        #####################debug用#####################
+        5.times {puts "********* 相手の手番です ***********"}
+        #################################################
       end
       
-      #保存
+      #更新
+      @game.disconnect_time = 0
       @game.save
       
       #持ち時間が無くなった場合は、負けとする
@@ -258,15 +260,6 @@ class GamesController < ApplicationController
   end
   
   private
-    def my_turn(game)
-      if(game.first_user_name == current_user.name)
-        FIRST
-      elsif(game.second_user_name == current_user.name)
-        SECOND
-      else
-        nil
-      end
-    end
     
     def display_mode(game, turn)
       if(@my_turn == FIRST)

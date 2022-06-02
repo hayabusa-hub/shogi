@@ -28,7 +28,7 @@ class MatchsController < ApplicationController
     
     #対局する場合、GAME画面へ移動する
     if(@match != nil)
-      if(PLAYING == @match.status) or (DISCONNECT == @match.status)
+      if(PLAYING == @match.status)
         redirect_to game_path(@match.game_id)
       end
     end

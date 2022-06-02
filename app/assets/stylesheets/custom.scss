@@ -179,35 +179,6 @@ button{
 }
 
 /* ユーザー情報の表示 */
-.user_info{
-  font-size: 25px;
-  .front_user_name{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    transform: translate(0%, 100%);
-  }
-  .front_time{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    transform: translate(0%, 200%);
-  }
-  .back_user_name{
-    position: absolute;
-    left: 0;
-    top: 0;
-    transform: translate(0%, -200%);
-  }
-  .back_time{
-    position: absolute;
-    left: 0;
-    top: 0;
-    transform: translate(0%, -100%);
-  }
-}
-
-/* ユーザー情報の表示 */
 .frontDisplayUser{
   font-size: 25px;
   .user_name{

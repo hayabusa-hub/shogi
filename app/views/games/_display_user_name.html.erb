@@ -1,2 +1,6 @@
 <tr><td class="border-none user_name"><%= getUserInfo(turn, game) %></td></tr>
-<tr><td class="border-none time"><%= getLeftTime(turn, game) %></td></tr>
+<% if true == isConnected(game, turn) %>
+  <tr><td class="border-none time"><%= getLeftTime(turn, game) %></td></tr>
+<% else %>
+  <tr><td class="border-none time">接続切れ</td></tr>
+<% end %>
