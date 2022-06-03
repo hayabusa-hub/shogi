@@ -8,9 +8,10 @@ class GameChannel < ApplicationCable::Channel
     user_match = Match.find_by(id: current_user.match.id)
     if (nil != user_match) and (-1 != user_match.game_id)
       game = Game.find_by(id: current_user.match.game_id)
-      if (user_match.game_id) and (CONNECTED != game.connect)
+      turn = my_turn(game)
+      if (user_match.game_id) and (false == isConnected(game, turn))
         #接続時の処理
-        game.connect = CONNECTED
+        game.connect ^= turn
         game.save
         
         5.times {puts "********* reconnect ***********"} #debug用
@@ -30,8 +31,12 @@ class GameChannel < ApplicationCable::Channel
     if (nil != user_match) and (-1 != user_match.game_id)
       5.times {puts "********* unsubscribed user: #{current_user.name}, game_id: #{current_user.match.game_id} ***********"} #debug用
       game = Game.find_by(id: current_user.match.game_id)
-      game.connect = my_turn(game)
-      game.save
+      turn = my_turn(game)
+      if(true == isConnected(game, turn))
+        game.connect ^= turn
+        game.save
+        5.times {puts "*********    game.connect: #{game.connect} ***********"} #debug用
+      end
     end
   end
   
