@@ -6,6 +6,15 @@
 $(".flash_messages").html("<%= escape_javascript(render 'layouts/flash_messages') %>");
 $(".displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: -1, after: -1, promote: -1}) %>");
 $("#confirmPromote").hide();
+
+<% if -1 != @game.latest_place %>
+  $("img#<%= @game.latest_place %>").addClass("latest_place");
+<% end %>
+
+<% if -1 != @game.second_latest_place %>
+  $("img#<%= @game.second_latest_place %>").removeClass("latest_place");
+<% end%>
+
 <% if 0 != @game.winner %>
   $("#finish").show();
 <% end %>

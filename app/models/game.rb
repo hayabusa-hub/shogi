@@ -384,6 +384,10 @@ class Game < ApplicationRecord
         set_king_pos(after_pos, self.turn)
       end
       
+      #着手盤面情報を更新
+      self.second_latest_place = self.latest_place
+      self.latest_place = after_pos
+      
       # board_hashを更新
       #set_board_hash()
       

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_01_132318) do
+ActiveRecord::Schema.define(version: 2022_06_11_045837) do
 
   create_table "games", force: :cascade do |t|
     t.text "board"
@@ -30,6 +30,8 @@ ActiveRecord::Schema.define(version: 2022_06_01_132318) do
     t.integer "second_have_time", default: 0
     t.integer "disconnect_time", default: 0
     t.integer "connect", default: 0
+    t.integer "latest_place", default: -1
+    t.integer "second_latest_place", default: -1
   end
 
   create_table "matches", force: :cascade do |t|
