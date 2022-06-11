@@ -27,7 +27,7 @@ class GameChannel < ApplicationCable::Channel
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
     #切断時の処理
-    user_match = Match.find_by(id: current_user.match.id)
+    user_match = Match.find_by(id: current_user.match)
     if (nil != user_match) and (-1 != user_match.game_id)
       5.times {puts "********* unsubscribed user: #{current_user.name}, game_id: #{current_user.match.game_id} ***********"} #debug用
       game = Game.find_by(id: current_user.match.game_id)
