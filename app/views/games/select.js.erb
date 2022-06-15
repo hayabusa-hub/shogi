@@ -1,2 +1,6 @@
 $(".displayField").html("<%= escape_javascript(render 'games/display_field', {game: @game, display: @display, order: @order, before: @before_pos, after: -1, promote: -1}) %>");
 $("img#<%= @before_pos %>").addClass("board_primary");
+<% if -1 != @game.latest_place %>
+  $("img#<%= @game.latest_place %>").addClass("latest_place");
+<% end %>
+test();

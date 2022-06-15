@@ -11,9 +11,9 @@ $("#confirmPromote").hide();
   $("img#<%= @game.latest_place %>").addClass("latest_place");
 <% end %>
 
-<% if -1 != @game.second_latest_place %>
-  $("img#<%= @game.second_latest_place %>").removeClass("latest_place");
-<% end%>
+<!--<%# if -1 != @game.second_latest_place %>-->
+<!--  $("img#<%#= @game.second_latest_place %>").removeClass("latest_place");-->
+<!--<%# end%>-->
 
 <% if 0 != @game.winner %>
   $("#finish").show();
