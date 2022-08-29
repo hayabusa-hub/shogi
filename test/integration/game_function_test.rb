@@ -1870,4 +1870,51 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     
   end
   
+  ### 千日手テスト
+  def put_piece(before_pos, after_pos, turn)
+    set_turn(turn)
+    patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false}), xhr: true
+    @game.save
+  end
+  
+  test "repetition" do
+    
+    # 1手目
+    put_piece(76, 67, @FIRST)
+    
+    # 2手目
+    put_piece(4, 13, @SECOND)
+    
+    # 3手目
+    put_piece(67, 76, @FIRST)
+    
+    # 4手目
+    put_piece(13, 4, @SECOND) #2回目
+    
+    # 5手目
+    put_piece(76, 67, @FIRST)
+    
+    # 6手目
+    put_piece(4, 13, @SECOND)
+    
+    # 7手目
+    put_piece(67, 76, @FIRST)
+    
+    # 8手目
+    put_piece(13, 4, @SECOND) #3回目
+    
+    # 9手目
+    put_piece(76, 67, @FIRST)
+    
+    # 10手目
+    put_piece(4, 13, @SECOND)
+    
+    # 11手目
+    put_piece(67, 76, @FIRST)
+    assert @game.reload.winner == 0
+    
+    # 12手目
+    put_piece(13, 4, @SECOND) #4回目
+    assert @game.reload.winner == 3
+  end
 end

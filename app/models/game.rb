@@ -1,11 +1,15 @@
 class Game < ApplicationRecord
-  has_many :match
   
-  attr_accessor :board_hash
-  attr_accessor :first_oute_seq
-  attr_accessor :second_oute_seq
+  #relationship
+  has_many :match
+  has_many :game_record
+  
+  # attr_accessor :board_hash
+  # attr_accessor :first_oute_seq
+  # attr_accessor :second_oute_seq
   
   include GamesHelper
+  # include GameRecordsHelper
   
   # @board_hash = {}
   
@@ -22,10 +26,10 @@ class Game < ApplicationRecord
   #   @board_hash[key] = value
   # end
   
-  def init_board_hash
-    self.board_hash = {}
-    self.update!(board_hash: self.board_hash)
-  end
+  # def init_board_hash
+  #   self.board_hash = {}
+  #   self.update!(board_hash: self.board_hash)
+  # end
   
   # def board_hash
   #   @board_hash
@@ -66,13 +70,16 @@ class Game < ApplicationRecord
     self.second_user_board = 0
     self.first_king_pos = 74
     self.second_king_pos = 4
-    self.first_oute_seq = false
-    self.second_oute_seq = false
+    # self.first_oute_seq = false
+    # self.second_oute_seq = false
     #self.board_hash = {}
-    init_board_hash
+    # init_board_hash
     self.first_have_time = 600
     self.second_have_time = 600
     self.save
+    
+    record = self.game_record.new(cnt: 0, board: create_board_for_record())
+    record.save()
   end
   
   def set_board_display_mode(value, turn)
@@ -388,16 +395,18 @@ class Game < ApplicationRecord
       self.second_latest_place = self.latest_place
       self.latest_place = after_pos
       
-      # board_hashを更新
-      #set_board_hash()
+      # 手数を進め、game_recordへ保存
+      self.move_cnt += 1
+      record = self.game_record.new(cnt: self.move_cnt, board: create_board_for_record())
+      record.save()
       
       #詰んでいる場合
       if self.is_checkmate?()
         self.winner = self.turn
+      #千日手の場合
+      elsif check_repetition()
+        self.winner = DRAW
       end
-      
-      #千日手か確認
-      #check_repetition()
       
     end
     
@@ -477,24 +486,31 @@ class Game < ApplicationRecord
       end
     end
     
-    def check_repetition(board=self.board, turn_board=self.board, own_piece=self.own_piece)
-      key = (board + turn_board + own_piece).to_sym
+    def check_repetition()
+      hash = {}
+      board = create_board_for_record()
+      ret = false
       
-      if self.board_hash[key] >= 4
-        #debugger
-        if self.first_oute_seq
-          #後手勝ち
-          self.winner = 2
-        elsif self.second_oute_seq
-          #先手勝ち
-          self.winner = 1
+      records = self.game_record.order(cnt: "DESC")
+      
+      # 同一局面の数を数える
+      records.each do |record|
+        if nil == hash[record.board]
+          hash[record.board] = 1
         else
-          #千日手
-          self.winner = 3
+          hash[record.board] += 1
         end
-      else
-        #続行
       end
+      
+      # 同一局面の数が4回以上出現したとき、千日手とする
+      if 4 <= hash[board]
+        ret = true
+      end
+      
       return ret
+    end
+    
+    def create_board_for_record()
+      return self.board + self.turn_board + self.own_piece
     end
 end
