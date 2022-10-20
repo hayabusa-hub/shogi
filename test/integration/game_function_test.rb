@@ -1871,9 +1871,9 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   end
   
   ### 千日手テスト
-  def put_piece(before_pos, after_pos, turn)
+  def put_piece(before_pos, after_pos, turn, promote=false)
     set_turn(turn)
-    patch game_path(@game, game: {before: before_pos, after: after_pos, promote: false}), xhr: true
+    patch game_path(@game, game: {before: before_pos, after: after_pos, promote: promote}), xhr: true
     @game.save
   end
   
@@ -1916,5 +1916,148 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     # 12手目
     put_piece(13, 4, @SECOND) #4回目
     assert @game.reload.winner == 3
+  end
+  
+  test "repetition2" do
+    board =      "230000000" + 
+                 "64f000000" + 
+                 "110000000" + 
+                 "004000000" + 
+                 "000000000" +
+                 "000000040" +
+                 "111000000" +
+                 "245000000" +
+                 "635000000"
+                 
+    turn_board = "220000000" + 
+                 "221000000" +
+                 "220000000" +
+                 "001000000" +
+                 "000000000" +
+                 "000000010" +
+                 "111000000" +
+                 "111000000" +
+                 "111000000"
+    own_piece  = "000" +
+                 "100" +
+                 "200" +
+                 "300" +
+                 "401" +
+                 "500" +
+                 "600" +
+                 "700" +
+                 "800"
+    @game.board = board
+    @game.turn_board = turn_board
+    @game.own_piece = own_piece
+    @game.save
+    
+    # 1手目
+    put_piece(29, 20, @FIRST) #1回目
+    
+    # 2手目
+    put_piece(204, 2, @SECOND)
+    
+    # 3手目
+    put_piece(20, 10, @FIRST, true)
+    
+    # 4手目
+    put_piece(2, 10, @SECOND)
+    
+    # 5手目
+    put_piece(104, 20, @FIRST) #2回目
+    
+    # 6手目
+    put_piece(204, 2, @SECOND)
+    
+    # 7手目
+    put_piece(20, 10, @FIRST, true)
+    
+    # 8手目
+    put_piece(2, 10, @SECOND)
+    
+    # 9手目
+    put_piece(104, 20, @FIRST) #3回目
+    
+    # 10手目
+    put_piece(204, 2, @SECOND)
+    
+    # 11手目
+    put_piece(20, 10, @FIRST, true)
+    
+    # 12手目
+    put_piece(2, 10, @SECOND)
+    assert @game.reload.winner == 0
+    
+    # 13手目
+    put_piece(104, 20, @FIRST) #4回目
+    assert @game.reload.winner == 3
+  end
+  
+  ###連続王手の千日手テスト
+  test "oute_repetition" do
+    board =      "000000002" + 
+                 "000000900" + 
+                 "00000f010" + 
+                 "000000061" + 
+                 "000000000" +
+                 "000000040" +
+                 "111000000" +
+                 "245000000" +
+                 "635000000"
+                 
+    turn_board = "000000002" + 
+                 "000000100" +
+                 "000001020" +
+                 "000000022" +
+                 "000000000" +
+                 "000000010" +
+                 "111000000" +
+                 "111000000" +
+                 "111000000"
+    @game.board = board
+    @game.turn_board = turn_board
+    @game.save
+    
+    # 1手目
+    put_piece(23, 24, @FIRST) #1回目
+    
+    # 2手目
+    put_piece(34, 26, @SECOND)
+    
+    # 3手目
+    put_piece(24, 16, @FIRST)
+    
+    # 4手目
+    put_piece(26, 34, @SECOND)
+    
+    # 5手目
+    put_piece(16, 24, @FIRST) #2回目
+    
+    # 6手目
+    put_piece(34, 26, @SECOND)
+    
+    # 7手目
+    put_piece(24, 16, @FIRST)
+    
+    # 8手目
+    put_piece(26, 34, @SECOND)
+    
+    # 9手目
+    put_piece(16, 24, @FIRST) #3回目
+    
+    # 10手目
+    put_piece(34, 26, @SECOND)
+    
+    # 11手目
+    put_piece(24, 16, @FIRST)
+    
+    # 12手目
+    put_piece(26, 34, @SECOND)
+    assert @game.reload.winner == 0
+    
+    # 13手目
+    put_piece(16, 24, @FIRST) #4回目
+    assert @game.reload.winner == 2
   end
 end

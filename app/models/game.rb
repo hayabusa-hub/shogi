@@ -397,17 +397,24 @@ class Game < ApplicationRecord
       
       # 手数を進め、game_recordへ保存
       self.move_cnt += 1
-      record = self.game_record.new(cnt: self.move_cnt, board: create_board_for_record())
+      record = self.game_record.new(cnt: self.move_cnt, board: create_board_for_record(), isOute: self.is_oute?() | self.is_oute?(self.turn^3))
       record.save()
       
       #詰んでいる場合
       if self.is_checkmate?()
         self.winner = self.turn
-      #千日手の場合
-      elsif check_repetition()
-        self.winner = DRAW
+        return
       end
       
+      #千日手の場合
+      isSeq, isSeqOute = check_repetition()
+      if isSeqOute
+        self.winner = self.turn^3
+      elsif isSeq
+        self.winner = DRAW
+      else
+        #何もしない
+      end
     end
     
     def before_put_piece(piece, pos, board=self.board, turn_board=self.board)
@@ -444,52 +451,53 @@ class Game < ApplicationRecord
       end
     end
     
-    def set_board_hash(turn=self.turn, board=self.board, turn_board=self.board, own_piece=self.own_piece)
-      key = (board + turn_board + own_piece).to_sym
+    # def set_board_hash(turn=self.turn, board=self.board, turn_board=self.board, own_piece=self.own_piece)
+    #   key = (board + turn_board + own_piece).to_sym
       
-      ########################
-      if nil == self.board_hash
-        #debugger
-      end
-      ########################
-      if nil == @board_hash[key]
-        @board_hash[key] = 1
-      else
-        @board_hash[key] += 1
+    #   ########################
+    #   if nil == self.board_hash
+    #     #debugger
+    #   end
+    #   ########################
+    #   if nil == @board_hash[key]
+    #     @board_hash[key] = 1
+    #   else
+    #     @board_hash[key] += 1
         
-        value = is_oute?(turn^3)
-        if 2 == @board_hash[key]
-          set_seq_status(turn, value)
-        else
-          value &= get_seq_status(turn)
-          set_seq_status(turn, value)
-        end
-      end
-    end
+    #     value = is_oute?(turn^3)
+    #     if 2 == @board_hash[key]
+    #       set_seq_status(turn, value)
+    #     else
+    #       value &= get_seq_status(turn)
+    #       set_seq_status(turn, value)
+    #     end
+    #   end
+    # end
     
-    def set_seq_status(turn, value)
-      if 1 == turn
-        self.first_oute_seq = value
-      elsif 2 == turn
-        self.second_oute_seq = value
-      else
-      end
-    end
+    # def set_seq_status(turn, value)
+    #   if 1 == turn
+    #     self.first_oute_seq = value
+    #   elsif 2 == turn
+    #     self.second_oute_seq = value
+    #   else
+    #   end
+    # end
     
-    def get_seq_status(turn)
-      if 1 == turn
-        self.first_oute_seq
-      elsif 2 == turn
-        self.second_oute_seq
-      else
-        #debugger
-      end
-    end
+    # def get_seq_status(turn)
+    #   if 1 == turn
+    #     self.first_oute_seq
+    #   elsif 2 == turn
+    #     self.second_oute_seq
+    #   else
+    #     #debugger
+    #   end
+    # end
     
     def check_repetition()
       hash = {}
       board = create_board_for_record()
-      ret = false
+      isSeq = true
+      isSeqOute = true
       
       records = self.game_record.order(cnt: "DESC")
       
@@ -500,17 +508,28 @@ class Game < ApplicationRecord
         else
           hash[record.board] += 1
         end
+        
+        #　連続王手かどうか
+        if get_turn(record.cnt) == self.turn
+          isSeqOute &= record.isOute
+        end
       end
       
       # 同一局面の数が4回以上出現したとき、千日手とする
-      if 4 <= hash[board]
-        ret = true
+      if 4 > hash[board]
+        isSeq = false
+        isSeqOute = false
       end
       
-      return ret
+      return isSeq, isSeqOute
     end
     
     def create_board_for_record()
       return self.board + self.turn_board + self.own_piece
+    end
+    
+    def get_turn(cnt)
+      # 奇数→1　偶数→2
+      return (cnt - 1) % 2 + 1
     end
 end
