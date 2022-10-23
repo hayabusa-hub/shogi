@@ -510,7 +510,7 @@ class Game < ApplicationRecord
         end
         
         #　連続王手かどうか
-        if get_turn(record.cnt) == self.turn
+        if (get_turn(record.cnt) == self.turn) && (1 == hash[board])
           isSeqOute &= record.isOute
         end
       end

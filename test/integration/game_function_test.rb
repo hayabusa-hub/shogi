@@ -1997,8 +1997,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
   ###連続王手の千日手テスト
   test "oute_repetition" do
     board =      "000000002" + 
-                 "000000900" + 
-                 "00000f010" + 
+                 "000008900" + 
+                 "100000010" + 
                  "000000061" + 
                  "000000000" +
                  "000000040" +
@@ -2007,8 +2007,8 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
                  "635000000"
                  
     turn_board = "000000002" + 
-                 "000000100" +
-                 "000001020" +
+                 "000001100" +
+                 "200000020" +
                  "000000022" +
                  "000000000" +
                  "000000010" +
@@ -2020,43 +2020,49 @@ class GameFunctionTest < ActionDispatch::IntegrationTest
     @game.save
     
     # 1手目
-    put_piece(23, 24, @FIRST) #1回目
+    put_piece(14, 23, @FIRST, true)
     
     # 2手目
-    put_piece(34, 26, @SECOND)
+    put_piece(18, 27, @SECOND)
     
     # 3手目
-    put_piece(24, 16, @FIRST)
+    put_piece(23, 24, @FIRST) #1回目
     
     # 4手目
-    put_piece(26, 34, @SECOND)
+    put_piece(34, 26, @SECOND)
     
     # 5手目
-    put_piece(16, 24, @FIRST) #2回目
+    put_piece(24, 16, @FIRST)
     
     # 6手目
-    put_piece(34, 26, @SECOND)
-    
-    # 7手目
-    put_piece(24, 16, @FIRST)
-    
-    # 8手目
     put_piece(26, 34, @SECOND)
     
-    # 9手目
-    put_piece(16, 24, @FIRST) #3回目
+    # 7手目
+    put_piece(16, 24, @FIRST) #2回目
     
-    # 10手目
+    # 8手目
     put_piece(34, 26, @SECOND)
     
-    # 11手目
+    # 9手目
     put_piece(24, 16, @FIRST)
     
+    # 10手目
+    put_piece(26, 34, @SECOND)
+    
+    # 11手目
+    put_piece(16, 24, @FIRST) #3回目
+    
     # 12手目
+    put_piece(34, 26, @SECOND)
+    
+    # 13手目
+    put_piece(24, 16, @FIRST)
+    
+    # 14手目
     put_piece(26, 34, @SECOND)
     assert @game.reload.winner == 0
     
-    # 13手目
+    # 15手目
     put_piece(16, 24, @FIRST) #4回目
     assert @game.reload.winner == 2
   end
