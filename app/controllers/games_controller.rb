@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm, :update_board, :update_time]
+  before_action :init, only: [:show, :edit, :update, :edit_board, :confirm, :update_board, :update_time, :resign]
   
   include SessionsHelper
   include GamesHelper
@@ -115,6 +115,11 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+  
+  def resign
+    opp = User.find(@user.match.opponent_id)
+    quit(@game, opp)
   end
   
   # def disconnect

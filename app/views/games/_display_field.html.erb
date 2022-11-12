@@ -6,6 +6,11 @@
 <!-- <%# turn = "エラーが発生しました" %>-->
 <!--<%# end %>-->
 <!--<p><%#= "現在の手番:#{turn}"%></p>-->
+<div class="">
+  <%= link_to "投了", "/games/#{@game.id}/resign", method: :patch,
+    data: 
+    { confirm: "投了しますか？"} %>
+</div>
 
 <table border=3 class="displayBoard">
   

@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post   "/login"                  => "sessions#create"
   patch  "/games/:id/editBoard"    => "games#edit_board"
   patch  "/games/:id/update_time"  => "games#update_time"
+  patch  "/games/:id/resign"       => "games#resign"
   delete "/logout"                 => "sessions#destroy"
   resources :users
   resources :games
