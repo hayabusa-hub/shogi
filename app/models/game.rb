@@ -515,7 +515,7 @@ class Game < ApplicationRecord
         end
       end
       
-      # 同一局面の数が4回以上出現したとき、千日手とする
+      # 同一局面の数が4回未満の場合、千日手としない
       if 4 > hash[board]
         isSeq = false
         isSeqOute = false
