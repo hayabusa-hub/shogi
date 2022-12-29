@@ -43,7 +43,7 @@ gem 'bootsnap',   '1.4.5', require: false
 gem 'sidekiq'
 
 # redis
-# gem 'redis'
+gem 'redis', '~> 4.0'
 gem 'redis-rails'
 
 # React
