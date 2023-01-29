@@ -103,6 +103,7 @@ GEM
     ffi (1.15.5)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    hiredis (0.6.3)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     jbuilder (2.9.1)
@@ -118,7 +119,7 @@ GEM
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mail (2.8.0.1)
+    mail (2.8.1)
       mini_mime (>= 0.1.1)
       net-imap
       net-pop
@@ -305,6 +306,7 @@ DEPENDENCIES
   capybara (= 3.28.0)
   devise
   devise-i18n
+  hiredis
   jbuilder (= 2.9.1)
   jquery-rails (= 4.4.0)
   listen (= 3.1.5)
