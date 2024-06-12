@@ -8,4 +8,8 @@ services:
       context: .
     ports:
       - '3000:3000'
+    volumes:
+      - type: bind
+        source: ./Gemfile.lock
+        target: /myapp/Gemfile.lock
     command: rails server -b 0.0.0.0
