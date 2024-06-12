@@ -55,6 +55,9 @@ group :development, :test do
   gem 'sqlite3', '1.4.1'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '11.0.1', platforms: [:mri, :mingw, :x64_mingw]
+  # Java Script Runtime用
+  gem 'libv8-node', '~> 21.7', '>= 21.7.2.0'
+  gem 'mini_racer'
 end
 
 group :development do
