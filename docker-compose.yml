@@ -4,12 +4,12 @@ services:
   app:
     container_name: shogi_app
     build:
-      dockerfile: docker/app/Dockerfile
+      dockerfile: backend/docker/app/Dockerfile
       context: .
     ports:
       - '3000:3000'
     volumes:
       - type: bind
-        source: ./Gemfile.lock
+        source: ./backend/Gemfile.lock
         target: /myapp/Gemfile.lock
     command: rails server -b 0.0.0.0
