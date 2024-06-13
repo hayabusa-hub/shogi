@@ -8,6 +8,10 @@ Bundler.require(*Rails.groups)
 
 module Shogi
   class Application < Rails::Application
+
+    #APIモード
+    config.api_only = true
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
