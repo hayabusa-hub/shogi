@@ -14,7 +14,7 @@ RUN npm install --global yarn
 
 # コピー
 WORKDIR /myapp
-COPY . /myapp
+COPY ./backend /myapp
 
 # packageのインストール
 RUN bundle install
