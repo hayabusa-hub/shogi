@@ -5,6 +5,7 @@ services:
     container_name: shogi_app
     build:
       dockerfile: docker/app/Dockerfile
+      dockerfile: docker/app/Dockerfile
       context: .
     ports:
       - '3000:3000'
