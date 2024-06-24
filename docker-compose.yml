@@ -10,8 +10,8 @@ services:
       - '3000:3000'
     volumes:
       - type: bind
-        source: ./backend/Gemfile.lock
-        target: /myapp/Gemfile.lock
+        source: ./backend/
+        target: /myapp/
     command: rails server -b 0.0.0.0
   front:
     container_name: shogi_front
