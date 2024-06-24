@@ -10,17 +10,27 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       log_in(user)
       remember(user)
-      flash[:success] = "ログインしました"
-      redirect_back_or(root_path)
-    else
-      flash.now[:danger] = "メールアドレスまたはパスワードが間違っています"
-      render "sessions/new"
     end
+    render json: outputType()
   end
   
   def destroy
     log_out() if logged_in?
-    flash[:success] = "ログアウトしました"
-    redirect_to root_path
+    render json: outputType()
   end
+
+  def isLogin?
+    render json: outputType()
+  end
+
+  private 
+    def outputType()
+      user = current_user
+      ret = {
+        isLogin:   user ? true       : false,
+        userId:    user ? user.id    : nil,
+        userName:  user ? user.name  : nil,
+        userEmail: user ? user.email : nil
+      }
+    end
 end

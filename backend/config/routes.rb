@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root   "homes#top"
   get    "/signup"                 => "users#new"
   get    "/login"                  => "sessions#new"
+  get    "/isLogin"                => "sessions#isLogin?"
   get    "/matches/update_info"    => "matchs#update_info"
   get    "/games/:id/confirm"      => "games#confirm"
   get    "/games/:id/update_board" => "games#update_board"

@@ -31,3 +31,43 @@ body {
     text-wrap: balance;
   }
 }
+
+body {
+  padding-top: 60px;
+}
+
+h1{
+  font-size: 3em;
+  letter-spacing: -2px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+li{
+  list-style: none;
+}
+
+input{
+  margin-bottom: 15px;
+}
+
+button{
+  background-color: rgba(249,194,112,1);
+  border: none;
+}
+
+/* header */
+#logo {
+  float: left;
+  margin-right: 10px;
+  font-size: 1.7em;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  padding-top: 9px;
+  font-weight: bold;
+  &:hover {
+    color: white;
+    text-decoration: none;
+  }
+}

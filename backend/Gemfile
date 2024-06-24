@@ -50,6 +50,9 @@ gem 'redis-rails'
 # React
 gem 'react-rails'
 
+# CORS (required for integration with nextjs)
+gem 'rack-cors'
+
 group :development, :test do
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3', '1.4.1'

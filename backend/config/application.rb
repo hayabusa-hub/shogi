@@ -22,6 +22,10 @@ module Shogi
     
     # 認証トークンをremoteフォームに埋め込む
     config.action_view.embed_authenticity_token_in_remote_forms = true
+
+    # COR間でSessionとCookieを使用する
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
     
     #独自クラスの追加
     config.paths.add 'app/validator/Koma', eager_load: true #これを追加
