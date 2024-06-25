@@ -26,6 +26,3 @@
 - デプロイ
   - Render
 - Docker対応
-- デプロイ
-  - Render
-- Docker対応
