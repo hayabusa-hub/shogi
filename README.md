@@ -1,5 +1,6 @@
 # 将棋
 [サイトURL](https://shogi.onrender.com)
+[サイトURL](https://shogi.onrender.com)
 
 ## 概要
 - アプリ上で、他のユーザーと将棋の通信対戦ができます。
@@ -22,6 +23,9 @@
   - Ruby on rails 6.0.3
 - データベース
   - PostgreSQL
+- デプロイ
+  - Render
+- Docker対応
 - デプロイ
   - Render
 - Docker対応
