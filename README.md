@@ -1,5 +1,5 @@
 # 将棋
-[サイトURL](https://stark-retreat-97514.herokuapp.com/)
+[サイトURL](https://shogi.onrender.com)
 
 ## 概要
 - アプリ上で、他のユーザーと将棋の通信対戦ができます。
@@ -18,13 +18,10 @@
   - 盤面反転機能
 
 ## 使用技術
-- デプロイ
-  - Heroku
+- フレームワーク
+　- Ruby on rails 6.0.3
 - データベース
   - PostgreSQL
-- テスト
-  - Minitest
-
-## バージョン
-- Ruby 2.6.6
-- Ruby on rails 6.0.3
+- デプロイ
+  - Render
+- Docker対応
