@@ -11,238 +11,128 @@ class MatchsController < ApplicationController
     @user = current_user()
     @opponent = Match.find_by(opponent_id: @user.id)
     @match = Match.find_by(user_id: @user.id)
-    @matches = Match.where(status: STANDBY).paginate(page: params[:page])
+    @matches = User.joins(
+      "inner join matches 
+         on matches.user_id = users.id 
+       where 
+         matches.status = #{STANDBY}
+         and matches.user_id <> #{@user.id}"
+    )
   end
   
-  # def update_user_list
-  #   @opp_user = User.find_by(id: params[:from_id])
-  #   @opponent = Match.find_by(opponent_id: @user.id, status: WAITING)
-  #   @match = Match.find_by(user_id: @user.id)
-  #   @matches = Match.where(status: STANDBY).paginate(page: params[:page])
-  # end
-  
-  def index()
-    # @opponent = Match.find_by(opponent_id: @user.id)
-    # @match = Match.find_by(user_id: @user.id)
-    # @matches = Match.where(status: STANDBY).paginate(page: params[:page])
+  def getRoomInfo
+    render json: outputType()
+  end
+
+  def enter_room
     
-    #対局する場合、GAME画面へ移動する
-    if(@match != nil)
-      if(PLAYING == @match.status)
-        redirect_to game_path(@match.game_id)
-      end
-    end
-  end
-  
-  def create
-    @match = Match.new(user_id: params[:user_id])
+    @match = Match.new(user_id: @user.id)
     if @match.save
       # 入室の旨をチャット参加者に配信
       broadcast(@match.user_id)
-      
-      flash[:info] = "対局室へ移動しました"
-      redirect_to matchs_path
-    elsif Match.find_by(user_id: params[:user_id])
-      flash[:info] = "すでに対局室へいます"
-      redirect_to matchs_path
+      # puts "対局室へ移動しました"
+    elsif @match = Match.find_by(user_id: @user.id)
+      # puts "すでに対局室へいます"
     else
-      flash[:danger] = "対局室への移動へ失敗しました"
-      redirect_to root_path
+      errMsg = "対局室への移動へ失敗しました"
+      raise errMsg
     end
+
+    render json: outputType(errMsg)
   end
-  
-  def edit
+
+  def leave_room
+    if @opponent
+      @opponent.status = STANDBY
+      @opponent.opponent_id = 0
+    end
+
+    if @match.destroy && (!@opponent || @opponent.save)
+      # 退出の旨をチャット参加者に配信
+      broadcast()
+    else
+      errMsg = "エラーが発生したため、退室に失敗しました"
+      raise errMsg
+    end
+    render json: outputType(errMsg)
   end
-  
-  def update
-    
-    # @match = Match.find_by(user_id: @user.id)
-    @opponent = Match.find_by(user_id: params[:opponent_id])
-    
-    #対戦要求を出した場合
-    if(REQUEST == params[:status].to_i)
-      if(STANDBY == @opponent.status)
-        opp = User.find_by(id: params[:opponent_id])
-        if(STANDBY == @match.status)
-          #状態を更新
-          @match.opponent_id = params[:opponent_id]
-          @match.status = REQUEST
-          @match.save
-          @opponent.opponent_id = @match.user_id
-          @opponent.status = WAITING
-          @opponent.save
-          
-          msg = "#{opp.name}へ対戦要求を出しました"
-          broadcast(@opponent.user_id)
-        elsif(REQUEST == @match.status)
-          msg = "複数の対戦要求を出すことはできません"
-        elsif(WAITING == @match.status)
-          msg = "既に#{opp.name}から対戦要求が出されています"
+
+  def make_request
+    opp_id = params[:opp_id]
+    @opponent = Match.find_by(user_id: opp_id)
+
+    if(STANDBY == @opponent.status)
+      opp = User.find_by(id: opp_id)
+      if(STANDBY == @match.status)
+        #状態を更新
+        @match.opponent_id = opp_id
+        @match.status = REQUEST
+        @opponent.opponent_id = @match.user_id
+        @opponent.status = WAITING
+        if @match.save && @opponent.save
+          broadcast(opp_id)
         else
-          #ここにはこない
-          5.times {puts "********* @match.status is invalid value: #{@match.status} ***********"}
+          errMsg = "エラーが発生したため、対戦要求を出すことはできませんでした。"
         end
+      elsif(REQUEST == @match.status)
+        errMsg = "複数の対戦要求を出すことはできません"
+      elsif(WAITING == @match.status)
+        errMsg = "既に#{opp.name}から対戦要求が出されています"
       else
-        @match.opponent_id = 0
-        @match.status = STANDBY
-        @match.save
-        msg = "別の人が対戦要求を出しています"
+        # ここにはこない
+        raise "不正な値です"
       end
     else
-      
-      #対戦要求を拒否した場合
-      if(DECLINE == params[:status].to_i)
-        #状態を更新
-        @match.status = STANDBY
-        @match.opponent_id = 0
-        @match.save
-        @opponent.status = STANDBY
-        @opponent.opponent_id = 0
-        @opponent.save
-        
-        msg = "対戦要求を拒否しました"
-        broadcast(@opponent.user_id)
-      #対戦要求を承諾した場合
-      elsif(PLAYING == params[:status].to_i)
-        #状態を更新
-        @match.opponent_id = params[:opponent_id]
-        @match.status = PLAYING
-        @opponent.status = PLAYING
-        
-        #ゲームモデルを作成
-        game_id = make_game(@match.user, @opponent.user)
-        @match.game_id = game_id
-        @opponent.game_id = game_id
-        
-        #保存
-        @match.save
-        @opponent.save
-        
-        msg = "対局開始！！！"
-        broadcast(@opponent.user_id, true)
-      end
+      errMsg = "別の人が対戦要求を出しています"
+    end
+    render json: outputType(errMsg)
+  end
+
+  def accept_request
+
+    @opponent = Match.find_by(user_id: params[:opp_id])
+
+    #状態を更新
+    @match.opponent_id = @opponent.user_id
+    @match.status = PLAYING
+    @opponent.status = PLAYING
+    
+    #ゲームモデルを作成
+    game_id = make_game(@match.user, @opponent.user)
+    @match.game_id = game_id
+    @opponent.game_id = game_id
+    
+    #保存
+    if @match.save && @opponent.save
+    
+      msg = "対局開始！！！"
+      broadcast(@opponent.user_id, true)
+    else
+      errMsg = "対局を開始できませんでした"
+      raise errMsg
+    end
+    render json: outputType(errMsg)
+  end
+
+  def decline_request
+
+    @opponent = Match.find_by(user_id: params[:opp_id])
+
+    #状態を更新
+    @match.status = STANDBY
+    @match.opponent_id = 0
+    @opponent.status = STANDBY
+    @opponent.opponent_id = 0
+    if @match.save && @opponent.save
+      broadcast(@opponent.user_id)
+    else
+      errMsg = "エラーが発生したため、対戦要求をキャンセルできませんでした"
+      raise errMsg
     end
     
-    #モデルの保存
-    # @match.save
-    # @opponent.save
-    
-    #更新した旨を通知
-    #broadcast(@match.user_id, type)
-    
-    #フラッシュメッセージの表示
-    flash[:info] = msg
-    
-    #リダイレクト
-    redirect_to matchs_path
-    # update_info()
-    
-    # @opponent = Match.find(params[:id])
-    # @opponent.opponent_id = params[:opponent_id]
-    # @opponent.status = params[:status]
-    # if @opponent.save
-    # else
-    # end
-    
-    # # respond_to do |format|
-    # #   format.html { redirect_to @match }
-    # #   format.js
-    # # end
-    
-    # #更新した旨を表示
-    # #broadcast(@match.user_id)
-    
-    # if @opponent.status == 1
-    #   opp = User.find(@opponent.opponent_id)
-    #   flash[:success] = "#{opp.name}へ対戦要求を出しました"
-    #   redirect_to matchs_path
-    # elsif @opponent.status == 3
-    #   @match = Match.find(@user.match.id)
-    #   @match.opponent_id = @opponent.user_id
-    #   @match.status = 3
-    #   if @match.save
-    #     flash[:success] = "対局開始！！！"
-    #     render "shared/_game_create"
-    #     # redirect_to games_path, method: :post
-    #   else
-    #     flash[:danger] = "対戦できませんでした"
-    #     redirect_to matchs_path
-    #   end
-    # end 
+    puts "対戦要求を拒否しました"
+    render json: outputType(errMsg)
   end
-  
-  def destroy
-    
-    # 削除対象のインスタンスを取得
-    @match = Match.find(@user.match.id)
-    
-    #インスタンスを削除する
-    @match.destroy
-    @match.save
-    flash[:info] = "対局室から退室しました"
-    
-    # 退出の旨をチャット参加者に配信
-    broadcast()
-    
-    redirect_to root_path
-  end
-  
-  def update_info
-    # if @user.id != params[:id].to_i
-    # @opponent = Match.find_by(opponent_id: @user.id)
-    # @match = Match.find_by(user_id: @user.id)
-    # @matches = Match.where(status: STANDBY)
-    # debugger
-    # 5.times {puts "********* match_opponent: #{@opponent} update_info js ***********"}
-    
-    respond_to do |format|
-      format.js { render 'matchs/update_info.js.erb'}
-    end
-    
-    
-    
-    # end
-    
-    # if @user.id != params[:id].to_i
-    #   respond_to do |format|
-    #     # format.html {redirect_to matchs_path}
-    #     format.js {5.times {puts "********* user_id: #{@user.id} update_info js ***********"} #debug用
-    #       render 'matchs/update_info.js.erb'}
-    #   end
-    # end
-  end
-  
-  # def request_match
-  #   if @user.id == params[:id].to_i
-  #     @match.opponent_id = @opp_user.id
-  #     @match.status = WAITING
-  #     @match.save
-  #   end
-  #   respond_to do |format|
-  #     format.js { render 'matchs/update_info.js.erb'}
-  #   end
-  # end
-  
-  # def accept_match
-  #   if @user.id == params[:id].to_i
-  #     @match.status = PLAYING
-  #     @match.game_id = @opp_user.match.game_id
-  #     @match.save
-  #   end
-  #   respond_to do |format|
-  #     format.js { render 'matchs/update_info.js.erb'}
-  #   end
-  # end
-  
-  # def decline_match
-  #   if @user.id == params[:id].to_i
-  #     @match.status = STANDBY
-  #     @match.save
-  #   end
-  #   respond_to do |format|
-  #     format.js { render 'matchs/update_info.js.erb'}
-  #   end
-  # end
   
   private
   
@@ -279,4 +169,16 @@ class MatchsController < ApplicationController
       # チャット参加者に配信
       ActionCable.server.broadcast('match_channel', data: data)
     end
+
+    def outputType(errMsg="")
+      ret = {
+        user:       @user,
+        requestFlg: @match && @match.status ==  REQUEST ? true: false,
+        waitingFlg: @match && @match.status ==  WAITING ? true: false,
+        playingFlg: @match && @match.status ==  PLAYING ? true: false,
+        opp:        @opponent ? @opponent.user : nil,
+        userList:   @matches,
+        errMsg:     errMsg
+      }
+    end 
 end

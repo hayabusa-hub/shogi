@@ -77,7 +77,7 @@ export default function Home() {
           <div>
             <h1>将棋対戦</h1>
             <div>
-              <Link href="/">対局室へ移動</Link>
+              <Link href="/match">対局室へ移動</Link>
             </div>
             <div>
               <Link href="/">観戦</Link>
