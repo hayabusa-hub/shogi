@@ -32,6 +32,7 @@ body {
   }
 }
 
+/* universal */
 body {
   padding-top: 60px;
 }
@@ -69,5 +70,189 @@ button{
   &:hover {
     color: white;
     text-decoration: none;
+  }
+}
+
+/* エラーメッセージ */
+#error_explanation {
+  color: red;
+  ul{
+    margin: 0 0 30px 0;
+  }
+}
+
+/* .field_with_errors {
+  @extend .has-error;
+  // form-controlの存在意義がわからない
+  // .form-control {
+  // cd  color: $state-danger-text;
+  // }
+} */
+
+/* 背景画像 */
+.backFull{
+  position: fixed;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(100, 100, 100, .8);
+  z-index: 2147483647;
+}
+
+/* 境界線を描画しない */
+.border-none{
+  border: none;
+}
+
+/* inline-blockへ変換 */
+.inlineBlock{
+  display: inline-block;
+}
+
+/* ボードのヘッダーの位置など */
+.textCenter{
+  text-align : center;
+}
+
+/* 中央表示　ゲーム終了画面など */
+.center{
+  text-align : center;
+  transform: translate(0, 50%)
+}
+
+/* リストの中央表示 */
+.center_ul{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* フラッシュメッセージ表示 */
+.flash{
+  display: block;
+  position: fixed;
+  left: 50%;
+  width: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  z-index: 1100;
+}
+
+/* match  */
+.user_list{
+  display: inline-block;
+  margin: 0;
+  padding: 3px 5px 0 0; /* 上　右　下　左 */
+  text-align: center;
+  font-size: 20px;
+}
+
+/* game  */ 
+.board_cell{
+  align: center;
+  margin: 0;
+}
+
+/* 選択したセルの色 */
+.board_primary{
+  color: blue;
+  background-color:rgba(0,0,255,0.7);
+}
+
+/* 最後に着手したセルの色 */
+.latest_place{
+  color: red;
+  background-color:rgba(255,0,0,0.7);
+}
+
+/* 盤全体 */
+.displayBoard{
+  position: relative;
+  margin: auto;
+  align: center;
+  background-color: rgba(249,194,112,1);
+}
+
+/* 盤全体 */
+.board_table{
+  margin: auto;
+  align: center;
+}
+
+/* 駒のない箇所 */
+.empty_cell{
+  width: 50px;
+  height: 50px;
+}
+
+/* 手前持ち駒の表示位置 */
+#front{
+  position: absolute;
+  right: -100px;
+  bottom: 0px;
+  .image{
+    display: inline-block;
+  }
+}
+
+/* 奥持ち駒の表示位置 */
+#back{
+  position: absolute;
+  left: -100px;
+  top: 20px;
+  .image{
+    display: inline-block;
+  }
+}
+
+/* ユーザー情報の表示 */
+.frontDisplayUser{
+  font-size: 25px;
+  .user_name{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(0%, 100%);
+  }
+  .time{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(0%, 200%);
+  }
+}
+.backDisplayUser{
+  font-size: 25px;
+  .user_name{
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(0%, -200%);
+  }
+  .time{
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(0%, -100%);
+  }
+}
+
+/* ゲストログイン */
+.guest{
+  margin: 5% 0;
+  label{
+    display: block;
+    font-size: 20px;
+    vertical-align: middle;
+  }
+  select{
+    font-size: 15px;
+    vertical-align: middle;
+  }
+  input{
+    margin-bottom: 0px;
+    vertical-align: middle;
   }
 }
