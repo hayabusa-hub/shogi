@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   patch  "/makeRequest"            => "matchs#make_request"
   patch  "/acceptRequest"          => "matchs#accept_request"
   patch  "/declineRequest"         => "matchs#decline_request"
+  patch  "/games/:id/updateBoard"  => "games#updateBoard"
   patch  "/games/:id/editBoard"    => "games#edit_board"
   patch  "/games/:id/update_time"  => "games#update_time"
   patch  "/games/:id/resign"       => "games#resign"

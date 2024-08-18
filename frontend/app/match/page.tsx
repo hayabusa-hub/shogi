@@ -6,7 +6,6 @@ import { createConsumer } from "@rails/actioncable"
 
 const axiosURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 const actionCableURL = process.env.NEXT_PUBLIC_BASE_ACTIONCABLE_URL || "ws://localhost:3000/cable";
-
 const baseAxios = axios.create({
   baseURL: axiosURL,
   headers: {
@@ -41,7 +40,7 @@ export default function Match() {
     .then((res) => {
       setData(res);
       if(res.data.playingFlg){
-        router.push('/');
+        router.push(res.data.gameURL);
       }
     })
     .catch(error => {
@@ -124,7 +123,7 @@ export default function Match() {
         console.log("_____receive data________");
 
         if(true == data.data["reload"]){
-          router.push('/');
+          router.push(data.data.gameURL);
         }
         else{
           getRoomInfo();

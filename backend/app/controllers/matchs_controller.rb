@@ -176,6 +176,7 @@ class MatchsController < ApplicationController
         requestFlg: @match && @match.status ==  REQUEST ? true: false,
         waitingFlg: @match && @match.status ==  WAITING ? true: false,
         playingFlg: @match && @match.status ==  PLAYING ? true: false,
+        gameURL:    @match ? "/game/#{@match.game_id}": nil,
         opp:        @opponent ? @opponent.user : nil,
         userList:   @matches,
         errMsg:     errMsg
