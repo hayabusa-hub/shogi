@@ -17,14 +17,14 @@
   - WebSocketによる着手検知機能
   - 盤面反転機能
 
-## 使用技術
-- デプロイ
-  - Heroku
+## フレームワーク
+- フロントエンド
+  - Next.js
+- バックエンド
+  - Ruby on rails 6.0.3
+- インフラ
+  - Render
 - データベース
   - PostgreSQL
-- テスト
-  - Minitest
-
-## バージョン
-- Ruby 2.6.6
-- Ruby on rails 6.0.3
+- 構成管理
+  - Docker
