@@ -23,7 +23,7 @@ RUN bundle install
 RUN yarn install --check-files
 
 # データベースの初期化
-RUN rails db:migrate && rails db:seed
+RUN rails db:migrate:reset && rails db:seed
 
 # DOCKERにて、rails server実行時に、下記エラーが発生する
 #　「webpacker can't find application in manifest.json」
