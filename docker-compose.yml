@@ -13,6 +13,8 @@ services:
         source: ./backend/
         target: /myapp/
     command: rails server -b 0.0.0.0
+    depends_on:
+      - redis
   front:
     container_name: shogi_front
     build:
@@ -25,3 +27,9 @@ services:
         source: ./frontend/
         target: /myfront/
     command: yarn dev
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    # volumes:
+      # -- "./app/redis:/data"
