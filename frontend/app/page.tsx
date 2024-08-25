@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import axios, { AxiosResponse } from "axios";
 import {useEffect, useState} from 'react'
+import { useRouter } from 'next/navigation'
 
 const baseAxios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
@@ -21,6 +22,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginStatus, setLoginStatus] = useState(false);
+  const router = useRouter();
 
   async function login(){
     await baseAxios.post('login', {
@@ -55,6 +57,10 @@ export default function Home() {
     });
   }
 
+  async function enterRoom(){
+    router.push("/match");
+  }
+
   function setData(res: AxiosResponse<any, any>){
     setLoginStatus(res.data.isLogin);
     setId(res.data.userId);
@@ -76,70 +82,105 @@ export default function Home() {
         loginStatus ? (
           <div>
             <h1>将棋対戦</h1>
-            <div>
-              <Link href="/match">対局室へ移動</Link>
-            </div>
-            <div>
-              <Link href="/">観戦</Link>
-            </div>
-            <div>
-              <Link href="/">マイページ</Link>
+            <div className="container">
+              <div className="row">
+                
+                <div>
+                  <h3>
+                    ようこそ {name} さん
+                  </h3>
+
+                  <div className="offset-md-4">
+                    <button 
+                      name="commit" 
+                      className="btn btn-primary m-1 btn-block col-md-6 " 
+                      onClick={() => {
+                        enterRoom();
+                      }}>
+                        対局室へ移動
+                    </button>      
+                  </div>
+
+                  <div className="offset-md-4">
+                    <button 
+                      name="commit" 
+                      className="btn btn-primary m-1 btn-block col-md-6" 
+                      disabled>
+                        観戦
+                    </button>
+                  </div>
+
+                  <div className="offset-md-4">
+                    <button 
+                      name="commit" 
+                      className="btn btn-primary m-1 btn-block col-md-6" 
+                      disabled>
+                        マイページ
+                    </button>
+                  </div>
+
+                  <div className="offset-md-7">
+                    <button 
+                      name="commit" 
+                      className="btn btn-link m-1 col-md-3" 
+                      onClick={() => logout()}>
+                        ログアウト
+                    </button>
+                  </div>
+
+                </div>
+              </div>
             </div>
 
-            <button onClick={() => logout()}>
-              ログアウト
-            </button>
           </div>
         ) : (
           <div>
             <h1>ログイン</h1>
-            <div className="row">
-              <div className="col-md-6 col-md-offset-3">
-                <div>
+            <div className="container">
+              <div className="row">
+                <div className="col-md-6 offset-md-3">
+                  <div>
+                    
+                    <label>メールアドレス</label>
+                    <input className="form-control m-1" type="email" value={email} 
+                          onChange={(e) => setEmail(e.target.value)} />
+                    
+                    <label>パスワード</label>
+                    <input className="form-control m-1" type="password" value={password}
+                          onChange={(e) => setPassword(e.target.value)} />
                   
-                  <label>メールアドレス</label>
-                  <input className="form-control" type="email" value={email} 
-                        onChange={(e) => setEmail(e.target.value)} />
-                  
-                  <label>パスワード</label>
-                  <input className="form-control" type="password" value={password}
-                        onChange={(e) => setPassword(e.target.value)} />
-                
-                  <button name="commit" className="btn btn-primary" onClick={() => login()}>
-                    ログイン
-                  </button>
+                    <button name="commit" className="btn btn-primary m-1" onClick={() => login()}>
+                      ログイン
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              <div className="guest">
+                <label>ゲストログイン</label>
+                {
+                  (function () {
+                    const list = [];
+                    for(let i = 1; i <= 5; i++){
+                      list.push(
+                        <div>
+                          <button 
+                            className="btn m-1 btn-outline-dark" onClick={() => guestLogin(i)}>
+                              user{i}
+                          </button>
+                        </div>
+                      )
+                    }
+                    return list;
+                  }())
+                }
+              </div>
+
             </div>
           </div>
         )
       }
       
-
-      <div>
-        {/* {user.user.id} */}
-        {id}, {name}
-        {/* , {email}, {password} */}
-      </div>
-      <div>
-        isLogin?: {loginStatus ? "true": "false"}
-        
-      </div>
-      <div>
-        isLogin?: {loginStatus}
-      </div>
-
-      <button onClick={() => {
-        isLogin();
-      }}>
-        確認
-      </button>
-
-      <div onClick={() => guestLogin(1)}>user1</div>
-      <div onClick={() => guestLogin(2)}>user2</div>
-      <div onClick={() => guestLogin(3)}>user3</div>
-      <div onClick={() => guestLogin(4)}>user4</div>
-      <div onClick={() => guestLogin(5)}>user5</div>
     </div>
   );
 }

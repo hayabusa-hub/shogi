@@ -57,6 +57,13 @@ button{
   border: none;
 }
 
+label{
+  font-weight: 700;
+  margin-bottom: 5px;
+  max-width: 100%;
+  display: inline-block;
+}
+
 /* header */
 #logo {
   float: left;
